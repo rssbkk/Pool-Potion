@@ -43,32 +43,34 @@ const scene = new THREE.Scene();
 const gltfLoader = new GLTFLoader();
 
 // Lights
-const hemisphereLight = new THREE.HemisphereLight( 0xff0000, 0x00ff00, 0.5 );
+const hemisphereLight = new THREE.HemisphereLight( 0xE2E2E2, 0x00ff00, 0.5 );
 scene.add(hemisphereLight);
 
 /**
  * Potion Object
  */
 // Potion Colour
-debugObject.depthColor = '#186691';
-debugObject.surfaceColor = '#9bd8ff';
+debugObject.depthColor = '#18911a';
+debugObject.surfaceColor = '#393b3c';
 
-potionColourTweaks.addColor(debugObject, 'depthColor').onChange(() => { potionMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor) });
-potionColourTweaks.addColor(debugObject, 'surfaceColor').onChange(() => { potionMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor) });
+potionColourTweaks.addColor(debugObject, 'depthColor')
+    .onChange(() => { potionMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor) });
+potionColourTweaks.addColor(debugObject, 'surfaceColor')
+    .onChange(() => { potionMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor) });
 
 /**
  *  POTION
  */
-//  Potion Dimensions & Positioning
+// Potion Dimension Tweaks
 const potionDimensions = {
-    XScale : 2,
-    YScale : 2
+    XScale : 4.8,
+    YScale : 5.7
 }
 
 potionPositioning.add(potionDimensions, 'XScale')
     .min(0)
-    .max(5)
-    .step(.25)
+    .max(10)
+    .step(.1)
     .name('X Size')
     .onFinishChange(() =>
     {
@@ -83,8 +85,8 @@ potionPositioning.add(potionDimensions, 'XScale')
 
 potionPositioning.add(potionDimensions, 'YScale')
     .min(0)
-    .max(5)
-    .step(.25)
+    .max(10)
+    .step(.1)
     .name('Y Size')
     .onFinishChange(() =>
     {
@@ -129,7 +131,12 @@ const potionMaterial = new THREE.ShaderMaterial({
 });
 
 let potionMesh = new THREE.Mesh(potionGeometry, potionMaterial);
+
 potionMesh.rotation.x = - Math.PI * 0.5;
+
+potionMesh.position.x = - 4.5;
+potionMesh.position.y = - 0.05;
+potionMesh.position.z = 7.5;
 scene.add(potionMesh);
 
 // Potion Tweaks
@@ -147,6 +154,11 @@ potionTweaks.add(potionMaterial.uniforms.uSmallIterations, 'value').min(0).max(5
 potionTweaks.add(potionMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
 potionTweaks.add(potionMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier')
 
+//  Potion Positioning Tweaks
+potionPositioning.add(potionMesh.position, 'x').min(-10).max(10).step(0.5).name('X Position');
+potionPositioning.add(potionMesh.position, 'y').min(-10).max(10).step(0.05).name('Y Position');
+potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name('Z Position');
+
 /**
  * Background Objects
  */
@@ -156,7 +168,7 @@ gltfLoader.load('/scene-draft-three.glb', (gltf) =>
     const materialChange = gltf.scene.children;
     materialChange.forEach( (mesh) =>
     {
-        mesh.material = new THREE.MeshBasicMaterial();
+        mesh.material = new THREE.MeshStandardMaterial();
     });
     gltf.scene.children[0].material.color = new THREE.Color( 0xf00000 );
     gltf.scene.children[1].material.color = new THREE.Color( 0xf00000 );
