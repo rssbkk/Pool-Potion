@@ -56,14 +56,54 @@ debugObject.surfaceColor = '#9bd8ff';
 potionColourTweaks.addColor(debugObject, 'depthColor').onChange(() => { potionMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor) });
 potionColourTweaks.addColor(debugObject, 'surfaceColor').onChange(() => { potionMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor) });
 
+/**
+ *  POTION
+ */
+//  Potion Dimensions & Positioning
+const potionDimensions = {
+    XScale : 2,
+    YScale : 2
+}
+
+potionPositioning.add(potionDimensions, 'XScale')
+    .min(0)
+    .max(5)
+    .step(.25)
+    .name('X Size')
+    .onFinishChange(() =>
+    {
+        potionMesh.geometry.dispose()
+        potionMesh.geometry = new THREE.PlaneGeometry( 
+            potionDimensions.XScale, 
+            potionDimensions.YScale, 
+            512, 
+            512
+        )
+    });
+
+potionPositioning.add(potionDimensions, 'YScale')
+    .min(0)
+    .max(5)
+    .step(.25)
+    .name('Y Size')
+    .onFinishChange(() =>
+    {
+        potionMesh.geometry.dispose()
+        potionMesh.geometry = new THREE.PlaneGeometry( 
+            potionDimensions.XScale, 
+            potionDimensions.YScale, 
+            512, 
+            512
+        )
+    });
+
 // Potion Mesh
-let potionXScale = 2;
-let potionYScale = 2;
-
-potionPositioning.add('xScale').min(0).max(5).step(1).name('Potion X');
-potionPositioning.add('yScale').min(0).max(5).step(1).name('Potion Y');
-
-const potionGeometry = new THREE.PlaneGeometry( potionXScale, potionYScale, 512, 512 );
+const potionGeometry = new THREE.PlaneGeometry( 
+    potionDimensions.XScale, 
+    potionDimensions.YScale, 
+    512, 
+    512 
+);
 const potionMaterial = new THREE.ShaderMaterial({
     vertexShader: potionVertexShader,
     fragmentShader: potionFragmentShader,
@@ -88,7 +128,7 @@ const potionMaterial = new THREE.ShaderMaterial({
     }
 });
 
-const potionMesh = new THREE.Mesh(potionGeometry, potionMaterial);
+let potionMesh = new THREE.Mesh(potionGeometry, potionMaterial);
 potionMesh.rotation.x = - Math.PI * 0.5;
 scene.add(potionMesh);
 
