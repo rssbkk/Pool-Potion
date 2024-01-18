@@ -160,9 +160,9 @@ potionPositioning.add(potionMesh.position, 'y').min(-10).max(10).step(0.05).name
 potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name('Z Position');
 
 /**
- * Background Objects
+ * Pool
  */
-gltfLoader.load('/scene-draft-three.glb', (gltf) => 
+gltfLoader.load('./simplePool-draft-one.glb', (gltf) => 
 {
     console.log(gltf.scene.children);
     const materialChange = gltf.scene.children;
