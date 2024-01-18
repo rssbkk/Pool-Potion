@@ -43,15 +43,15 @@ const scene = new THREE.Scene();
 const gltfLoader = new GLTFLoader();
 
 // Lights
-const hemisphereLight = new THREE.HemisphereLight( 0xE2E2E2, 0x00ff00, 0.5 );
+const hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0x00ff00, 0.5 );
 scene.add(hemisphereLight);
 
 /**
  * Potion Object
  */
 // Potion Colour
-debugObject.depthColor = '#18911a';
-debugObject.surfaceColor = '#393b3c';
+debugObject.depthColor = '#367981';
+debugObject.surfaceColor = '#6d90a2';
 
 potionColourTweaks.addColor(debugObject, 'depthColor')
     .onChange(() => { potionMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor) });
@@ -63,14 +63,15 @@ potionColourTweaks.addColor(debugObject, 'surfaceColor')
  */
 // Potion Dimension Tweaks
 const potionDimensions = {
-    XScale : 4.8,
-    YScale : 5.7
+    XScale : 1.565,
+    YScale : 1.565,
+    divisions: 64
 }
 
 potionPositioning.add(potionDimensions, 'XScale')
     .min(0)
     .max(10)
-    .step(.1)
+    .step(.005)
     .name('X Size')
     .onFinishChange(() =>
     {
@@ -78,15 +79,15 @@ potionPositioning.add(potionDimensions, 'XScale')
         potionMesh.geometry = new THREE.PlaneGeometry( 
             potionDimensions.XScale, 
             potionDimensions.YScale, 
-            512, 
-            512
+            potionDimensions.divisions, 
+            potionDimensions.divisions
         )
     });
 
 potionPositioning.add(potionDimensions, 'YScale')
     .min(0)
     .max(10)
-    .step(.1)
+    .step(.005)
     .name('Y Size')
     .onFinishChange(() =>
     {
@@ -94,8 +95,24 @@ potionPositioning.add(potionDimensions, 'YScale')
         potionMesh.geometry = new THREE.PlaneGeometry( 
             potionDimensions.XScale, 
             potionDimensions.YScale, 
-            512, 
-            512
+            potionDimensions.divisions, 
+            potionDimensions.divisions
+        )
+    });
+
+potionPositioning.add(potionDimensions, 'divisions')
+    .min(64)
+    .max(1028)
+    .step(8)
+    .name('Divisions')
+    .onFinishChange(() =>
+    {
+        potionMesh.geometry.dispose()
+        potionMesh.geometry = new THREE.PlaneGeometry( 
+            potionDimensions.XScale, 
+            potionDimensions.YScale, 
+            potionDimensions.divisions, 
+            potionDimensions.divisions
         )
     });
 
@@ -103,8 +120,8 @@ potionPositioning.add(potionDimensions, 'YScale')
 const potionGeometry = new THREE.PlaneGeometry( 
     potionDimensions.XScale, 
     potionDimensions.YScale, 
-    512, 
-    512 
+    potionDimensions.divisions, 
+    potionDimensions.divisions
 );
 const potionMaterial = new THREE.ShaderMaterial({
     vertexShader: potionVertexShader,
@@ -114,19 +131,19 @@ const potionMaterial = new THREE.ShaderMaterial({
     {
         uTime: { value: 0 },
         
-        uBigWavesElevation: { value: 0.2 },
+        uBigWavesElevation: { value: 0.055 },
         uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
-        uBigWavesSpeed: { value: 0.75 },
+        uBigWavesSpeed: { value: 0.2 },
 
-        uSmallWavesElevation: { value: 0.15 },
+        uSmallWavesElevation: { value: 0.055 },
         uSmallWavesFrequency: { value: 3 },
-        uSmallWavesSpeed: { value: 0.2 },
+        uSmallWavesSpeed: { value: 0.45 },
         uSmallIterations: { value: 4 },
 
         uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
         uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
-        uColorOffset: { value: 0.08 },
-        uColorMultiplier: { value: 5 }
+        uColorOffset: { value: 0 },
+        uColorMultiplier: { value: 7 }
     }
 });
 
@@ -134,9 +151,9 @@ let potionMesh = new THREE.Mesh(potionGeometry, potionMaterial);
 
 potionMesh.rotation.x = - Math.PI * 0.5;
 
-potionMesh.position.x = - 4.5;
-potionMesh.position.y = - 0.05;
-potionMesh.position.z = 7.5;
+potionMesh.position.x = 0;
+potionMesh.position.y = 0.45;
+potionMesh.position.z = 0;
 scene.add(potionMesh);
 
 // Potion Tweaks
@@ -156,13 +173,13 @@ potionTweaks.add(potionMaterial.uniforms.uColorMultiplier, 'value').min(0).max(1
 
 //  Potion Positioning Tweaks
 potionPositioning.add(potionMesh.position, 'x').min(-10).max(10).step(0.5).name('X Position');
-potionPositioning.add(potionMesh.position, 'y').min(-10).max(10).step(0.05).name('Y Position');
+potionPositioning.add(potionMesh.position, 'y').min(-10).max(10).step(0.01).name('Y Position');
 potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name('Z Position');
 
 /**
  * Pool
  */
-gltfLoader.load('./simplePool-draft-one.glb', (gltf) => 
+gltfLoader.load('/simplePool-draft-one.glb', (gltf) => 
 {
     console.log(gltf.scene.children);
     const materialChange = gltf.scene.children;
@@ -170,29 +187,29 @@ gltfLoader.load('./simplePool-draft-one.glb', (gltf) =>
     {
         mesh.material = new THREE.MeshStandardMaterial();
     });
-    gltf.scene.children[0].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[1].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[2].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[3].material.color = new THREE.Color( 0x0000ff );
-    gltf.scene.children[4].material.color = new THREE.Color( 0x00ff00 );
-    gltf.scene.children[5].material.color = new THREE.Color( 0xf000f0 );
-    gltf.scene.children[6].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[7].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[8].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[9].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[10].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[11].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[12].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[13].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[14].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[15].material.color = new THREE.Color( 0x00ff00 );
-    gltf.scene.children[16].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[17].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[18].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[19].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[20].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[21].material.color = new THREE.Color( 0xf00000 );
-    gltf.scene.children[22].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[0].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[1].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[2].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[3].material.color = new THREE.Color( 0x0000ff );
+    // gltf.scene.children[4].material.color = new THREE.Color( 0x00ff00 );
+    // gltf.scene.children[5].material.color = new THREE.Color( 0xf000f0 );
+    // gltf.scene.children[6].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[7].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[8].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[9].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[10].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[11].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[12].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[13].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[14].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[15].material.color = new THREE.Color( 0x00ff00 );
+    // gltf.scene.children[16].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[17].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[18].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[19].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[20].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[21].material.color = new THREE.Color( 0xf00000 );
+    // gltf.scene.children[22].material.color = new THREE.Color( 0xf00000 );
 
     scene.add(gltf.scene);
 });
