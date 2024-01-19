@@ -15,16 +15,20 @@ const debugObject = {};
 
 // Potion Tweaks
 const potionTweaks = gui.addFolder( 'Potion Tweaks' );
-potionTweaks.close();
+// potionTweaks.close();
 
 const potionColourTweaks = potionTweaks.addFolder( 'Potion Colour' );
 // potionColourTweaks.close();
 
 const potionPositioning = potionTweaks.addFolder( 'Potion Positioning' );
 
+//  Ground Tweaks
+const groundTweaks = gui.addFolder( 'Ground Tweaks' );
+
+
 // Camera Tweaks
 const cameraTweaks = gui.addFolder('CameraTweaks')
-cameraTweaks.close();
+// cameraTweaks.close();
 
 debugObject.locateCamera = () => 
 {
@@ -42,9 +46,40 @@ const scene = new THREE.Scene();
 // Loaders
 const gltfLoader = new GLTFLoader();
 
-// Lights
-const hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0x00ff00, 0.5 );
-scene.add(hemisphereLight);
+/**
+ * Ground
+ */
+// Ground Mesh
+const groundDimensions = {
+    planeSize: 100
+}
+
+const groundGeometry = new THREE.PlaneGeometry( 100, 100 );
+const groundMaterial = new THREE.MeshBasicMaterial();
+const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
+groundMesh.rotation.x = - Math.PI / 2;
+scene.add( groundMesh );
+
+// Ground tweaks
+groundTweaks.add( groundDimensions, 'planeSize')
+    .min(10)
+    .max(10000)
+    .step(10)
+    .name('Ground Size')
+    .onChange(() =>
+    {
+        groundMesh.geometry.dispose()
+        groundMesh.geometry = new THREE.PlaneGeometry( 
+            groundDimensions.planeSize, 
+            groundDimensions.planeSize
+        )
+    });
+
+groundTweaks.add(groundMesh.position, 'y')
+    .min(-10)
+    .max(10)
+    .step(0.01)
+    .name('Y Position');
 
 /**
  * Potion Object
@@ -58,9 +93,6 @@ potionColourTweaks.addColor(debugObject, 'depthColor')
 potionColourTweaks.addColor(debugObject, 'surfaceColor')
     .onChange(() => { potionMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor) });
 
-/**
- *  POTION
- */
 // Potion Dimension Tweaks
 const potionDimensions = {
     XScale : 1.565,
@@ -177,7 +209,7 @@ potionPositioning.add(potionMesh.position, 'y').min(-10).max(10).step(0.01).name
 potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name('Z Position');
 
 /**
- * Pool
+ * Pool Object
  */
 gltfLoader.load('/simplePool-draft-one.glb', (gltf) => 
 {
@@ -238,11 +270,28 @@ window.addEventListener('resize', () =>
 });
 
 /**
+ * Lights
+ */
+const hemisphereLight = new THREE.HemisphereLight( 0xf0f0ff, 0xffffff, 0.0 );
+scene.add(hemisphereLight);
+
+const ambientLight = new THREE.AmbientLight( 0xfff, 0 );
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight();
+directionalLight.position.set( 2, 2, 2 );
+scene.add(directionalLight);
+
+const directionalLightHelper = new THREE.DirectionalLightHelper( directionalLight );
+scene.add(directionalLightHelper)
+
+/**
  * Camera
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set( 5, 5, 5 );
+camera.position.set( 2.5, 3, -2.5 );
+camera.lookAt( potionMesh );
 scene.add(camera)
 
 // Controls
