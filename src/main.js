@@ -55,9 +55,10 @@ const groundDimensions = {
 }
 
 const groundGeometry = new THREE.PlaneGeometry( 100, 100 );
-const groundMaterial = new THREE.MeshBasicMaterial();
+const groundMaterial = new THREE.MeshStandardMaterial();
 const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
 groundMesh.rotation.x = - Math.PI / 2;
+groundMesh.position.y = - 0.51;
 scene.add( groundMesh );
 
 // Ground tweaks
