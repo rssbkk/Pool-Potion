@@ -59,7 +59,7 @@ const groundMaterial = new THREE.MeshStandardMaterial();
 const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
 groundMesh.rotation.x = - Math.PI / 2;
 groundMesh.position.y = - 0.51;
-scene.add( groundMesh );
+// scene.add( groundMesh );
 
 // Ground tweaks
 groundTweaks.add( groundDimensions, 'planeSize')
@@ -210,39 +210,26 @@ potionPositioning.add(potionMesh.position, 'y').min(-10).max(10).step(0.01).name
 potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name('Z Position');
 
 /**
- * Pool Object
+ * Scene Object
  */
-gltfLoader.load('/simplePool-draft-one.glb', (gltf) => 
+gltfLoader.load('/blockOutScene-draft-one.glb', (gltf) => 
 {
     console.log(gltf.scene.children);
     const materialChange = gltf.scene.children;
     materialChange.forEach( (mesh) =>
     {
-        mesh.material = new THREE.MeshStandardMaterial();
+        mesh.material = new THREE.MeshBasicMaterial();
+        mesh.material.side = 2;
     });
-    // gltf.scene.children[0].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[1].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[2].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[3].material.color = new THREE.Color( 0x0000ff );
-    // gltf.scene.children[4].material.color = new THREE.Color( 0x00ff00 );
-    // gltf.scene.children[5].material.color = new THREE.Color( 0xf000f0 );
-    // gltf.scene.children[6].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[7].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[8].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[9].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[10].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[11].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[12].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[13].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[14].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[15].material.color = new THREE.Color( 0x00ff00 );
-    // gltf.scene.children[16].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[17].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[18].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[19].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[20].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[21].material.color = new THREE.Color( 0xf00000 );
-    // gltf.scene.children[22].material.color = new THREE.Color( 0xf00000 );
+
+    gltf.scene.children[0].material.color = new THREE.Color( 0xffffff );
+    gltf.scene.children[1].material.color = new THREE.Color( 0xff000 );
+    gltf.scene.children[2].material.color = new THREE.Color( 0xfff );
+    gltf.scene.children[3].material.color = new THREE.Color( 0xfff );
+    gltf.scene.children[4].material.color = new THREE.Color( 0xfff );
+    gltf.scene.children[5].material.color = new THREE.Color( 0xfff );
+    gltf.scene.children[6].material.color = new THREE.Color( 0xfff );
+    gltf.scene.children[7].material.color = new THREE.Color( 0xfff );
 
     scene.add(gltf.scene);
 });
@@ -274,17 +261,17 @@ window.addEventListener('resize', () =>
  * Lights
  */
 const hemisphereLight = new THREE.HemisphereLight( 0xf0f0ff, 0xffffff, 0.0 );
-scene.add(hemisphereLight);
+// scene.add(hemisphereLight);
 
 const ambientLight = new THREE.AmbientLight( 0xfff, 0 );
-scene.add(ambientLight);
+// scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight();
 directionalLight.position.set( 2, 2, 2 );
-scene.add(directionalLight);
+// scene.add(directionalLight);
 
 const directionalLightHelper = new THREE.DirectionalLightHelper( directionalLight );
-scene.add(directionalLightHelper)
+// scene.add(directionalLightHelper)
 
 /**
  * Camera
