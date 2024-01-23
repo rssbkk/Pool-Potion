@@ -281,7 +281,6 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 camera.position.set( 2.5, 3, -2.5 );
 camera.lookAt( potionMesh );
 scene.add(camera)
-
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
