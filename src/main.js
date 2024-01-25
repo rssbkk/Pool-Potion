@@ -48,6 +48,7 @@ const scene = new THREE.Scene();
 
 // Loaders
 const gltfLoader = new GLTFLoader();
+const textureLoader = new THREE.TextureLoader();
 
 // Fog
 debugObject.fogColor = "#cccccc"
@@ -69,6 +70,43 @@ fogTweaks.add(scene.fog, 'far')
     .step(0.05)
     .name('Fog Far')
 ;
+
+
+/**
+ * Sizes
+ */
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+};
+
+window.addEventListener('resize', () =>
+{
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+});
+
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+    canvas: canvas
+});
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+/**
+ * Textures
+ */
 
 /**
  * Ground
@@ -238,6 +276,29 @@ potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name(
 /**
  * Scene Object
  */
+
+// MeshToonMaterial
+let sceneMaterial = null;
+
+const stepSize = 1;
+const format = ( renderer.capabilities.isWebGL2 ) ? THREE.RedFormat : THREE.LuminanceFormat;
+
+for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex ++ ) {
+
+    const colors = new Uint8Array( alphaIndex + 2 );
+
+    for ( let c = 0; c <= colors.length; c ++ ) {
+        colors[ c ] = ( c / colors.length ) * 256;
+    }
+
+    const gradientMap = new THREE.DataTexture( colors, colors.length, 1, format );
+    gradientMap.needsUpdate = true;
+
+    sceneMaterial = new THREE.MeshToonMaterial( {
+        gradientMap: gradientMap
+    } );
+}
+
 gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) => 
 {
     console.log(gltf.scene.children);
@@ -246,8 +307,7 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
     const materialChange = gltf.scene.children;
     materialChange.forEach( (mesh) =>
     {
-        mesh.material = new THREE.MeshStandardMaterial();
-        mesh.material.side = 2;
+        mesh.material = sceneMaterial;
     });
 
     // gltf.scene.children[0].material.color = new THREE.Color( 0xffffff );
@@ -263,35 +323,12 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
 });
 
 /**
- * Sizes
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-};
-
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-});
-
-/**
  * Lights
  */
 const hemisphereLight = new THREE.HemisphereLight( 0xf0f0ff, 0xffffff, 0.0 );
 // scene.add(hemisphereLight);
 
-const ambientLight = new THREE.AmbientLight( 0xfff, 0.5 );
+const ambientLight = new THREE.AmbientLight( 0xffffff, 0.5 );
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight();
@@ -312,15 +349,6 @@ scene.add(camera)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-
-/**
- * Renderer
- */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-});
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
  * Animate
