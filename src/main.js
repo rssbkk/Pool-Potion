@@ -13,17 +13,20 @@ import potionFragmentShader from './shaders/potionShader/potionFragment.glsl';
 const gui = new GUI();
 const debugObject = {};
 
+// Fog Tweaks
+const fogTweaks = gui.addFolder( 'Fog Tweaks' );
+    // fogTweaks.close();
+
 // Potion Tweaks
 const potionTweaks = gui.addFolder( 'Potion Tweaks' );
-// potionTweaks.close();
-
+    potionTweaks.close();
 const potionColourTweaks = potionTweaks.addFolder( 'Potion Colour' );
-// potionColourTweaks.close();
-
+    potionColourTweaks.close();
 const potionPositioning = potionTweaks.addFolder( 'Potion Positioning' );
 
 //  Ground Tweaks
 const groundTweaks = gui.addFolder( 'Ground Tweaks' );
+    groundTweaks.close();
 
 
 // Camera Tweaks
@@ -46,6 +49,27 @@ const scene = new THREE.Scene();
 // Loaders
 const gltfLoader = new GLTFLoader();
 
+// Fog
+debugObject.fogColor = "#cccccc"
+
+scene.fog = new THREE.Fog( debugObject.fogColor, 1, 10 );
+
+fogTweaks.addColor(debugObject, 'fogColor')
+    .onChange(() => { scene.fog.color.set(debugObject.fogColor) })
+;
+fogTweaks.add(scene.fog, 'near')
+    .min(0.1)
+    .max(10)
+    .step(0.05)
+    .name('Fog Near')
+;
+fogTweaks.add(scene.fog, 'far')
+    .min(0.2)
+    .max(15)
+    .step(0.05)
+    .name('Fog Far')
+;
+
 /**
  * Ground
  */
@@ -57,9 +81,11 @@ const groundDimensions = {
 const groundGeometry = new THREE.PlaneGeometry( 100, 100 );
 const groundMaterial = new THREE.MeshStandardMaterial();
 const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
+
 groundMesh.rotation.x = - Math.PI / 2;
-groundMesh.position.y = - 0.51;
-// scene.add( groundMesh );
+groundMesh.material.color = new THREE.Color( 0x00f00f );
+
+scene.add( groundMesh );
 
 // Ground tweaks
 groundTweaks.add( groundDimensions, 'planeSize')
@@ -212,24 +238,26 @@ potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name(
 /**
  * Scene Object
  */
-gltfLoader.load('/blockOutScene-draft-one.glb', (gltf) => 
+gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) => 
 {
     console.log(gltf.scene.children);
+    gltf.scene.scale.set(0.25, 0.25, 0.25);
+
     const materialChange = gltf.scene.children;
     materialChange.forEach( (mesh) =>
     {
-        mesh.material = new THREE.MeshBasicMaterial();
+        mesh.material = new THREE.MeshStandardMaterial();
         mesh.material.side = 2;
     });
 
-    gltf.scene.children[0].material.color = new THREE.Color( 0xffffff );
-    gltf.scene.children[1].material.color = new THREE.Color( 0xff000 );
-    gltf.scene.children[2].material.color = new THREE.Color( 0xfff );
-    gltf.scene.children[3].material.color = new THREE.Color( 0xfff );
-    gltf.scene.children[4].material.color = new THREE.Color( 0xfff );
-    gltf.scene.children[5].material.color = new THREE.Color( 0xfff );
-    gltf.scene.children[6].material.color = new THREE.Color( 0xfff );
-    gltf.scene.children[7].material.color = new THREE.Color( 0xfff );
+    // gltf.scene.children[0].material.color = new THREE.Color( 0xffffff );
+    // gltf.scene.children[1].material.color = new THREE.Color( 0xff000 );
+    // gltf.scene.children[2].material.color = new THREE.Color( 0xfff );
+    // gltf.scene.children[3].material.color = new THREE.Color( 0xfff );
+    // gltf.scene.children[4].material.color = new THREE.Color( 0xfff );
+    // gltf.scene.children[5].material.color = new THREE.Color( 0xfff );
+    // gltf.scene.children[6].material.color = new THREE.Color( 0xfff );
+    // gltf.scene.children[7].material.color = new THREE.Color( 0xfff );
 
     scene.add(gltf.scene);
 });
@@ -263,15 +291,15 @@ window.addEventListener('resize', () =>
 const hemisphereLight = new THREE.HemisphereLight( 0xf0f0ff, 0xffffff, 0.0 );
 // scene.add(hemisphereLight);
 
-const ambientLight = new THREE.AmbientLight( 0xfff, 0 );
-// scene.add(ambientLight);
+const ambientLight = new THREE.AmbientLight( 0xfff, 0.5 );
+scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight();
 directionalLight.position.set( 2, 2, 2 );
-// scene.add(directionalLight);
+scene.add(directionalLight);
 
 const directionalLightHelper = new THREE.DirectionalLightHelper( directionalLight );
-// scene.add(directionalLightHelper)
+scene.add(directionalLightHelper)
 
 /**
  * Camera
