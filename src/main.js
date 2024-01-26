@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import GUI from 'lil-gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import Stats from 'stats.js';
+import gsap from 'gsap';
 
 import potionVertexShader from './shaders/potionShader/potionVertex.glsl';
 import potionFragmentShader from './shaders/potionShader/potionFragment.glsl';
@@ -9,13 +11,19 @@ import potionFragmentShader from './shaders/potionShader/potionFragment.glsl';
 /**
  * Base
  */
+
+// Stats
+var stats = new Stats();
+stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
+
 // Debug
 const gui = new GUI();
 const debugObject = {};
 
 // Fog Tweaks
 const fogTweaks = gui.addFolder( 'Fog Tweaks' );
-    // fogTweaks.close();
+    fogTweaks.close();
 
 // Potion Tweaks
 const potionTweaks = gui.addFolder( 'Potion Tweaks' );
@@ -323,6 +331,57 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
 });
 
 /**
+ * Interaction Objects
+ */
+const interactionObjectGeometry = new THREE.BoxGeometry( 0.5, 1, 0.5);
+const interactionObjectMaterial = new THREE.MeshToonMaterial({
+    color: new THREE.Color( 1, 0, 0)
+});
+const interactionObjectMesh = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial );
+interactionObjectMesh.position.set(3, 0, 3)
+scene.add(interactionObjectMesh);
+
+// let model = null
+// gltfLoader.load(
+//     './models/Duck/glTF-Binary/Duck.glb',
+//     (gltf) =>
+//     {
+//         model = gltf.scene
+//         gltf.scene.position.y = - 1.2
+//         scene.add(gltf.scene)
+//     }
+// )
+
+/**
+ * Interaction Actions
+ */
+window.addEventListener('click', () =>
+{
+    if(currentIntersect)
+    {
+        console.log(currentIntersect);
+        gsap.to(currentIntersect.object.position, 
+            { duration: 1, x: 0, y:0, z:0 })
+    }
+})
+
+/**
+ * Mouse
+ */
+const mouse = new THREE.Vector2()
+
+window.addEventListener('mousemove', (event) =>
+{
+    mouse.x = event.clientX / sizes.width * 2 - 1
+    mouse.y = - (event.clientY / sizes.height) * 2 + 1
+})
+
+/**
+ * Raycaster
+ */
+const raycaster = new THREE.Raycaster()
+
+/**
  * Lights
  */
 const hemisphereLight = new THREE.HemisphereLight( 0xf0f0ff, 0xffffff, 0.0 );
@@ -332,7 +391,7 @@ const ambientLight = new THREE.AmbientLight( 0xffffff, 0.5 );
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight();
-directionalLight.position.set( 2, 2, 2 );
+directionalLight.position.set( 5, 2, 5 );
 scene.add(directionalLight);
 
 const directionalLightHelper = new THREE.DirectionalLightHelper( directionalLight );
@@ -350,23 +409,48 @@ scene.add(camera)
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
+
 /**
  * Animate
  */
+// Animation variables
+let currentIntersect = null;
+
+// Animation Function
 const clock = new THREE.Clock()
 
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+    
+    stats.begin();
 
     // Update controls
     controls.update()
 
+    // Raycaster Work
+    raycaster.setFromCamera(mouse, camera)
+    
+    const objectsToTest = [interactionObjectMesh]
+    const intersects = raycaster.intersectObjects(objectsToTest)
+
+    if(intersects.length) {
+        currentIntersect = intersects[0];
+    } else {
+        currentIntersect = null;
+    };
+
     // Potion
     potionMaterial.uniforms.uTime.value = elapsedTime;
 
+    // Update Directional Light Position
+        // directionalLight.position.x = Math.sin(elapsedTime)
+        // directionalLight.position.z = Math.cos(elapsedTime)
+
     // Render
     renderer.render(scene, camera)
+    
+    stats.end();
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)

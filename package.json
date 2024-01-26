@@ -12,7 +12,9 @@
     "vite": "^5.0.8"
   },
   "dependencies": {
+    "gsap": "^3.12.5",
     "lil-gui": "^0.19.1",
+    "stats.js": "^0.17.0",
     "three": "^0.160.0",
     "vite-plugin-glsl": "^1.2.1"
   }
