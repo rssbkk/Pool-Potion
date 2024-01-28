@@ -335,7 +335,7 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
  */
 const interactionObjectGeometry = new THREE.BoxGeometry( 0.5, 1, 0.5);
 const interactionObjectMaterial = new THREE.MeshToonMaterial({
-    color: new THREE.Color( 1, 0, 0)
+    color: new THREE.Color( 1, 0, 0 )
 });
 const interactionObjectMesh = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial );
 interactionObjectMesh.position.set(3, 0, 3)
@@ -359,9 +359,46 @@ window.addEventListener('click', () =>
 {
     if(currentIntersect)
     {
-        console.log(currentIntersect);
-        gsap.to(currentIntersect.object.position, 
-            { duration: 1, x: 0, y:0, z:0 })
+        let modelX = currentIntersect.object.position.x
+        let modelZ = currentIntersect.object.position.z
+
+        let distanceToWellCenter = Math.hypot( modelX, modelZ );
+
+        console.log( distanceToWellCenter );
+
+        let throwAnimation = gsap.timeline();
+        throwAnimation.to(currentIntersect.object.position, {
+            x: modelX - (distanceToWellCenter / 5),
+            z: modelZ - (distanceToWellCenter / 5),
+            y: 2 / 4,
+            ease: "none" 
+        })
+        .to(currentIntersect.object.position, {
+            x: modelX - (distanceToWellCenter / 4),
+            z: modelZ - (distanceToWellCenter / 4),
+            y: 2 / 3,
+            ease: "none" 
+        })
+        .to(currentIntersect.object.position, {
+            x: modelX - (distanceToWellCenter / 3),
+            z: modelZ - (distanceToWellCenter / 3),
+            y: 2 / 2,
+            ease: "none" 
+        })
+        .to(currentIntersect.object.position, {
+            x: modelX - (distanceToWellCenter / 2),
+            z: modelZ - (distanceToWellCenter / 2),
+            y: 2 / 1,
+            ease: "none" 
+        })
+        .to(currentIntersect.object.position, {
+            x: 0,
+            z: 0,
+            y: 0,
+            ease: "none" 
+        })
+            // MAKE TOTAL DURATION 1S <<<<<<<<<<<<<<<<<<<<<<
+        return throwAnimation
     }
 })
 
