@@ -288,7 +288,8 @@ potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name(
 // MeshToonMaterial
 let sceneMaterial = null;
 
-const stepSize = 1;
+
+const stepSize = 0.1;
 const format = ( renderer.capabilities.isWebGL2 ) ? THREE.RedFormat : THREE.LuminanceFormat;
 
 for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex ++ ) {
@@ -296,7 +297,9 @@ for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex
     const colors = new Uint8Array( alphaIndex + 2 );
 
     for ( let c = 0; c <= colors.length; c ++ ) {
+
         colors[ c ] = ( c / colors.length ) * 256;
+
     }
 
     const gradientMap = new THREE.DataTexture( colors, colors.length, 1, format );
@@ -305,7 +308,25 @@ for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex
     sceneMaterial = new THREE.MeshToonMaterial( {
         gradientMap: gradientMap
     } );
+
+    console.log(colors);
+
 }
+// for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex ++ ) {
+
+//     const colors = new Uint8Array( alphaIndex + 2 );
+
+//     for ( let c = 0; c <= colors.length; c ++ ) {
+//         colors[ c ] = ( c / colors.length ) * 256;
+//     }
+
+//     const gradientMap = new THREE.DataTexture( colors, colors.length, 1, format );
+//     gradientMap.needsUpdate = true;
+
+//     sceneMaterial = new THREE.MeshToonMaterial( {
+//         gradientMap: gradientMap
+//     } );
+// }
 
 gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) => 
 {
@@ -355,52 +376,66 @@ scene.add(interactionObjectMesh);
 /**
  * Interaction Actions
  */
-window.addEventListener('click', () =>
-{
-    if(currentIntersect)
-    {
+function throwAnimation(intersect, distance) {
+    gsap.to(intersect.object.position, {
+        keyframes: [
+            // { x: (distance * 5) / 6 , z: (distance / 6) * 5, y: 0.5, duration: 0.1 },
+            { x: (distance / 6) * 4, z: (distance / 6) * 4, y: .2, duration: 0.2 },
+            { x: (distance / 6) * 3, z: (distance / 6) * 3, y: .4, duration: 0.25 },
+            { x: (distance / 6) * 2, z: (distance / 6) * 2, y: .6, duration: 0.3 },
+            { x: 0, z: 0, y: 2, duration: 0.1 },
+            { x: 0, z: 0, y: -1, duration: 0.1, delay: 0.5 },
+        ],
+        ease: "expo.out",
+        duration: 1.5
+    });
+}
+
+window.addEventListener('click', () => {
+    if (currentIntersect) {
         let modelX = currentIntersect.object.position.x
         let modelZ = currentIntersect.object.position.z
 
-        let distanceToWellCenter = Math.hypot( modelX, modelZ );
+        let distanceToWellCenter = Math.hypot(modelX, modelZ);
 
-        console.log( distanceToWellCenter );
+        console.log(distanceToWellCenter);
+        console.log(modelX);
+        console.log(modelZ);
 
-        let throwAnimation = gsap.timeline();
-        throwAnimation.to(currentIntersect.object.position, {
-            x: modelX - (distanceToWellCenter / 5),
-            z: modelZ - (distanceToWellCenter / 5),
-            y: 2 / 4,
-            ease: "none" 
-        })
-        .to(currentIntersect.object.position, {
-            x: modelX - (distanceToWellCenter / 4),
-            z: modelZ - (distanceToWellCenter / 4),
-            y: 2 / 3,
-            ease: "none" 
-        })
-        .to(currentIntersect.object.position, {
-            x: modelX - (distanceToWellCenter / 3),
-            z: modelZ - (distanceToWellCenter / 3),
-            y: 2 / 2,
-            ease: "none" 
-        })
-        .to(currentIntersect.object.position, {
-            x: modelX - (distanceToWellCenter / 2),
-            z: modelZ - (distanceToWellCenter / 2),
-            y: 2 / 1,
-            ease: "none" 
-        })
-        .to(currentIntersect.object.position, {
-            x: 0,
-            z: 0,
-            y: 0,
-            ease: "none" 
-        })
-            // MAKE TOTAL DURATION 1S <<<<<<<<<<<<<<<<<<<<<<
-        return throwAnimation
+        throwAnimation(currentIntersect, distanceToWellCenter);
     }
-})
+});
+
+// window.addEventListener('click', () =>
+// {
+//     if(currentIntersect)
+//     {
+//         let modelX = currentIntersect.object.position.x
+//         let modelZ = currentIntersect.object.position.z
+
+//         let distanceToWellCenter = Math.hypot( modelX, modelZ );
+//         let oneFrame = distanceToWellCenter / 6;
+
+//         console.log( distanceToWellCenter );
+//         console.log( modelX );
+//         console.log( modelZ );
+
+//         function throwAnimation() {
+//             gsap.to(currentIntersect.object.position, {
+//                 keyframes: [
+//                     { x: (distanceToWellCenter / 6) * 5, z: (distanceToWellCenter / 6) * 5, y: 0.5 },
+//                     { x: (distanceToWellCenter / 6) * 4, z: (distanceToWellCenter / 6) * 4, y: 1 },
+//                     { x: (distanceToWellCenter / 6) * 3, z: (distanceToWellCenter / 6) * 3, y: 1.5 },
+//                     { x: (distanceToWellCenter / 6) * 2, z: (distanceToWellCenter / 6) * 2, y: 2 },
+//                     { x: distanceToWellCenter / 6, z: distanceToWellCenter / 6, y: 1.5 },
+//                     { x: 0, z: 0, y: -1 },
+//                 ],
+//                 ease: "Power2.in"
+//             })
+//         }
+//         return throwAnimation
+//     }
+// })
 
 /**
  * Mouse
