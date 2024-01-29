@@ -288,8 +288,7 @@ potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name(
 // MeshToonMaterial
 let sceneMaterial = null;
 
-
-const stepSize = 0.1;
+const stepSize = 0.3;
 const format = ( renderer.capabilities.isWebGL2 ) ? THREE.RedFormat : THREE.LuminanceFormat;
 
 for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex ++ ) {
@@ -298,7 +297,7 @@ for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex
 
     for ( let c = 0; c <= colors.length; c ++ ) {
 
-        colors[ c ] = ( c / colors.length ) * 256;
+        colors[ c ] = ( c / colors.length ) * 255;
 
     }
 
@@ -312,21 +311,6 @@ for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex
     console.log(colors);
 
 }
-// for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex ++ ) {
-
-//     const colors = new Uint8Array( alphaIndex + 2 );
-
-//     for ( let c = 0; c <= colors.length; c ++ ) {
-//         colors[ c ] = ( c / colors.length ) * 256;
-//     }
-
-//     const gradientMap = new THREE.DataTexture( colors, colors.length, 1, format );
-//     gradientMap.needsUpdate = true;
-
-//     sceneMaterial = new THREE.MeshToonMaterial( {
-//         gradientMap: gradientMap
-//     } );
-// }
 
 gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) => 
 {
