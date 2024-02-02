@@ -36,7 +36,6 @@ const potionPositioning = potionTweaks.addFolder( 'Potion Positioning' );
 const groundTweaks = gui.addFolder( 'Ground Tweaks' );
     groundTweaks.close();
 
-
 // Camera Tweaks
 const cameraTweaks = gui.addFolder('CameraTweaks')
 // cameraTweaks.close();
@@ -282,6 +281,58 @@ potionPositioning.add(potionMesh.position, 'y').min(-10).max(10).step(0.01).name
 potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name('Z Position');
 
 /**
+ * POTION ANIMATION ON INTERACTION  
+ */
+
+const properties = {
+    uBigWavesElevation: [0, 1],
+    // uBigWavesFrequencyX: [0.5, 10],
+    // uBigWavesFrequencyY: [0.5, 10],
+    uBigWavesSpeed: [0.25, 2.5],
+    uSmallWavesElevation: [0, 1],
+    uSmallWavesFrequency: [1, 12],
+    uSmallWavesSpeed: [0, 2],
+    uSmallIterations: [1, 4],
+    // uDepthColor: [0x000000, 0xffffff],
+    // uSurfaceColor: [0x000000, 0xffffff],
+    // uColorOffset: [0, 1],
+    // uColorMultiplier: [1, 10]
+};
+
+// Function to get a random number within a range
+function getRandomArbitrary(min, max) {
+    let changeDivision = 10; 
+    let amountChange = Math.round(Math.random() * ((max - min) / changeDivision));
+
+    console.log(amountChangeNumber);
+    return amountChange;
+}
+
+// Function to select a random property and animate it
+function animateRandomProperty() {
+    // Get a random property key
+    const propertyKeys = Object.keys(properties);
+    const randomPropertyKey = propertyKeys[Math.floor(Math.random() * propertyKeys.length)];
+    const propertyRange = properties[randomPropertyKey];
+
+    console.log(randomPropertyKey);
+
+    let newValue = getRandomArbitrary(propertyRange[0], propertyRange[1]);;
+
+
+    gsap.to(potionMaterial.uniforms[randomPropertyKey], {
+        value: newValue,
+        duration: 1, // Duration in seconds
+        ease: 'power1.inOut',
+        // onUpdate: function () {
+        //     // Do I need something to go here?
+        // }
+    });
+
+    console.log(potionMaterial.uniforms);
+}
+
+/**
  * Scene Object
  */
 
@@ -307,14 +358,10 @@ for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex
     sceneMaterial = new THREE.MeshToonMaterial( {
         gradientMap: gradientMap
     } );
-
-    console.log(colors);
-
 }
 
 gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) => 
 {
-    console.log(gltf.scene.children);
     gltf.scene.scale.set(0.25, 0.25, 0.25);
 
     const materialChange = gltf.scene.children;
@@ -382,11 +429,12 @@ window.addEventListener('click', () => {
 
         let distanceToWellCenter = Math.hypot(modelX, modelZ);
 
-        console.log(distanceToWellCenter);
-        console.log(modelX);
-        console.log(modelZ);
+        // console.log(distanceToWellCenter);
+        // console.log(modelX);
+        // console.log(modelZ);
 
         throwAnimation(currentIntersect, distanceToWellCenter);
+        animateRandomProperty()
     }
 });
 
@@ -462,8 +510,8 @@ camera.position.set( 2.5, 3, -2.5 );
 camera.lookAt( potionMesh );
 scene.add(camera)
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
 
 /**
