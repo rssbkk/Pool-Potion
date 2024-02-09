@@ -283,54 +283,117 @@ potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name(
 /**
  * POTION ANIMATION ON INTERACTION  
  */
+let animationCount = 0;
 
-const properties = {
-    uBigWavesElevation: [0, 1],
-    // uBigWavesFrequencyX: [0.5, 10],
-    // uBigWavesFrequencyY: [0.5, 10],
-    uBigWavesSpeed: [0.25, 2.5],
-    uSmallWavesElevation: [0, 1],
-    uSmallWavesFrequency: [1, 12],
-    uSmallWavesSpeed: [0, 2],
-    uSmallIterations: [1, 4],
-    // uDepthColor: [0x000000, 0xffffff],
-    // uSurfaceColor: [0x000000, 0xffffff],
-    // uColorOffset: [0, 1],
-    // uColorMultiplier: [1, 10]
-};
+let tinyRandom = (Math.random() - 0.5) / 5;
 
-// Function to get a random number within a range
-function getRandomArbitrary(min, max) {
-    let changeDivision = 10; 
-    let amountChange = Math.round(Math.random() * ((max - min) / changeDivision));
+// bigWavesElevation
+const bigWavesElevationAnimate = () => {
+    animationCount += 1;
 
-    console.log(amountChangeNumber);
-    return amountChange;
-}
+    let previous = potionMaterial.uniforms.uBigWavesElevation.value;
 
-// Function to select a random property and animate it
-function animateRandomProperty() {
-    // Get a random property key
-    const propertyKeys = Object.keys(properties);
-    const randomPropertyKey = propertyKeys[Math.floor(Math.random() * propertyKeys.length)];
-    const propertyRange = properties[randomPropertyKey];
-
-    console.log(randomPropertyKey);
-
-    let newValue = getRandomArbitrary(propertyRange[0], propertyRange[1]);;
-
-
-    gsap.to(potionMaterial.uniforms[randomPropertyKey], {
-        value: newValue,
-        duration: 1, // Duration in seconds
-        ease: 'power1.inOut',
-        // onUpdate: function () {
-        //     // Do I need something to go here?
-        // }
+    gsap.to(potionMaterial.uniforms.uBigWavesElevation, {
+        value: Math.max(0, Math.min(1, previous + tinyRandom)),
+        duration: 1,
+        ease: "power2.inOut"
     });
 
-    console.log(potionMaterial.uniforms);
+    // gsap.to(potionMesh.position , {
+    //     y: ((0.5 * potionMaterial.uniforms.uBigWavesElevation.value) + (0.2 * potionMaterial.uniforms.uSmallWavesElevation.value))
+    // })
+
+    console.log("big wave elev " + potionMaterial.uniforms.uBigWavesElevation.value);
+    // console.log("mesh Y " + potionMesh.position.y);
+    // console.log("tinyRandom " + tinyRandom);
+};
+
+//bigWavesSpeed
+const bigWavesSpeedAnimate = () => {
+    animationCount += 1;
+
+    let previous = potionMaterial.uniforms.uBigWavesSpeed.value;
+
+    gsap.to(potionMaterial.uniforms.uBigWavesSpeed, {
+        value: previous + tinyRandom,
+        duration: 1,
+        ease: "power2.inOut"
+    });
+
+    console.log("big wave speed " + potionMaterial.uniforms.uBigWavesSpeed.value);
+};
+
+//SmallWavesElevation
+const smallWavesElevationAnimate = () => {
+    animationCount += 1;
+
+    let previous = potionMaterial.uniforms.uSmallWavesElevation.value;
+
+    gsap.to(potionMaterial.uniforms.uSmallWavesElevation, {
+        value: previous + tinyRandom,
+        duration: 1,
+        ease: "power2.inOut"
+    });
+
+    console.log("small wave elev " + potionMaterial.uniforms.uSmallWavesElevation.value + " " + tinyRandom );
 }
+//SmallWavesFrequency
+const smallWavesFrequencyAnimate = () => {
+    animationCount += 1;
+
+    let previous = potionMaterial.uniforms.uSmallWavesFrequency.value;
+
+    gsap.to(potionMaterial.uniforms.uSmallWavesFrequency, {
+        value: previous + tinyRandom,
+        duration: 1,
+        ease: "power2.inOut"
+    });
+
+    console.log("small wave freq " + potionMaterial.uniforms.uSmallWavesFrequency.value);
+}
+//SmallWavesSpeed
+const smallWavesSpeedAnimate = () => {
+    animationCount += 1;
+
+    let previous = potionMaterial.uniforms.uSmallWavesSpeed.value;
+
+    gsap.to(potionMaterial.uniforms.uSmallWavesSpeed, {
+        value: previous + tinyRandom,
+        duration: 1,
+        ease: "power2.inOut"
+    });
+
+    console.log("small wave speed " + potionMaterial.uniforms.uSmallWavesSpeed.value);
+}
+//SmallIterations
+const smallIterationsAnimate = () => {
+    animationCount += 1;
+
+    let previous = potionMaterial.uniforms.uSmallIterations.value;
+
+    gsap.to(potionMaterial.uniforms.uSmallIterations, {
+        value: (Math.round( previous + Math.random() * 4)),
+        duration: 1,
+        ease: "power2.inOut"
+    });
+
+    console.log("small wave itte " + potionMaterial.uniforms.uSmallIterations.value);
+}
+
+// const properties = {
+//     uBigWavesElevation: [0, 1],
+//     // uBigWavesFrequencyX: [0.5, 10],
+//     // uBigWavesFrequencyY: [0.5, 10],
+//     uBigWavesSpeed: [0.25, 2.5],
+//     uSmallWavesElevation: [0, 1],
+//     uSmallWavesFrequency: [1, 12],
+//     uSmallWavesSpeed: [0, 2],
+//     uSmallIterations: [1, 4],
+//     // uDepthColor: [0x000000, 0xffffff],
+//     // uSurfaceColor: [0x000000, 0xffffff],
+//     // uColorOffset: [0, 1],
+//     // uColorMultiplier: [1, 10]
+// };
 
 /**
  * Scene Object
@@ -385,24 +448,55 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
 /**
  * Interaction Objects
  */
-const interactionObjectGeometry = new THREE.BoxGeometry( 0.5, 1, 0.5);
+const interactionObjectGeometry = new THREE.BoxGeometry( 0.2, 0.3, 0.2);
+
 const interactionObjectMaterial = new THREE.MeshToonMaterial({
     color: new THREE.Color( 1, 0, 0 )
 });
 const interactionObjectMesh = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial );
-interactionObjectMesh.position.set(3, 0, 3)
+interactionObjectMesh.position.set(1, 0, 1);
+interactionObjectMesh.name = "red";
 scene.add(interactionObjectMesh);
 
-// let model = null
-// gltfLoader.load(
-//     './models/Duck/glTF-Binary/Duck.glb',
-//     (gltf) =>
-//     {
-//         model = gltf.scene
-//         gltf.scene.position.y = - 1.2
-//         scene.add(gltf.scene)
-//     }
-// )
+const interactionObjectMaterial2 = new THREE.MeshToonMaterial({
+    color: new THREE.Color( 0, 1, 0 )
+});
+const interactionObjectMesh2 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial2 );
+interactionObjectMesh2.position.set(-1, 0, -1);
+interactionObjectMesh2.name = "green";
+scene.add(interactionObjectMesh2);
+
+const interactionObjectMaterial3 = new THREE.MeshToonMaterial({
+    color: new THREE.Color( 0, 0, 1 )
+});
+const interactionObjectMesh3 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial3 );
+interactionObjectMesh3.position.set(1.5, 0, 1);
+interactionObjectMesh3.name = "blue";
+scene.add(interactionObjectMesh3);
+
+const interactionObjectMaterial4 = new THREE.MeshToonMaterial({
+    color: new THREE.Color( 1, 1, 0 )
+});
+const interactionObjectMesh4 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial4 );
+interactionObjectMesh4.position.set(2.5, 0, 1);
+interactionObjectMesh4.name = "yellow";
+scene.add(interactionObjectMesh4);
+
+const interactionObjectMaterial5 = new THREE.MeshToonMaterial({
+    color: new THREE.Color( 0, 1, 1 )
+});
+const interactionObjectMesh5 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial5 );
+interactionObjectMesh5.position.set(-2, 0, -1);
+interactionObjectMesh5.name = "cyan";
+scene.add(interactionObjectMesh5);
+
+const interactionObjectMaterial6 = new THREE.MeshToonMaterial({
+    color: new THREE.Color( 1, 0, 1 )
+});
+const interactionObjectMesh6 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial6 );
+interactionObjectMesh6.position.set(-1.5, 0, 1.5);
+interactionObjectMesh6.name = "magenta";
+scene.add(interactionObjectMesh6);
 
 /**
  * Interaction Actions
@@ -424,50 +518,34 @@ function throwAnimation(intersect, distance) {
 
 window.addEventListener('click', () => {
     if (currentIntersect) {
-        let modelX = currentIntersect.object.position.x
-        let modelZ = currentIntersect.object.position.z
+        // let modelX = currentIntersect.object.position.x
+        // let modelZ = currentIntersect.object.position.z
 
-        let distanceToWellCenter = Math.hypot(modelX, modelZ);
+        // let distanceToWellCenter = Math.hypot(modelX, modelZ);
 
-        // console.log(distanceToWellCenter);
-        // console.log(modelX);
-        // console.log(modelZ);
+        // // console.log(distanceToWellCenter);
+        // // console.log(modelX);
+        // // console.log(modelZ);
+        
+        // throwAnimation(currentIntersect, distanceToWellCenter);
 
-        throwAnimation(currentIntersect, distanceToWellCenter);
-        animateRandomProperty()
+        console.log(currentIntersect.object.name);
+
+        if(currentIntersect.object.name === 'red') {
+            bigWavesElevationAnimate();
+        } else if(currentIntersect.object.name === 'blue') {
+            bigWavesSpeedAnimate();
+        } else if(currentIntersect.object.name === 'green') {
+            smallWavesElevationAnimate();
+        } else if(currentIntersect.object.name === 'magenta') {
+            smallWavesSpeedAnimate();
+        } else if(currentIntersect.object.name === 'cyan') {
+            smallWavesFrequencyAnimate();
+        } else if(currentIntersect.object.name === 'yellow') {
+            smallIterationsAnimate();
+        }
     }
 });
-
-// window.addEventListener('click', () =>
-// {
-//     if(currentIntersect)
-//     {
-//         let modelX = currentIntersect.object.position.x
-//         let modelZ = currentIntersect.object.position.z
-
-//         let distanceToWellCenter = Math.hypot( modelX, modelZ );
-//         let oneFrame = distanceToWellCenter / 6;
-
-//         console.log( distanceToWellCenter );
-//         console.log( modelX );
-//         console.log( modelZ );
-
-//         function throwAnimation() {
-//             gsap.to(currentIntersect.object.position, {
-//                 keyframes: [
-//                     { x: (distanceToWellCenter / 6) * 5, z: (distanceToWellCenter / 6) * 5, y: 0.5 },
-//                     { x: (distanceToWellCenter / 6) * 4, z: (distanceToWellCenter / 6) * 4, y: 1 },
-//                     { x: (distanceToWellCenter / 6) * 3, z: (distanceToWellCenter / 6) * 3, y: 1.5 },
-//                     { x: (distanceToWellCenter / 6) * 2, z: (distanceToWellCenter / 6) * 2, y: 2 },
-//                     { x: distanceToWellCenter / 6, z: distanceToWellCenter / 6, y: 1.5 },
-//                     { x: 0, z: 0, y: -1 },
-//                 ],
-//                 ease: "Power2.in"
-//             })
-//         }
-//         return throwAnimation
-//     }
-// })
 
 /**
  * Mouse
@@ -535,7 +613,14 @@ const tick = () =>
     // Raycaster Work
     raycaster.setFromCamera(mouse, camera)
     
-    const objectsToTest = [interactionObjectMesh]
+    const objectsToTest = [
+        interactionObjectMesh,
+        interactionObjectMesh2,
+        interactionObjectMesh3,
+        interactionObjectMesh4,
+        interactionObjectMesh5,
+        interactionObjectMesh6
+    ]
     const intersects = raycaster.intersectObjects(objectsToTest)
 
     if(intersects.length) {
