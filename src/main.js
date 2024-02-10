@@ -285,11 +285,11 @@ potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name(
  */
 let animationCount = 0;
 
-let tinyRandom = (Math.random() - 0.5) / 5;
-
 // bigWavesElevation
 const bigWavesElevationAnimate = () => {
     animationCount += 1;
+
+    let tinyRandom = (Math.random() - 0.5) / 5;
 
     let previous = potionMaterial.uniforms.uBigWavesElevation.value;
 
@@ -299,9 +299,9 @@ const bigWavesElevationAnimate = () => {
         ease: "power2.inOut"
     });
 
-    // gsap.to(potionMesh.position , {
-    //     y: ((0.5 * potionMaterial.uniforms.uBigWavesElevation.value) + (0.2 * potionMaterial.uniforms.uSmallWavesElevation.value))
-    // })
+    gsap.to(potionMesh.position , {
+        y: 0.45 - ((0.5 * potionMaterial.uniforms.uBigWavesElevation.value) + (0.2 * potionMaterial.uniforms.uSmallWavesElevation.value))
+    })
 
     console.log("big wave elev " + potionMaterial.uniforms.uBigWavesElevation.value);
     // console.log("mesh Y " + potionMesh.position.y);
@@ -311,6 +311,8 @@ const bigWavesElevationAnimate = () => {
 //bigWavesSpeed
 const bigWavesSpeedAnimate = () => {
     animationCount += 1;
+
+    let tinyRandom = (Math.random() - 0.5) / 5;
 
     let previous = potionMaterial.uniforms.uBigWavesSpeed.value;
 
@@ -327,6 +329,8 @@ const bigWavesSpeedAnimate = () => {
 const smallWavesElevationAnimate = () => {
     animationCount += 1;
 
+    let tinyRandom = (Math.random() - 0.5) / 5;
+
     let previous = potionMaterial.uniforms.uSmallWavesElevation.value;
 
     gsap.to(potionMaterial.uniforms.uSmallWavesElevation, {
@@ -335,11 +339,17 @@ const smallWavesElevationAnimate = () => {
         ease: "power2.inOut"
     });
 
+    gsap.to(potionMesh.position , {
+        y: 0.45 - ((0.5 * potionMaterial.uniforms.uBigWavesElevation.value) + (0.2 * potionMaterial.uniforms.uSmallWavesElevation.value))
+    })
+    
     console.log("small wave elev " + potionMaterial.uniforms.uSmallWavesElevation.value + " " + tinyRandom );
 }
 //SmallWavesFrequency
 const smallWavesFrequencyAnimate = () => {
     animationCount += 1;
+
+    let tinyRandom = (Math.random() - 0.5) / 5;
 
     let previous = potionMaterial.uniforms.uSmallWavesFrequency.value;
 
@@ -355,6 +365,8 @@ const smallWavesFrequencyAnimate = () => {
 const smallWavesSpeedAnimate = () => {
     animationCount += 1;
 
+    let tinyRandom = (Math.random() - 0.5) / 5;
+
     let previous = potionMaterial.uniforms.uSmallWavesSpeed.value;
 
     gsap.to(potionMaterial.uniforms.uSmallWavesSpeed, {
@@ -368,6 +380,8 @@ const smallWavesSpeedAnimate = () => {
 //SmallIterations
 const smallIterationsAnimate = () => {
     animationCount += 1;
+
+    let tinyRandom = (Math.random() - 0.5) / 5;
 
     let previous = potionMaterial.uniforms.uSmallIterations.value;
 
