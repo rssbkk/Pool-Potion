@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import GUI from 'lil-gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import Stats from 'stats.js';
+import Stats from 'three/addons/libs/stats.module.js';
 import gsap from 'gsap';
+import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
 
 import potionVertexShader from './shaders/potionShader/potionVertex.glsl';
 import potionFragmentShader from './shaders/potionShader/potionFragment.glsl';
@@ -58,25 +59,25 @@ const gltfLoader = new GLTFLoader();
 const textureLoader = new THREE.TextureLoader();
 
 // Fog
-debugObject.fogColor = "#cccccc"
+// debugObject.fogColor = "#cccccc"
 
-scene.fog = new THREE.Fog( debugObject.fogColor, 1, 10 );
+// scene.fog = new THREE.Fog( debugObject.fogColor, 1, 10 );
 
-fogTweaks.addColor(debugObject, 'fogColor')
-    .onChange(() => { scene.fog.color.set(debugObject.fogColor) })
-;
-fogTweaks.add(scene.fog, 'near')
-    .min(0.1)
-    .max(10)
-    .step(0.05)
-    .name('Fog Near')
-;
-fogTweaks.add(scene.fog, 'far')
-    .min(0.2)
-    .max(15)
-    .step(0.05)
-    .name('Fog Far')
-;
+// fogTweaks.addColor(debugObject, 'fogColor')
+//     .onChange(() => { scene.fog.color.set(debugObject.fogColor) })
+// ;
+// fogTweaks.add(scene.fog, 'near')
+//     .min(0.1)
+//     .max(10)
+//     .step(0.05)
+//     .name('Fog Near')
+// ;
+// fogTweaks.add(scene.fog, 'far')
+//     .min(0.2)
+//     .max(15)
+//     .step(0.05)
+//     .name('Fog Far')
+// ;
 
 
 /**
@@ -283,131 +284,115 @@ potionPositioning.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name(
 /**
  * POTION ANIMATION ON INTERACTION  
  */
+// Animation configuration
 let animationCount = 0;
 
-// bigWavesElevation
-const bigWavesElevationAnimate = () => {
-    animationCount += 1;
-
-    let tinyRandom = (Math.random() - 0.5) / 5;
-
-    let previous = potionMaterial.uniforms.uBigWavesElevation.value;
-
-    gsap.to(potionMaterial.uniforms.uBigWavesElevation, {
-        value: Math.max(0, Math.min(1, previous + tinyRandom)),
-        duration: 1,
-        ease: "power2.inOut"
-    });
-
-    gsap.to(potionMesh.position , {
-        y: 0.45 - ((0.5 * potionMaterial.uniforms.uBigWavesElevation.value) + (0.2 * potionMaterial.uniforms.uSmallWavesElevation.value))
-    })
-
-    console.log("big wave elev " + potionMaterial.uniforms.uBigWavesElevation.value);
-    // console.log("mesh Y " + potionMesh.position.y);
-    // console.log("tinyRandom " + tinyRandom);
+const animationConfig = {
+    uBigWavesElevation: { min: 0.25, max: 1 },
+    uBigWavesSpeed: { min: 0.25, max: 2.5 },
+    uSmallWavesElevation: { min: 0.15, max: 1 },
+    uSmallWavesFrequency: { min: 2, max: 15 },
+    uSmallWavesSpeed: { min: 0, max: 2 },
+    // Special case without min/max
+    uSmallIterations: { isIterations: true }
 };
 
-//bigWavesSpeed
-const bigWavesSpeedAnimate = () => {
+// Generalized animate function
+const animateProperty = (propertyKey) => {
     animationCount += 1;
 
+    let config = animationConfig[propertyKey];
+    let previous = potionMaterial.uniforms[propertyKey].value;
     let tinyRandom = (Math.random() - 0.5) / 5;
+    let newValue;
 
-    let previous = potionMaterial.uniforms.uBigWavesSpeed.value;
+    // console.log('config = ' + config);
 
-    gsap.to(potionMaterial.uniforms.uBigWavesSpeed, {
-        value: previous + tinyRandom,
+    if (config.isIterations) {
+        newValue = Math.round(Math.random() * 4);
+    } else {
+        newValue = Math.max(config.min, Math.min(config.max, (previous + tinyRandom)));
+        if(newValue === previous) {
+            newValue = (config.max - config.min) / 2;
+        }
+    }
+
+    // console.log("config min = " + config.min);
+    // console.log("config max = " + config.max);
+    // console.log("tr = " + tinyRandom);
+    // console.log("prv = " + previous);
+    // console.log("nv = " + newValue);
+
+    gsap.to(potionMaterial.uniforms[propertyKey], {
+        value: newValue,
         duration: 1,
         ease: "power2.inOut"
     });
 
-    console.log("big wave speed " + potionMaterial.uniforms.uBigWavesSpeed.value);
+    console.log(`${propertyKey} ${potionMaterial.uniforms[propertyKey].value}`);
+
+    //Color Animation
+    gsap.to(potionMaterial.uniforms.uDepthColor.value, {
+        r: Math.random(),
+        g: Math.random(),
+        b: Math.random(),
+        duration: 2,
+        ease: "power1.inOut",
+        onUpdate: function () {
+            potionMaterial.uniforms.uDepthColor.value.needsUpdate = true;
+        }
+    });
+    gsap.to(potionMaterial.uniforms.uSurfaceColor.value, {
+        r: Math.random(),
+        g: Math.random(),
+        b: Math.random(),
+        duration: 2,
+        ease: "power1.inOut",
+        onUpdate: function () {
+            potionMaterial.uniforms.uSurfaceColor.value.needsUpdate = true;
+        }
+    });
 };
 
-//SmallWavesElevation
-const smallWavesElevationAnimate = () => {
-    animationCount += 1;
+// Scattering Test
+const rootGeometry = new THREE.BoxGeometry( 1, 1, 1);
+const rootMaterial = new THREE.MeshBasicMaterial();
+rootMaterial.wireframe = true;
+const rootMesh = new THREE.Mesh( rootGeometry, rootMaterial );
+rootMesh.position.set(2, 2, 2);
+scene.add(rootMesh);
 
-    let tinyRandom = (Math.random() - 0.5) / 5;
+//sampler
+const sampler = new MeshSurfaceSampler(rootMesh).build();
 
-    let previous = potionMaterial.uniforms.uSmallWavesElevation.value;
+const leafGeometry = new THREE.SphereGeometry( .1, 6, 6);
+const leafMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffa0e6
+   });
+const leafMesh = new THREE.InstancedMesh( leafGeometry, leafMaterial, 300 );
+scene.add(leafMesh);
 
-    gsap.to(potionMaterial.uniforms.uSmallWavesElevation, {
-        value: previous + tinyRandom,
-        duration: 1,
-        ease: "power2.inOut"
-    });
-
-    gsap.to(potionMesh.position , {
-        y: 0.45 - ((0.5 * potionMaterial.uniforms.uBigWavesElevation.value) + (0.2 * potionMaterial.uniforms.uSmallWavesElevation.value))
-    })
-    
-    console.log("small wave elev " + potionMaterial.uniforms.uSmallWavesElevation.value + " " + tinyRandom );
-}
-//SmallWavesFrequency
-const smallWavesFrequencyAnimate = () => {
-    animationCount += 1;
-
-    let tinyRandom = (Math.random() - 0.5) / 5;
-
-    let previous = potionMaterial.uniforms.uSmallWavesFrequency.value;
-
-    gsap.to(potionMaterial.uniforms.uSmallWavesFrequency, {
-        value: previous + tinyRandom,
-        duration: 1,
-        ease: "power2.inOut"
-    });
-
-    console.log("small wave freq " + potionMaterial.uniforms.uSmallWavesFrequency.value);
-}
-//SmallWavesSpeed
-const smallWavesSpeedAnimate = () => {
-    animationCount += 1;
-
-    let tinyRandom = (Math.random() - 0.5) / 5;
-
-    let previous = potionMaterial.uniforms.uSmallWavesSpeed.value;
-
-    gsap.to(potionMaterial.uniforms.uSmallWavesSpeed, {
-        value: previous + tinyRandom,
-        duration: 1,
-        ease: "power2.inOut"
-    });
-
-    console.log("small wave speed " + potionMaterial.uniforms.uSmallWavesSpeed.value);
-}
-//SmallIterations
-const smallIterationsAnimate = () => {
-    animationCount += 1;
-
-    let tinyRandom = (Math.random() - 0.5) / 5;
-
-    let previous = potionMaterial.uniforms.uSmallIterations.value;
-
-    gsap.to(potionMaterial.uniforms.uSmallIterations, {
-        value: (Math.round( previous + Math.random() * 4)),
-        duration: 1,
-        ease: "power2.inOut"
-    });
-
-    console.log("small wave itte " + potionMaterial.uniforms.uSmallIterations.value);
+// Create a dummy Vector to store the sampled coordinates
+const tempPosition = new THREE.Vector3();
+// Create a dummy 3D object to generate the Matrix of each sphere
+const tempObject = rootMesh;
+// Loop as many spheres we have
+for (let i = 0; i < 300; i++) {
+  // Sample a random point on the surface of the cube
+  sampler.sample(tempPosition);
+  // Store that point coordinates in the dummy object
+  tempObject.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
+  // Define a random scale
+  tempObject.scale.setScalar(Math.random() * 0.5 + 0.5);
+  // Update the matrix of the object
+  tempObject.updateMatrix();
+  // Insert the object udpated matrix into our InstancedMesh Matrix
+  leafMesh.setMatrixAt(i, tempObject.matrix);
 }
 
-// const properties = {
-//     uBigWavesElevation: [0, 1],
-//     // uBigWavesFrequencyX: [0.5, 10],
-//     // uBigWavesFrequencyY: [0.5, 10],
-//     uBigWavesSpeed: [0.25, 2.5],
-//     uSmallWavesElevation: [0, 1],
-//     uSmallWavesFrequency: [1, 12],
-//     uSmallWavesSpeed: [0, 2],
-//     uSmallIterations: [1, 4],
-//     // uDepthColor: [0x000000, 0xffffff],
-//     // uSurfaceColor: [0x000000, 0xffffff],
-//     // uColorOffset: [0, 1],
-//     // uColorMultiplier: [1, 10]
-// };
+
+
+
 
 /**
  * Scene Object
@@ -456,7 +441,7 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
     // gltf.scene.children[6].material.color = new THREE.Color( 0xfff );
     // gltf.scene.children[7].material.color = new THREE.Color( 0xfff );
 
-    scene.add(gltf.scene);
+    // scene.add(gltf.scene);
 });
 
 /**
@@ -546,17 +531,17 @@ window.addEventListener('click', () => {
         console.log(currentIntersect.object.name);
 
         if(currentIntersect.object.name === 'red') {
-            bigWavesElevationAnimate();
+            animateProperty('uBigWavesElevation');
         } else if(currentIntersect.object.name === 'blue') {
-            bigWavesSpeedAnimate();
+            animateProperty('uBigWavesSpeed');
         } else if(currentIntersect.object.name === 'green') {
-            smallWavesElevationAnimate();
+            animateProperty('uSmallWavesElevation');
         } else if(currentIntersect.object.name === 'magenta') {
-            smallWavesSpeedAnimate();
+            animateProperty('uSmallWavesSpeed');
         } else if(currentIntersect.object.name === 'cyan') {
-            smallWavesFrequencyAnimate();
+            animateProperty('uSmallWavesFrequency');
         } else if(currentIntersect.object.name === 'yellow') {
-            smallIterationsAnimate();
+            animateProperty('uSmallIterations');
         }
     }
 });
