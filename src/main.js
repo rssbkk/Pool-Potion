@@ -355,7 +355,7 @@ const animateProperty = (propertyKey) => {
 };
 
 // Scattering Test
-const rootGeometry = new THREE.BoxGeometry( 1, 1, 1);
+const rootGeometry = new THREE.BoxGeometry( 1, 5, 1);
 const rootMaterial = new THREE.MeshBasicMaterial();
 rootMaterial.wireframe = true;
 const rootMesh = new THREE.Mesh( rootGeometry, rootMaterial );
@@ -365,30 +365,83 @@ scene.add(rootMesh);
 //sampler
 const sampler = new MeshSurfaceSampler(rootMesh).build();
 
-const leafGeometry = new THREE.SphereGeometry( .1, 6, 6);
+// let leafGeometry = null;
+// gltfLoader.load('/Leaf-draft-one.glb', (gltf) => 
+// {
+//     leafGeometry = gltf.scene.children[0]
+// });
+
+// const leafMaterial = new THREE.MeshBasicMaterial({
+//     color: 0xffa0e6
+// });
+
+// const leafMesh = new THREE.Mesh( leafGeometry, leafMaterial );
+// leafMesh.scale.set( 0.1 );
+
+// scene.add(leafMesh);
+
+// Define the material outside the loader if it's not dependent on the loaded model
 const leafMaterial = new THREE.MeshBasicMaterial({
     color: 0xffa0e6
-   });
-const leafMesh = new THREE.InstancedMesh( leafGeometry, leafMaterial, 300 );
-scene.add(leafMesh);
+});
 
-// Create a dummy Vector to store the sampled coordinates
-const tempPosition = new THREE.Vector3();
-// Create a dummy 3D object to generate the Matrix of each sphere
-const tempObject = rootMesh;
-// Loop as many spheres we have
-for (let i = 0; i < 300; i++) {
-  // Sample a random point on the surface of the cube
-  sampler.sample(tempPosition);
-  // Store that point coordinates in the dummy object
-  tempObject.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
-  // Define a random scale
-  tempObject.scale.setScalar(Math.random() * 0.5 + 0.5);
-  // Update the matrix of the object
-  tempObject.updateMatrix();
-  // Insert the object udpated matrix into our InstancedMesh Matrix
-  leafMesh.setMatrixAt(i, tempObject.matrix);
+// Function to create and add an instanced mesh to the scene using MeshSurfaceSampler
+function createInstancedMesh(geometry, material, instanceCount) {
+    // Create an instanced mesh with the given geometry and material
+    const instancedMesh = new THREE.InstancedMesh(geometry, material, instanceCount);
+
+    const dummy = new THREE.Object3D();
+    const position = new THREE.Vector3();
+    const normal = new THREE.Vector3();
+
+    // Sample positions on the surface of the geometry for each instance
+    for (let i = 0; i < instanceCount; i++) {
+        sampler.sample(position, normal);
+
+        // Optionally, align the instance with the normal
+        dummy.position.copy(position);
+        dummy.lookAt(normal.add(position)); // Orient the dummy object based on the normal
+        dummy.updateMatrix();
+        dummy.scale.setScalar(Math.random() * 0.01 + 0.01);
+
+        instancedMesh.setMatrixAt(i, dummy.matrix);
+    }
+
+    // Add the instanced mesh to the scene
+    scene.add(instancedMesh);
 }
+
+// Load the GLTF model
+gltfLoader.load('/Leaf-draft-one.glb', (gltf) => {
+    // Assuming the first child of the loaded scene is the geometry you want
+    const leafGeometry = gltf.scene.children[0].geometry;
+
+    // Number of instances you want
+    const numberOfInstances = 10000;
+
+    // Call the function to create and add the instanced mesh to the scene
+    createInstancedMesh(leafGeometry, leafMaterial, numberOfInstances);
+});
+
+
+
+// // Create a dummy Vector to store the sampled coordinates
+// const tempPosition = new THREE.Vector3();
+// // Create a dummy 3D object to generate the Matrix of each sphere
+// const tempObject = new THREE.Object3D();
+// // Loop as many spheres we have
+// for (let i = 0; i < 300; i++) {
+//   // Sample a random point on the surface of the cube
+//   sampler.sample(tempPosition);
+//   // Store that point coordinates in the dummy object
+//   tempObject.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
+//   // Define a random scale
+//   tempObject.scale.setScalar(Math.random() * 0.2 + 0.2);
+//   // Update the matrix of the object
+//   tempObject.updateMatrix();
+//   // Insert the object udpated matrix into our InstancedMesh Matrix
+//   leafMesh.setMatrixAt(i, tempObject.matrix);
+// }
 
 
 
@@ -447,55 +500,55 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
 /**
  * Interaction Objects
  */
-const interactionObjectGeometry = new THREE.BoxGeometry( 0.2, 0.3, 0.2);
+// const interactionObjectGeometry = new THREE.BoxGeometry( 0.2, 0.3, 0.2);
 
-const interactionObjectMaterial = new THREE.MeshToonMaterial({
-    color: new THREE.Color( 1, 0, 0 )
-});
-const interactionObjectMesh = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial );
-interactionObjectMesh.position.set(1, 0, 1);
-interactionObjectMesh.name = "red";
-scene.add(interactionObjectMesh);
+// const interactionObjectMaterial = new THREE.MeshToonMaterial({
+//     color: new THREE.Color( 1, 0, 0 )
+// });
+// const interactionObjectMesh = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial );
+// interactionObjectMesh.position.set(1, 0, 1);
+// interactionObjectMesh.name = "red";
+// scene.add(interactionObjectMesh);
 
-const interactionObjectMaterial2 = new THREE.MeshToonMaterial({
-    color: new THREE.Color( 0, 1, 0 )
-});
-const interactionObjectMesh2 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial2 );
-interactionObjectMesh2.position.set(-1, 0, -1);
-interactionObjectMesh2.name = "green";
-scene.add(interactionObjectMesh2);
+// const interactionObjectMaterial2 = new THREE.MeshToonMaterial({
+//     color: new THREE.Color( 0, 1, 0 )
+// });
+// const interactionObjectMesh2 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial2 );
+// interactionObjectMesh2.position.set(-1, 0, -1);
+// interactionObjectMesh2.name = "green";
+// scene.add(interactionObjectMesh2);
 
-const interactionObjectMaterial3 = new THREE.MeshToonMaterial({
-    color: new THREE.Color( 0, 0, 1 )
-});
-const interactionObjectMesh3 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial3 );
-interactionObjectMesh3.position.set(1.5, 0, 1);
-interactionObjectMesh3.name = "blue";
-scene.add(interactionObjectMesh3);
+// const interactionObjectMaterial3 = new THREE.MeshToonMaterial({
+//     color: new THREE.Color( 0, 0, 1 )
+// });
+// const interactionObjectMesh3 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial3 );
+// interactionObjectMesh3.position.set(1.5, 0, 1);
+// interactionObjectMesh3.name = "blue";
+// scene.add(interactionObjectMesh3);
 
-const interactionObjectMaterial4 = new THREE.MeshToonMaterial({
-    color: new THREE.Color( 1, 1, 0 )
-});
-const interactionObjectMesh4 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial4 );
-interactionObjectMesh4.position.set(2.5, 0, 1);
-interactionObjectMesh4.name = "yellow";
-scene.add(interactionObjectMesh4);
+// const interactionObjectMaterial4 = new THREE.MeshToonMaterial({
+//     color: new THREE.Color( 1, 1, 0 )
+// });
+// const interactionObjectMesh4 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial4 );
+// interactionObjectMesh4.position.set(2.5, 0, 1);
+// interactionObjectMesh4.name = "yellow";
+// scene.add(interactionObjectMesh4);
 
-const interactionObjectMaterial5 = new THREE.MeshToonMaterial({
-    color: new THREE.Color( 0, 1, 1 )
-});
-const interactionObjectMesh5 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial5 );
-interactionObjectMesh5.position.set(-2, 0, -1);
-interactionObjectMesh5.name = "cyan";
-scene.add(interactionObjectMesh5);
+// const interactionObjectMaterial5 = new THREE.MeshToonMaterial({
+//     color: new THREE.Color( 0, 1, 1 )
+// });
+// const interactionObjectMesh5 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial5 );
+// interactionObjectMesh5.position.set(-2, 0, -1);
+// interactionObjectMesh5.name = "cyan";
+// scene.add(interactionObjectMesh5);
 
-const interactionObjectMaterial6 = new THREE.MeshToonMaterial({
-    color: new THREE.Color( 1, 0, 1 )
-});
-const interactionObjectMesh6 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial6 );
-interactionObjectMesh6.position.set(-1.5, 0, 1.5);
-interactionObjectMesh6.name = "magenta";
-scene.add(interactionObjectMesh6);
+// const interactionObjectMaterial6 = new THREE.MeshToonMaterial({
+//     color: new THREE.Color( 1, 0, 1 )
+// });
+// const interactionObjectMesh6 = new THREE.Mesh( interactionObjectGeometry, interactionObjectMaterial6 );
+// interactionObjectMesh6.position.set(-1.5, 0, 1.5);
+// interactionObjectMesh6.name = "magenta";
+// scene.add(interactionObjectMesh6);
 
 /**
  * Interaction Actions
@@ -612,21 +665,21 @@ const tick = () =>
     // Raycaster Work
     raycaster.setFromCamera(mouse, camera)
     
-    const objectsToTest = [
-        interactionObjectMesh,
-        interactionObjectMesh2,
-        interactionObjectMesh3,
-        interactionObjectMesh4,
-        interactionObjectMesh5,
-        interactionObjectMesh6
-    ]
-    const intersects = raycaster.intersectObjects(objectsToTest)
+    // const objectsToTest = [
+    //     interactionObjectMesh,
+    //     interactionObjectMesh2,
+    //     interactionObjectMesh3,
+    //     interactionObjectMesh4,
+    //     interactionObjectMesh5,
+    //     interactionObjectMesh6
+    // ]
+    // const intersects = raycaster.intersectObjects(objectsToTest)
 
-    if(intersects.length) {
-        currentIntersect = intersects[0];
-    } else {
-        currentIntersect = null;
-    };
+    // if(intersects.length) {
+    //     currentIntersect = intersects[0];
+    // } else {
+    //     currentIntersect = null;
+    // };
 
     // Potion
     potionMaterial.uniforms.uTime.value = elapsedTime;
