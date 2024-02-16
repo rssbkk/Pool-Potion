@@ -22,6 +22,10 @@ document.body.appendChild( stats.dom );
 const gui = new GUI();
 const debugObject = {};
 
+// Toon Material Tweaks
+const ToonMaterialTweaks = gui.addFolder( 'Toon Material Tweaks' );
+    // ToonMaterialTweaks.close();
+
 // Fog Tweaks
 const fogTweaks = gui.addFolder( 'Fog Tweaks' );
     fogTweaks.close();
@@ -354,74 +358,36 @@ const animateProperty = (propertyKey) => {
     });
 };
 
-// Scattering Test
-const rootGeometry = new THREE.BoxGeometry( 1, 5, 1);
-const rootMaterial = new THREE.MeshBasicMaterial();
-rootMaterial.wireframe = true;
-const rootMesh = new THREE.Mesh( rootGeometry, rootMaterial );
-rootMesh.position.set(2, 2, 2);
-scene.add(rootMesh);
+// //sampler
+// const sampler = new MeshSurfaceSampler(leafShape).build();
 
-//sampler
-const sampler = new MeshSurfaceSampler(rootMesh).build();
+// // Define the material outside the loader if it's not dependent on the loaded model
 
-// let leafGeometry = null;
-// gltfLoader.load('/Leaf-draft-one.glb', (gltf) => 
-// {
-//     leafGeometry = gltf.scene.children[0]
-// });
+// // Function to create and add an instanced mesh to the scene using MeshSurfaceSampler
+// function createInstancedMesh(geometry, material, instanceCount) {
+//     // Create an instanced mesh with the given geometry and material
+//     const instancedMesh = new THREE.InstancedMesh(geometry, material, instanceCount);
 
-// const leafMaterial = new THREE.MeshBasicMaterial({
-//     color: 0xffa0e6
-// });
+//     const dummy = new THREE.Object3D();
+//     const position = new THREE.Vector3();
+//     const normal = new THREE.Vector3();
 
-// const leafMesh = new THREE.Mesh( leafGeometry, leafMaterial );
-// leafMesh.scale.set( 0.1 );
+//     // Sample positions on the surface of the geometry for each instance
+//     for (let i = 0; i < instanceCount; i++) {
+//         sampler.sample(position, normal);
 
-// scene.add(leafMesh);
+//         // Optionally, align the instance with the normal
+//         dummy.position.copy(position);
+//         dummy.lookAt(normal.add(position));
+//         dummy.updateMatrix();
+//         dummy.scale.setScalar(Math.random() * 0.01 + 0.02);
 
-// Define the material outside the loader if it's not dependent on the loaded model
-const leafMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffa0e6
-});
+//         instancedMesh.setMatrixAt(i, dummy.matrix);
+//     }
 
-// Function to create and add an instanced mesh to the scene using MeshSurfaceSampler
-function createInstancedMesh(geometry, material, instanceCount) {
-    // Create an instanced mesh with the given geometry and material
-    const instancedMesh = new THREE.InstancedMesh(geometry, material, instanceCount);
-
-    const dummy = new THREE.Object3D();
-    const position = new THREE.Vector3();
-    const normal = new THREE.Vector3();
-
-    // Sample positions on the surface of the geometry for each instance
-    for (let i = 0; i < instanceCount; i++) {
-        sampler.sample(position, normal);
-
-        // Optionally, align the instance with the normal
-        dummy.position.copy(position);
-        dummy.lookAt(normal.add(position)); // Orient the dummy object based on the normal
-        dummy.updateMatrix();
-        dummy.scale.setScalar(Math.random() * 0.01 + 0.01);
-
-        instancedMesh.setMatrixAt(i, dummy.matrix);
-    }
-
-    // Add the instanced mesh to the scene
-    scene.add(instancedMesh);
-}
-
-// Load the GLTF model
-gltfLoader.load('/Leaf-draft-one.glb', (gltf) => {
-    // Assuming the first child of the loaded scene is the geometry you want
-    const leafGeometry = gltf.scene.children[0].geometry;
-
-    // Number of instances you want
-    const numberOfInstances = 10000;
-
-    // Call the function to create and add the instanced mesh to the scene
-    createInstancedMesh(leafGeometry, leafMaterial, numberOfInstances);
-});
+//     // Add the instanced mesh to the scene
+//     scene.add(instancedMesh);
+// }
 
 
 
@@ -452,12 +418,12 @@ gltfLoader.load('/Leaf-draft-one.glb', (gltf) => {
  */
 
 // MeshToonMaterial
-let sceneMaterial = null;
+let sceneMaterial;
 
-const stepSize = 0.3;
+debugObject.stepSize = 0.5;
 const format = ( renderer.capabilities.isWebGL2 ) ? THREE.RedFormat : THREE.LuminanceFormat;
 
-for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex ++ ) {
+for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += debugObject.stepSize, alphaIndex ++ ) {
 
     const colors = new Uint8Array( alphaIndex + 2 );
 
@@ -471,9 +437,12 @@ for ( let alpha = 0, alphaIndex = 0; alpha <= 1.0; alpha += stepSize, alphaIndex
     gradientMap.needsUpdate = true;
 
     sceneMaterial = new THREE.MeshToonMaterial( {
-        gradientMap: gradientMap
+        gradientMap: gradientMap,
+        side: THREE.DoubleSide
     } );
 }
+
+// BACKGROUND SCENE
 
 gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) => 
 {
@@ -495,6 +464,72 @@ gltfLoader.load('/ruin-scene-draft-one.glb', (gltf) =>
     // gltf.scene.children[7].material.color = new THREE.Color( 0xfff );
 
     // scene.add(gltf.scene);
+});
+
+let leafShape;
+
+let sampler;
+
+gltfLoader.load('/leaf-geometry.glb', (gltf) => 
+{
+    
+    const materialChange = gltf.scene.children;
+    materialChange.forEach( (mesh) =>
+    {
+        mesh.material = sceneMaterial;
+    });
+    
+    leafShape = gltf.scene.children[0];
+    
+    leafShape.scale.set(0.25, 0.25, 0.25);
+    leafShape.position.set(1, 0, 1);
+
+    sampler = new MeshSurfaceSampler(leafShape).build();
+    console.log(sampler);
+
+    scene.add(leafShape);
+});
+
+// sampler
+// const sampler = new MeshSurfaceSampler(leafShape).build();
+
+// Define the material outside the loader if it's not dependent on the loaded model
+
+// Function to create and add an instanced mesh to the scene using MeshSurfaceSampler
+function createInstancedMesh(geometry, material, instanceCount) {
+    // Create an instanced mesh with the given geometry and material
+    const instancedMesh = new THREE.InstancedMesh(geometry, material, instanceCount);
+
+    const dummy = new THREE.Object3D();
+    const position = new THREE.Vector3();
+    const normal = new THREE.Vector3();
+
+    // Sample positions on the surface of the geometry for each instance
+    for (let i = 0; i < instanceCount; i++) {
+        sampler.sample(position, normal);
+
+        // Optionally, align the instance with the normal
+        dummy.position.copy(position);
+        dummy.lookAt(normal.add(position));
+        dummy.scale.setScalar(Math.random() * 0.01 + 0.02);
+        dummy.updateMatrix();
+
+        instancedMesh.setMatrixAt(i, dummy.matrix);
+    }
+
+    instancedMesh.instanceMatrix.needsUpdate = true;
+    // Add the instanced mesh to the scene
+    scene.add(instancedMesh);
+}
+
+// Load the GLTF model
+gltfLoader.load('/Leaf-draft-one.glb', (gltf) => {
+
+    const leafGeometry = gltf.scene.children[0].geometry;
+
+    const numberOfInstances = 100;
+
+    createInstancedMesh(leafGeometry, sceneMaterial, numberOfInstances);
 });
 
 /**
