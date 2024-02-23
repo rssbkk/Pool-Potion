@@ -9,18 +9,28 @@ export default class Floor
         this.scene = this.experience.scene;
         this.resources = this.experience.resources;
 
-        this.setMesh()
+        this.createMesh()
     }
 
-    setMesh()
+    createMesh()
     {
         const groundGeometry = new THREE.CircleGeometry( 10, 10 );
         const groundMaterial = new THREE.MeshStandardMaterial();
-        const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
+        this.groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
         
-        groundMesh.rotation.x = - Math.PI / 2;
-        groundMesh.material.color = new THREE.Color( 0x00f00f );
+        this.groundMesh.rotation.x = - Math.PI / 2;
+        this.groundMesh.material.color = new THREE.Color( 0x00f00f );
         
-        this.scene.add( groundMesh );
+        this.scene.add( this.groundMesh );
+    }
+
+    getGeometry()
+    {
+        if(this.groundMesh)
+        {
+            return this.groundMesh;
+        } else {
+            console.log("working but not working");
+        }
     }
 }

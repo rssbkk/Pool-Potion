@@ -20,13 +20,13 @@ export default class Potion
             this.debugObject = {};
         }
 
-        this.setGeometry();
-        this.setMaterial()
-        this.setInteraction();
-        this.setMesh()
+        this.createGeometry();
+        this.createMaterial()
+        this.createInteraction();
+        this.createMesh()
     }
 
-    setGeometry()
+    createGeometry()
     {
         // Potion Dimension Tweaks
         const potionDimensions = {
@@ -35,6 +35,7 @@ export default class Potion
             divisions: 64
         }
 
+        // this.geometry = new THREE.SphereGeometry(2, 64, 64,  )
         this.geometry = new THREE.PlaneGeometry( 
             potionDimensions.XScale, 
             potionDimensions.YScale, 
@@ -53,7 +54,7 @@ export default class Potion
                 .name('X Size')
                 .onFinishChange(() =>
                 {
-                    setMesh.dispose()
+                    createMesh.dispose()
                     potionMesh.geometry = new THREE.PlaneGeometry( 
                         potionDimensions.XScale, 
                         potionDimensions.YScale, 
@@ -79,7 +80,7 @@ export default class Potion
                 });
 
                 this.geometryTweaks.add(potionDimensions, 'divisions')
-                    .min(64)
+                    .min(4)
                     .max(1028)
                     .step(8)
                     .name('Divisions')
@@ -96,7 +97,7 @@ export default class Potion
         }
     }
 
-    setMaterial()
+    createMaterial()
     {
         // Potion Colour
         this.debugObject.depthColor = '#367981';
@@ -148,7 +149,7 @@ export default class Potion
         }
     }
 
-    setInteraction()
+    createInteraction()
     {
         // Animation configuration
         let animationCount = 0;
@@ -222,7 +223,7 @@ export default class Potion
 
     }
 
-    setMesh()
+    createMesh()
     {
         
         let potionMesh = new THREE.Mesh( this.geometry, this.material);
