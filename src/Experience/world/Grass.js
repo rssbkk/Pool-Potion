@@ -28,19 +28,19 @@ export default class Grass
 
     createInstance()
     {
-        const instanceCount = 20;
+        const instanceCount = 2000;
         const sampler = new MeshSurfaceSampler(this.floor.groundMesh).build();
         const positions = new Float32Array(instanceCount * 3)
 
-        const bladeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
+        const bladeGeometry = new THREE.PlaneGeometry( .1, .5,);
         const instancedGeometry = new THREE.InstancedBufferGeometry().copy(bladeGeometry);
         instancedGeometry.instanceCount = instanceCount;
-
-        console.log(instancedGeometry);
 
         for(let i = 0; i < instanceCount; i++) {
             const position = new THREE.Vector3();
             sampler.sample(position);
+            this.floor.groundMesh.updateMatrixWorld(); //use "true" if the mesh has children that will need updated
+            position.applyMatrix4(this.floor.groundMesh.matrixWorld);
             positions.set([position.x, position.y, position.z], i * 3);
         }
 
@@ -58,31 +58,7 @@ export default class Grass
 
         const mesh = new THREE.Mesh(instancedGeometry, this.material);
 
-        console.log(mesh);
         this.scene.add(mesh);
-
-
-        // // Create an instanced mesh with the given geometry and material
-        // const instancedMesh = new THREE.InstancedMesh( testSphereGeometry, this.material, instanceCount);
-    
-        // const dummy = new THREE.Object3D();
-        // const position = new THREE.Vector3();
-        // const normal = new THREE.Vector3();
-    
-        // // Sample positions on the surface of the geometry for each instance
-        // for (let i = 0; i < instanceCount; i++) {
-        //     sampler.sample(position, normal);
-    
-        //     // Optionally, align the instance with the normal
-        //     dummy.position.copy(position);
-        //     // dummy.lookAt(normal.add(position));
-        //     dummy.scale.setScalar(Math.random() * 0.01 + 0.02);
-        //     dummy.updateMatrix();
-    
-        //     instancedMesh.setMatrixAt(i, dummy.matrix);
-        // }
-
-        // this.scene.add(instancedMesh);
     }
 
     update()

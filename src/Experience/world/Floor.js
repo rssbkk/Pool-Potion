@@ -28,9 +28,7 @@ export default class Floor
     {
         if(this.groundMesh)
         {
-            return this.groundMesh;
-        } else {
-            console.log("working but not working");
+            return this.groundMesh
         }
     }
 }
