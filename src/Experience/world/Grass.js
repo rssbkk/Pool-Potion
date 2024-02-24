@@ -27,7 +27,7 @@ export default class Grass
     {
         const sampler = new MeshSurfaceSampler(this.floor.groundMesh).build();
 
-        const testSphereGeometry = new THREE.SphereGeometry( 0.1, 5, 5);
+        const testSphereGeometry = new THREE.BoxGeometry( 1, 5);
         const testSphereMaterial = new THREE.MeshBasicMaterial();
 
         const instanceCount = 200;
@@ -45,9 +45,9 @@ export default class Grass
     
             // Optionally, align the instance with the normal
             dummy.position.copy(position);
-            dummy.lookAt(normal.add(position));
+            // dummy.lookAt(normal.add(position));
             dummy.updateMatrix();
-            // dummy.scale.setScalar(Math.random() * 0.01 + 0.02);
+            dummy.scale.setScalar(Math.random() * 0.01 + 0.02);
     
             instancedMesh.setMatrixAt(i, dummy.matrix);
         }
