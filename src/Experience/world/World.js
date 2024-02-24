@@ -28,5 +28,9 @@ export default class World
         {
             this.potion.update();
         }
+        if(this.grass)
+        {
+            this.grass.update();
+        }
     }
 }

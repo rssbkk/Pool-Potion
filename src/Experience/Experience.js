@@ -43,7 +43,6 @@ export default class Experience
         this.sizes.on('resize', ()=>
         {
             this.resize();
-            console.log('resizing');
         })
 
         // Time Tick Event
