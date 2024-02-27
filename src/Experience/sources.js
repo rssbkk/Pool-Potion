@@ -16,6 +16,16 @@ export default [
             'textures/environmentMap/pz.jpg',
             'textures/environmentMap/nz.jpg'
         ]
+    },
+    {
+        name: 'potionGeometry',
+        type: 'gltf',
+        path: 'models/potionGeometry.glb'
+    },
+    {
+        name: 'grass',
+        type: 'gltf',
+        path: 'models/gass-anim-draft-one.glb'
     }
 ]
 

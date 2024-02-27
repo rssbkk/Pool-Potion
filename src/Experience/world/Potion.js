@@ -35,13 +35,13 @@ export default class Potion
             divisions: 64
         }
 
-        // this.geometry = new THREE.SphereGeometry(2, 64, 64,  )
-        this.geometry = new THREE.PlaneGeometry( 
-            potionDimensions.XScale, 
-            potionDimensions.YScale, 
-            potionDimensions.divisions, 
-            potionDimensions.divisions
-        );
+        this.geometry = this.resources.items.potionGeometry.scene.children[0].geometry
+        // this.geometry = new THREE.PlaneGeometry( 
+        //     potionDimensions.XScale, 
+        //     potionDimensions.YScale, 
+        //     potionDimensions.divisions, 
+        //     potionDimensions.divisions
+        // );
 
         if(this.debug.active)
         {
@@ -132,12 +132,10 @@ export default class Potion
         {
             this.materialTweaks = this.debugFolder.addFolder('Material Tweaks')
 
-                // // Potion Tweaks
             this.materialTweaks.add(this.material.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
             this.materialTweaks.add(this.material.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
             this.materialTweaks.add(this.material.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
             this.materialTweaks.add(this.material.uniforms.uBigWavesSpeed, 'value').min(0).max(4).step(0.001).name('uBigWavesSpeed')
-
 
             this.materialTweaks.add(this.material.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation')
             this.materialTweaks.add(this.material.uniforms.uSmallWavesFrequency, 'value').min(0).max(30).step(0.001).name('uSmallWavesFrequency')
@@ -228,7 +226,7 @@ export default class Potion
         
         let potionMesh = new THREE.Mesh( this.geometry, this.material);
         
-        potionMesh.rotation.x = - Math.PI * 0.5;
+        // potionMesh.rotation.x = - Math.PI * 0.5;
         
         potionMesh.position.x = 0;
         potionMesh.position.y = 0.45;
