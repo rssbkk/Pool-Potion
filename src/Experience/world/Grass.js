@@ -32,7 +32,7 @@ export default class Grass
         const sampler = new MeshSurfaceSampler(this.floor.groundMesh).build();
         const positions = new Float32Array(instanceCount * 3)
 
-        const bladeGeometry = new THREE.PlaneGeometry( .1, .5,);
+        const bladeGeometry = this.experience.resources.items.grass.scene.children[0].geometry;
         const instancedGeometry = new THREE.InstancedBufferGeometry().copy(bladeGeometry);
         instancedGeometry.instanceCount = instanceCount;
 
