@@ -1,10 +1,5 @@
 import * as THREE from 'three';
 import Experience from '../Experience.js';
-import Floor from './Floor.js';
-import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
-
-import grassVertexShader from './shaders/grassShader/grassVertex.glsl';
-import grassFragmentShader from './shaders/grassShader/grassFragment.glsl';
 
 export default class Grass
 {
@@ -12,10 +7,9 @@ export default class Grass
     {
         this.experience = new Experience();
         this.scene = this.experience.scene;
+        this.camera = this.experience.camera;
         this.time = this.experience.time;
         this.debug = this.experience.debug;
-
-        this.floor = new Floor();
 
         if(this.debug.active)
         {
@@ -23,46 +17,68 @@ export default class Grass
             this.debugObject = {};
         }
 
+        this.instanceCount = 200;
+        this.grassPositions = [];
+        this.mesh = null;
         this.createInstance();
     }
 
     createInstance()
     {
-        const instanceCount = 2000;
-        const sampler = new MeshSurfaceSampler(this.floor.groundMesh).build();
-        const positions = new Float32Array(instanceCount * 3)
+        const planeSize = 5;
 
         const bladeGeometry = this.experience.resources.items.grass.scene.children[0].geometry;
-        const instancedGeometry = new THREE.InstancedBufferGeometry().copy(bladeGeometry);
-        instancedGeometry.instanceCount = instanceCount;
+        const bladeMaterial = new THREE.MeshBasicMaterial();
 
-        for(let i = 0; i < instanceCount; i++) {
-            const position = new THREE.Vector3();
-            sampler.sample(position);
-            this.floor.groundMesh.updateMatrixWorld(); //use "true" if the mesh has children that will need updated
-            position.applyMatrix4(this.floor.groundMesh.matrixWorld);
-            positions.set([position.x, position.y, position.z], i * 3);
+        this.mesh = new THREE.InstancedMesh( bladeGeometry, bladeMaterial, this.instanceCount );
+
+        for(let i = 0; i < this.instanceCount; i++) {
+            const position = new THREE.Vector3(
+                Math.random() * planeSize - planeSize / 2,
+                0.1,
+                Math.random() * planeSize - planeSize / 2
+            );
+
+            this.grassPositions.push(position);
+
+            const scale = 1
+            const quaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler( Math.PI * 0.5, 0, 0, 'XYZ'));
+
+            const matrix = new THREE.Matrix4();
+            matrix.compose( position, quaternion, new THREE.Vector3( scale, scale, scale ));
+            this.mesh.setMatrixAt( i, matrix );
         }
 
-        const instancedPositions = new THREE.InstancedBufferAttribute(positions, 3);
-        instancedGeometry.setAttribute('aPosition', instancedPositions);
+        // this.this.mesh.instanceMatrix.needsUpdate = true;
+        this.scene.add(this.mesh);
 
-        this.material = new THREE.ShaderMaterial({
-            vertexShader: grassVertexShader,
-            fragmentShader: grassFragmentShader,
-            uniforms: 
-            {
-                uTime: { value: 0 }
-            }
-        });
-
-        const mesh = new THREE.Mesh(instancedGeometry, this.material);
-
-        this.scene.add(mesh);
+        console.log(this.mesh);
     }
 
     update()
     {
-        this.material.uniforms.uTime.value = this.time.elapsed * 0.001
+        // const scale = new THREE.Vector3(1, 1, 1); // Assuming uniform scale for simplicity
+        // const upDirection = new THREE.Vector3(0, 1, 0);
+
+        // for (let i = 0; i < this.instanceCount; i++) {
+        //     const position = this.grassPositions[i];
+
+        //     // Compute direction towards the camera
+        //     const direction = new THREE.Vector3();
+        //     direction.subVectors(this.camera.instance.position, position).normalize();
+
+        //     // Calculate rotation around Y-axis
+        //     const angle = Math.atan2(direction.x, direction.z);
+        //     const quaternion = new THREE.Quaternion().setFromAxisAngle(upDirection, angle);
+
+        //     // Compose the new transformation matrix
+        //     const matrix = new THREE.Matrix4();
+        //     matrix.compose(position, quaternion, scale);
+
+        //     // Update the instance matrix
+        //     this.mesh.setMatrixAt(i, matrix);
+        // }
+
+        // this.mesh.instanceMatrix.needsUpdate = true;
     }
 }

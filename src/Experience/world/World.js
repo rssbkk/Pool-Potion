@@ -17,6 +17,7 @@ export default class World
             // Setup (Order matters here)
             this.floor = new Floor();
             this.potion = new Potion();
+            // this.grass = new Grass();
             this.grass = new Grass();
             this.environment = new Environment();
         })

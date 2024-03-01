@@ -99,9 +99,23 @@ export default class Potion
 
     createMaterial()
     {
+        let  depthColor;
+        let  surfaceColor;
+
         // Potion Colour
-        this.debugObject.depthColor = '#367981';
-        this.debugObject.surfaceColor = '#6d90a2';
+        if(!this.debug.active)
+        {
+            depthColor = '#367981'
+            surfaceColor = '#6d90a2'
+        } 
+        else 
+        {
+            depthColor = this.debugObject.depthColor = '#367981'
+            surfaceColor = this.debugObject.surfaceColor = '#6d90a2'
+        }
+        
+        // this.debugObject.depthColor = '#367981';
+        // this.debugObject.surfaceColor = '#6d90a2';
 
         this.material = new THREE.ShaderMaterial({
             vertexShader: potionVertexShader,
@@ -120,8 +134,8 @@ export default class Potion
                 uSmallWavesSpeed: { value: 0.45 },
                 uSmallIterations: { value: 4 },
         
-                uDepthColor: { value: new THREE.Color(this.debugObject.depthColor) },
-                uSurfaceColor: { value: new THREE.Color(this.debugObject.surfaceColor) },
+                uDepthColor: { value: new THREE.Color(depthColor) },
+                uSurfaceColor: { value: new THREE.Color(surfaceColor) },
                 uColorOffset: { value: 0 },
                 uColorMultiplier: { value: 7 }
             },
