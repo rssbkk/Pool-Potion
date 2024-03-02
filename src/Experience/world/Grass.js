@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Experience from '../Experience.js';
+import ToonMaterial from './ToonMaterial.js';
 
 export default class Grass
 {
@@ -10,11 +11,13 @@ export default class Grass
         this.camera = this.experience.camera;
         this.time = this.experience.time;
         this.debug = this.experience.debug;
+        this.toonMaterial = new ToonMaterial().toonMaterial;
 
         if(this.debug.active)
         {
             this.debugFolder = this.debug.gui.addFolder('Grass');
             this.debugObject = {};
+            this.debugFolder.close();
         }
 
         this.instanceCount = 200;
@@ -28,7 +31,8 @@ export default class Grass
         const planeSize = 5;
 
         const bladeGeometry = this.experience.resources.items.grass.scene.children[0].geometry;
-        const bladeMaterial = new THREE.MeshBasicMaterial();
+        const bladeMaterial = this.toonMaterial;
+        // const bladeMaterial = new THREE.MeshStandardMaterial();
 
         this.mesh = new THREE.InstancedMesh( bladeGeometry, bladeMaterial, this.instanceCount );
 
@@ -51,8 +55,6 @@ export default class Grass
 
         // this.this.mesh.instanceMatrix.needsUpdate = true;
         this.scene.add(this.mesh);
-
-        console.log(this.mesh);
     }
 
     update()

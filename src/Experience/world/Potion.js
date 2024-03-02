@@ -18,6 +18,7 @@ export default class Potion
         {
             this.debugFolder = this.debug.gui.addFolder('potion');
             this.debugObject = {};
+            this.debugFolder.close();
         }
 
         this.createGeometry();
