@@ -2,6 +2,7 @@ import Experience from '../Experience.js';
 import Environment from './Environment.js';
 import Floor from './Floor.js';
 import Grass from './Grass.js';
+import Landscape from './Landscape.js';
 import Potion from './Potion.js';
 
 export default class World
@@ -17,8 +18,8 @@ export default class World
             // Setup (Order matters here)
             this.floor = new Floor();
             this.potion = new Potion();
-            // this.grass = new Grass();
             this.grass = new Grass();
+            this.landscape = new Landscape
             this.environment = new Environment();
         })
     }

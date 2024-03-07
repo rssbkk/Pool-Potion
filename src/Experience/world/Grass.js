@@ -45,7 +45,7 @@ export default class Grass
 
             this.grassPositions.push(position);
 
-            const scale = 1
+            const scale = 1;
             const quaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler( Math.PI * 0.5, 0, 0, 'XYZ'));
 
             const matrix = new THREE.Matrix4();
@@ -59,28 +59,28 @@ export default class Grass
 
     update()
     {
-        // const scale = new THREE.Vector3(1, 1, 1); // Assuming uniform scale for simplicity
-        // const upDirection = new THREE.Vector3(0, 1, 0);
+        const scale = new THREE.Vector3(1, 1, 1); // Assuming uniform scale for simplicity
+        const upDirection = new THREE.Vector3(0, 1, 0);
 
-        // for (let i = 0; i < this.instanceCount; i++) {
-        //     const position = this.grassPositions[i];
+        for (let i = 0; i < this.instanceCount; i++) {
+            const position = this.grassPositions[i];
 
-        //     // Compute direction towards the camera
-        //     const direction = new THREE.Vector3();
-        //     direction.subVectors(this.camera.instance.position, position).normalize();
+            // Compute direction towards the camera
+            const direction = new THREE.Vector3();
+            direction.subVectors(this.camera.instance.position, position).normalize();
 
-        //     // Calculate rotation around Y-axis
-        //     const angle = Math.atan2(direction.x, direction.z);
-        //     const quaternion = new THREE.Quaternion().setFromAxisAngle(upDirection, angle);
+            // Calculate rotation around Y-axis
+            const angle = Math.atan2(direction.x, direction.z);
+            const quaternion = new THREE.Quaternion().setFromAxisAngle(upDirection, angle);
 
-        //     // Compose the new transformation matrix
-        //     const matrix = new THREE.Matrix4();
-        //     matrix.compose(position, quaternion, scale);
+            // Compose the new transformation matrix
+            const matrix = new THREE.Matrix4();
+            matrix.compose(position, quaternion, scale);
 
-        //     // Update the instance matrix
-        //     this.mesh.setMatrixAt(i, matrix);
-        // }
+            // Update the instance matrix
+            this.mesh.setMatrixAt(i, matrix);
+        }
 
-        // this.mesh.instanceMatrix.needsUpdate = true;
+        this.mesh.instanceMatrix.needsUpdate = true;
     }
 }

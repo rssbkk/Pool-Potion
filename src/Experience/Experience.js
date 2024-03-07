@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import Sizes from "./utils/Sizes.js";
 import Time from "./utils/Time.js";
 import Camera from './Camera.js';
-import LimitCamera from './LimitCamera.js';
 import Renderer from './Renderer.js';
 import World from './world/World.js';
 import Resources from './utils/Resources.js';
@@ -36,8 +35,7 @@ export default class Experience
         this.time = new Time();
         this.scene = new THREE.Scene();
         this.resources = new Resources(sources);
-        // this.camera = new Camera();
-        this.camera = new LimitCamera();
+        this.camera = new Camera();
         this.renderer = new Renderer();
         this.world = new World();
 
