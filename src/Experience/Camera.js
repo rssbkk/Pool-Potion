@@ -25,7 +25,9 @@ export default class Camera
 
     setInstance()
     {
-        this.instance = new THREE.PerspectiveCamera(35, this.sizes.width / this.sizes.height, 0.1, 100)
+        this.instance = new THREE.OrthographicCamera( - this.sizes.aspectRatio, this.sizes.aspectRatio, 1, -1, 0.1, 100 )
+        //.PerspectiveCamera(35, this.sizes.width / this.sizes.height, 0.1, 100)
+
         this.instance.position.set(6, 4, 8)
         this.scene.add(this.instance)
     }
@@ -35,14 +37,14 @@ export default class Camera
         this.controls = new OrbitControls(this.instance, this.canvas);
         this.controls.enableDamping = true;
         this.controls.enablePan = false;
-        this.controls.maxDistance = 10;
-        this.controls.minDistance = 2;
-        this.controls.maxPolarAngle = 1.4;
+        this.controls.maxZoom = 1.3;
+        this.controls.minZoom = 0.45;
+        this.controls.maxPolarAngle = 1.05;
         this.controls.minPolarAngle = 0.5;
 
         if(this.debug.active)
         {
-            this.debugFolder.add(this.controls, 'maxDistance')
+            this.debugFolder.add(this.controls, 'maxZoom')
                 .min(0)
                 .max(20)
                 .step(.05)
@@ -52,7 +54,7 @@ export default class Camera
                     this.controls.update();
                 });
             
-            this.debugFolder.add(this.controls, 'minDistance')
+            this.debugFolder.add(this.controls, 'minZoom')
                 .min(-5)
                 .max(5)
                 .step(.05)

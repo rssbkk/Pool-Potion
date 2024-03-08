@@ -37,12 +37,6 @@ export default class Potion
         }
 
         this.geometry = this.resources.items.potionGeometry.scene.children[0].geometry
-        // this.geometry = new THREE.PlaneGeometry( 
-        //     potionDimensions.XScale, 
-        //     potionDimensions.YScale, 
-        //     potionDimensions.divisions, 
-        //     potionDimensions.divisions
-        // );
 
         if(this.debug.active)
         {
@@ -139,8 +133,7 @@ export default class Potion
                 uSurfaceColor: { value: new THREE.Color(surfaceColor) },
                 uColorOffset: { value: 0 },
                 uColorMultiplier: { value: 7 }
-            },
-            wireframe: true
+            }
         });
 
         if(this.debug.active)
