@@ -8,6 +8,7 @@ import World from './world/World.js';
 import Resources from './utils/Resources.js';
 import Debug from './utils/Debug.js';
 import sources from './sources.js';
+import ToonMaterial from './world/ToonMaterial.js';
 
 let instance = null;
 
@@ -34,6 +35,7 @@ export default class Experience
         this.time = new Time();
         this.scene = new THREE.Scene();
         this.resources = new Resources(sources);
+        this.toonMaterial = new ToonMaterial().toonMaterial;
         this.camera = new Camera();
         this.renderer = new Renderer();
         this.world = new World();

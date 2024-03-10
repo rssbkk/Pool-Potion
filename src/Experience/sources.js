@@ -25,7 +25,7 @@ export default [
     {
         name: 'grass',
         type: 'gltf',
-        path: 'models/gass-anim-draft-one.glb'
+        path: 'models/gass-anim-draft-two.glb'
     },
     {
         name: 'landscape',

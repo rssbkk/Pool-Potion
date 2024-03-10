@@ -23,16 +23,27 @@ export default class Grass
         this.instanceCount = 200;
         this.grassPositions = [];
         this.mesh = null;
+
         this.createInstance();
+        this.createAnimation();
     }
 
     createInstance()
     {
+
+        //animation test 
+        this.model = this.experience.resources.items.grass.scene;
+        this.model.position.set( 2, 2, 2 )
+        this.scene.add(this.model)
+
+        // real code
         const planeSize = 5;
 
         const bladeGeometry = this.experience.resources.items.grass.scene.children[0].geometry;
         const bladeMaterial = this.toonMaterial;
         // const bladeMaterial = new THREE.MeshStandardMaterial();
+
+        console.log(this.experience.resources.items.grass);
 
         this.mesh = new THREE.InstancedMesh( bladeGeometry, bladeMaterial, this.instanceCount );
 
@@ -57,8 +68,34 @@ export default class Grass
         this.scene.add(this.mesh);
     }
 
+    createAnimation()
+    {
+        this.animation = {}
+        
+        // Mixer
+        this.animation.mixer = new THREE.AnimationMixer(this.model)
+        
+        this.animation.wind = this.animation.mixer.clipAction(this.experience.resources.items.grass.animations[0])
+
+        this.animation.wind.play();
+
+        // // Debug
+        // if(this.debug.active)
+        // {
+        //     const debugObject = {
+        //         playIdle: () => { this.animation.play('idle') },
+        //         playWalking: () => { this.animation.play('walking') },
+        //         playRunning: () => { this.animation.play('running') }
+        //     }
+        //     this.debugFolder.add(debugObject, 'playIdle')
+        //     this.debugFolder.add(debugObject, 'playWalking')
+        //     this.debugFolder.add(debugObject, 'playRunning')
+        // }
+    }
+
     update()
     {
+        // Face Camera
         const scale = new THREE.Vector3(1, 1, 1); // Assuming uniform scale for simplicity
         const upDirection = new THREE.Vector3(0, 1, 0);
 
@@ -82,5 +119,8 @@ export default class Grass
         }
 
         this.mesh.instanceMatrix.needsUpdate = true;
+
+        // Animation
+        this.animation.mixer.update(this.time.delta * 0.001)
     }
 }

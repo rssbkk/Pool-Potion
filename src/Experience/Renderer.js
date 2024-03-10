@@ -27,6 +27,7 @@ export default class Renderer
         this.composer = null;
 
         this.createInstance();
+        //this.postProcess();
     }
 
     createInstance()
@@ -43,7 +44,10 @@ export default class Renderer
         this.instance.setClearColor('#211d20');
         this.instance.setSize(this.sizes.width, this.sizes.height);
         this.instance.setPixelRatio(this.sizes.pixelRatio);
+    }
 
+    postProcess()
+    {
         this.composer = new EffectComposer( this.instance );
         this.composer.setPixelRatio(this.sizes.pixelRatio);
         this.composer.setSize(this.sizes.width, this.sizes.height);
@@ -51,7 +55,6 @@ export default class Renderer
         this.renderPixelatedPass = new RenderPixelatedPass( 3, this.scene, this.camera.instance );
         this.renderPixelatedPass.normalEdgeStrength = 1.5;
         this.renderPixelatedPass.depthEdgeStrength = 1.25;
-        console.log(this.renderPixelatedPass);
         this.renderPixelatedPass = new RenderPixelatedPass( 3, this.scene, this.camera.instance );
 
         this.composer.addPass( this.renderPixelatedPass );
@@ -92,6 +95,7 @@ export default class Renderer
 
     update()
     {
-        this.composer.render()
+        // this.composer.render();
+        this.instance.render( this.scene, this.camera.instance)
     }
 }

@@ -1,7 +1,7 @@
 import Experience from '../Experience.js';
 import Environment from './Environment.js';
 import Floor from './Floor.js';
-import Grass from './Grass.js';
+import Grass from './Grass2.js';
 import Landscape from './Landscape.js';
 import Potion from './Potion.js';
 
@@ -30,9 +30,9 @@ export default class World
         {
             this.potion.update();
         }
-        if(this.grass)
-        {
-            this.grass.update();
-        }
+        // if(this.grass)
+        // {
+        //     this.grass.update();
+        // }
     }
 }
