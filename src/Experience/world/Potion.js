@@ -16,9 +16,11 @@ export default class Potion
 
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('potion');
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'potion',
+                expanded: false
+            });
             this.debugObject = {};
-            this.debugFolder.close();
         }
 
         this.createGeometry();
@@ -30,7 +32,8 @@ export default class Potion
     createGeometry()
     {
         // Potion Dimension Tweaks
-        const potionDimensions = {
+        const potionDimensions = 
+        {
             XScale : 1.565,
             YScale : 1.565,
             divisions: 64
@@ -38,57 +41,64 @@ export default class Potion
 
         this.geometry = this.resources.items.potionGeometry.scene.children[0].geometry
 
-        if(this.debug.active)
+        if (this.debug.active) 
         {
-            this.geometryTweaks = this.debugFolder.addFolder('Geometry')
-
-            this.geometryTweaks.add(potionDimensions, 'XScale')
-                .min(0)
-                .max(10)
-                .step(.005)
-                .name('X Size')
-                .onFinishChange(() =>
-                {
-                    createMesh.dispose()
-                    potionMesh.geometry = new THREE.PlaneGeometry( 
-                        potionDimensions.XScale, 
-                        potionDimensions.YScale, 
-                        potionDimensions.divisions, 
-                        potionDimensions.divisions
-                    )
-                });
-
-                this.geometryTweaks.add(potionDimensions, 'YScale')
-                .min(0)
-                .max(10)
-                .step(.005)
-                .name('Y Size')
-                .onFinishChange(() =>
-                {
-                    potionMesh.geometry.dispose()
-                    potionMesh.geometry = new THREE.PlaneGeometry( 
-                        potionDimensions.XScale, 
-                        potionDimensions.YScale, 
-                        potionDimensions.divisions, 
-                        potionDimensions.divisions
-                    )
-                });
-
-                this.geometryTweaks.add(potionDimensions, 'divisions')
-                    .min(4)
-                    .max(1028)
-                    .step(8)
-                    .name('Divisions')
-                    .onFinishChange(() =>
-                    {
-                        potionMesh.geometry.dispose()
-                        potionMesh.geometry = new THREE.PlaneGeometry( 
-                            potionDimensions.XScale, 
-                            potionDimensions.YScale, 
-                            potionDimensions.divisions, 
-                            potionDimensions.divisions
-                        )
-                    });
+            const geometryTweaks = this.debugFolder.addFolder({
+              title: 'Geometry',
+            });
+          
+            // X Scale
+            geometryTweaks.addBinding(potionDimensions, 'XScale', 
+            {
+              label: 'X Size',
+              min: 0,
+              max: 10,
+              step: 0.005,
+            }).on('change', (value) => {
+              // Assuming createMesh is a method or an existing mesh you want to dispose of
+              // This might need to be potionMesh.dispose() depending on your setup
+              if (createMesh.dispose) createMesh.dispose();
+              potionMesh.geometry = new THREE.PlaneGeometry(
+                potionDimensions.XScale,
+                potionDimensions.YScale,
+                potionDimensions.divisions,
+                potionDimensions.divisions
+              );
+            });
+          
+            // Y Scale
+            geometryTweaks.addBinding(potionDimensions, 'YScale', 
+            {
+              label: 'Y Size',
+              min: 0,
+              max: 10,
+              step: 0.005,
+            }).on('change', () => {
+              potionMesh.geometry.dispose();
+              potionMesh.geometry = new THREE.PlaneGeometry(
+                potionDimensions.XScale,
+                potionDimensions.YScale,
+                potionDimensions.divisions,
+                potionDimensions.divisions
+              );
+            });
+          
+            // Divisions
+            geometryTweaks.addBinding(potionDimensions, 'divisions', 
+            {
+              label: 'Divisions',
+              min: 4,
+              max: 1028,
+              step: 8,
+            }).on('change', () => {
+              potionMesh.geometry.dispose();
+              potionMesh.geometry = new THREE.PlaneGeometry(
+                potionDimensions.XScale,
+                potionDimensions.YScale,
+                potionDimensions.divisions,
+                potionDimensions.divisions
+              );
+            });
         }
     }
 
@@ -138,20 +148,89 @@ export default class Potion
 
         if(this.debug.active)
         {
-            this.materialTweaks = this.debugFolder.addFolder('Material Tweaks')
-
-            this.materialTweaks.add(this.material.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
-            this.materialTweaks.add(this.material.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
-            this.materialTweaks.add(this.material.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
-            this.materialTweaks.add(this.material.uniforms.uBigWavesSpeed, 'value').min(0).max(4).step(0.001).name('uBigWavesSpeed')
-
-            this.materialTweaks.add(this.material.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation')
-            this.materialTweaks.add(this.material.uniforms.uSmallWavesFrequency, 'value').min(0).max(30).step(0.001).name('uSmallWavesFrequency')
-            this.materialTweaks.add(this.material.uniforms.uSmallWavesSpeed, 'value').min(0).max(4).step(0.001).name('uSmallWavesSpeed')
-            this.materialTweaks.add(this.material.uniforms.uSmallIterations, 'value').min(0).max(5).step(1).name('uSmallIterations')
-
-            this.materialTweaks.add(this.material.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
-            this.materialTweaks.add(this.material.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier')
+            const materialTweaks = this.debugFolder.addFolder({
+                title: 'Material Tweaks',
+              });
+              
+              // Big Waves Elevation
+              materialTweaks.addBinding(this.material.uniforms.uBigWavesElevation, 'value', {
+                min: 0,
+                max: 1,
+                step: 0.001,
+                label: 'uBigWavesElevation',
+              });
+              
+              // Big Waves Frequency X
+              materialTweaks.addBinding(this.material.uniforms.uBigWavesFrequency.value, 'x', {
+                min: 0,
+                max: 10,
+                step: 0.001,
+                label: 'uBigWavesFrequencyX',
+              });
+              
+              // Big Waves Frequency Y
+              materialTweaks.addBinding(this.material.uniforms.uBigWavesFrequency.value, 'y', {
+                min: 0,
+                max: 10,
+                step: 0.001,
+                label: 'uBigWavesFrequencyY',
+              });
+              
+              // Big Waves Speed
+              materialTweaks.addBinding(this.material.uniforms.uBigWavesSpeed, 'value', {
+                min: 0,
+                max: 4,
+                step: 0.001,
+                label: 'uBigWavesSpeed',
+              });
+              
+              // Small Waves Elevation
+              materialTweaks.addBinding(this.material.uniforms.uSmallWavesElevation, 'value', {
+                min: 0,
+                max: 1,
+                step: 0.001,
+                label: 'uSmallWavesElevation',
+              });
+              
+              // Small Waves Frequency
+              materialTweaks.addBinding(this.material.uniforms.uSmallWavesFrequency, 'value', {
+                min: 0,
+                max: 30,
+                step: 0.001,
+                label: 'uSmallWavesFrequency',
+              });
+              
+              // Small Waves Speed
+              materialTweaks.addBinding(this.material.uniforms.uSmallWavesSpeed, 'value', {
+                min: 0,
+                max: 4,
+                step: 0.001,
+                label: 'uSmallWavesSpeed',
+              });
+              
+              // Small Waves Iterations
+              materialTweaks.addBinding(this.material.uniforms.uSmallIterations, 'value', {
+                min: 0,
+                max: 5,
+                step: 1,
+                label: 'uSmallIterations',
+              });
+              
+              // Color Offset
+              materialTweaks.addBinding(this.material.uniforms.uColorOffset, 'value', {
+                min: 0,
+                max: 1,
+                step: 0.001,
+                label: 'uColorOffset',
+              });
+              
+              // Color Multiplier
+              materialTweaks.addBinding(this.material.uniforms.uColorMultiplier, 'value', {
+                min: 0,
+                max: 10,
+                step: 0.001,
+                label: 'uColorMultiplier',
+              });
         }
     }
 
@@ -243,12 +322,33 @@ export default class Potion
 
         if(this.debug.active)
         {
-            this.positionTweaks = this.debugFolder.addFolder('Potion Position')
-
-            //  Potion Positioning Tweaks
-            this.positionTweaks.add(potionMesh.position, 'x').min(-10).max(10).step(0.5).name('X Position');
-            this.positionTweaks.add(potionMesh.position, 'y').min(-10).max(10).step(0.01).name('Y Position');
-            this.positionTweaks.add(potionMesh.position, 'z').min(-10).max(10).step(0.5).name('Z Position');
+            const positionTweaks = this.debugFolder.addFolder({
+                title: 'Potion Position',
+              });
+              
+              // X Position
+              positionTweaks.addBinding(potionMesh.position, 'x', {
+                min: -10,
+                max: 10,
+                step: 0.5,
+                label: 'X Position',
+              });
+              
+              // Y Position
+              positionTweaks.addBinding(potionMesh.position, 'y', {
+                min: -10,
+                max: 10,
+                step: 0.01,
+                label: 'Y Position',
+              });
+              
+              // Z Position
+              positionTweaks.addBinding(potionMesh.position, 'z', {
+                min: -10,
+                max: 10,
+                step: 0.5,
+                label: 'Z Position',
+              });
         }
     }
 

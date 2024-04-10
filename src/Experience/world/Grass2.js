@@ -17,9 +17,11 @@ export default class Grass
 
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('Grass');
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'Grass',
+                expanded: false
+            });
             this.debugObject = {};
-            this.debugFolder.close();
         }
 
         this.instanceCount = 200;

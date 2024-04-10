@@ -16,11 +16,12 @@ export default class Landscape
 
         if(this.debug.active)
         {
-            this.LandscapeTweaks = this.debug.gui.addFolder('Landscape');
+            this.LandscapeTweaks = this.debug.pane.addFolder({
+                title: 'Landscape',
+                expanded: false
+            });
             this.debugObject = {};
-            this.LandscapeTweaks.close();
         }
-
         this.createLandscape();
     }
 
@@ -38,9 +39,7 @@ export default class Landscape
                 child.material = this.toonMaterial;
             }
         })
-
-        console.log(this.model);
-
+        
         this.scene.add(this.model);
     }
 }

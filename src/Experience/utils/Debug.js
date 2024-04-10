@@ -1,4 +1,4 @@
-import GUI from "lil-gui";
+import {Pane} from "tweakpane";
 
 export default class Debug
 {
@@ -8,7 +8,7 @@ export default class Debug
 
         if(this.active)
         {
-            this.gui = new GUI();
+            this.pane = new Pane();
         }
     }
 }

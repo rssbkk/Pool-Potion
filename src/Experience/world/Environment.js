@@ -12,9 +12,11 @@ export default class Environment
 
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('environment');
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'environment',
+                expanded: false
+            });
             this.debugObject = {};
-            this.debugFolder.close();
         }
 
         this.setSunLight();
@@ -34,33 +36,41 @@ export default class Environment
         // Debug
         if(this.debug.active)
         {
-            this.debugFolder
-                .add(this.sunLight, 'intensity')
-                .name('sunLightIntensity')
-                .min(0)
-                .max(10)
-                .step(0.001)
+            // Sun Light Intensity
+            this.debugFolder.addBinding(this.sunLight, 'intensity', 
+            {
+                label: 'sunLightIntensity',
+                min: 0,
+                max: 10,
+                step: 0.001,
+            });
             
-            this.debugFolder
-                .add(this.sunLight.position, 'x')
-                .name('sunLightX')
-                .min(- 5)
-                .max(5)
-                .step(0.001)
+            // Sun Light Position X
+            this.debugFolder.addBinding(this.sunLight.position, 'x', 
+            {
+                label: 'sunLightX',
+                min: -5,
+                max: 5,
+                step: 0.001,
+            });
             
-            this.debugFolder
-                .add(this.sunLight.position, 'y')
-                .name('sunLightY')
-                .min(- 5)
-                .max(5)
-                .step(0.001)
+            // Sun Light Position Y
+            this.debugFolder.addBinding(this.sunLight.position, 'y', 
+            {
+                label: 'sunLightY',
+                min: -5,
+                max: 5,
+                step: 0.001,
+            });
             
-            this.debugFolder
-                .add(this.sunLight.position, 'z')
-                .name('sunLightZ')
-                .min(- 5)
-                .max(5)
-                .step(0.001)
+            // Sun Light Position Z
+            this.debugFolder.addBinding(this.sunLight.position, 'z', 
+            {
+                label: 'sunLightZ',
+                min: -5,
+                max: 5,
+                step: 0.001,
+            });
         }
     }
 
@@ -91,13 +101,17 @@ export default class Environment
         // Debug
         if(this.debug.active)
         {
-            this.debugFolder
-                .add(this.environmentMap, 'intensity')
-                .name('envMapIntensity')
-                .min(0)
-                .max(4)
-                .step(0.001)
-                .onChange(this.environmentMap.updateMaterials)
+            this.debugFolder.addBinding(this.environmentMap, 'intensity', 
+            {
+                min: 0,
+                max: 4,
+                step: 0.001,
+                label: 'envMapIntensity'
+            })
+            .on('change', () => 
+            {
+                this.environmentMap.updateMaterials
+            })
         }
     }
 }

@@ -19,9 +19,11 @@ export default class Renderer
 
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('Render')
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'Render',
+                expanded: false
+            });
             this.debugObject = {};
-            this.debugFolder.close();
         }
 
         this.composer = null;

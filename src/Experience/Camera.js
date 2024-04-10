@@ -14,9 +14,11 @@ export default class Camera
 
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('Camera');
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'Camera',
+                expanded: false
+            });
             this.debugObject = {};
-            this.debugFolder.close();
         }
 
         this.setInstance();
@@ -44,45 +46,49 @@ export default class Camera
 
         if(this.debug.active)
         {
-            this.debugFolder.add(this.controls, 'maxZoom')
-                .min(0)
-                .max(20)
-                .step(.05)
-                .name('Max Distance')
-                .onChange(() =>
-                {
-                    this.controls.update();
-                });
+            this.debugFolder.addBinding(this.controls, 'maxZoom', {
+                min: 0,
+                max: 20,
+                step: 0.05,
+                label: 'Max Distacne'
+            })
+            .on('change', () =>
+            {
+                this.controls.update();
+            });
             
-            this.debugFolder.add(this.controls, 'minZoom')
-                .min(-5)
-                .max(5)
-                .step(.05)
-                .name('Min Distance')
-                .onChange(() =>
-                {
-                    this.controls.update();
-                });
+            this.debugFolder.addBinding(this.controls, 'minZoom', {
+                min: -5,
+                max: 5,
+                step: 0.05,
+                label: 'Min Distance'
+            })
+            .on('change', () =>
+            {
+                this.controls.update();
+            });
 
-            this.debugFolder.add(this.controls, 'maxPolarAngle')
-                .min(0)
-                .max(10)
-                .step(.05)
-                .name('Max Angle')
-                .onChange(() =>
-                {
-                    this.controls.update();
-                });
+            this.debugFolder.addBinding(this.controls, 'maxPolarAngle', {
+                min: 0,
+                max: 10,
+                step: 0.05,
+                label: 'Max Angle'
+            })
+            .on('change', () =>
+            {
+                this.controls.update();
+            });
             
-            this.debugFolder.add(this.controls, 'minPolarAngle')
-                .min(0)
-                .max(3.14)
-                .step(.05)
-                .name('Min Angle')
-                .onChange(() =>
-                {
-                    this.controls.update();
-                });
+            this.debugFolder.addBinding(this.controls, 'minPolarAngle', {
+                min: 0,
+                max: 3.14,
+                step: 0.05,
+                label: 'Min Angle'
+            })
+            .on('change', () =>
+            {
+                this.controls.update();
+            });
         }
     }
 
