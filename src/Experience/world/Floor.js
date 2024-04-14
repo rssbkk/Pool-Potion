@@ -19,7 +19,7 @@ export default class Floor
         this.groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
         
         this.groundMesh.rotation.x = - Math.PI / 2;
-        this.groundMesh.material.color = new THREE.Color( 0x00f00f );
+        this.groundMesh.material.color = new THREE.Color( 0x159947 );
         
         this.scene.add( this.groundMesh );
     }

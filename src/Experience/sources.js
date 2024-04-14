@@ -31,6 +31,16 @@ export default [
         name: 'landscape',
         type: 'gltf',
         path: 'models/ruin-scene-draft-one.glb'
+    },
+    {
+        name: 'leaf',
+        type: 'gltf',
+        path: 'models/Leaf-draft-one.glb'
+    },
+    {
+        name: 'perlinNoiseImage',
+        type: 'image',
+        path: 'images/perlin.png'
     }
 ]
 

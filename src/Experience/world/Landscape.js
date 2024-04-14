@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
 import Experience from '../Experience.js';
-import ToonMaterial from './ToonMaterial.js';
 
 export default class Landscape
 {
@@ -12,7 +11,7 @@ export default class Landscape
         this.camera = this.experience.camera;
         this.time = this.experience.time;
         this.debug = this.experience.debug;
-        this.toonMaterial = new ToonMaterial().toonMaterial;
+        this.toonMaterial = this.experience.toonMaterial;
 
         if(this.debug.active)
         {
@@ -23,11 +22,12 @@ export default class Landscape
             this.debugObject = {};
         }
         this.createLandscape();
+        this.seperateParts();
     }
 
     createLandscape()
     {
-        this.model = this.experience.resources.items.landscape.scene
+        this.model = this.experience.resources.items.landscape.scene;
         this.model.scale.set(0.25, 0.25, 0.25);
 
         this.model.traverse((child) =>
@@ -39,8 +39,34 @@ export default class Landscape
                 child.material = this.toonMaterial;
             }
         })
-        
         this.scene.add(this.model);
+    }
+
+    seperateParts()
+    {
+        this.leaves = [];
+
+        this.scene.traverse((child) =>
+        {
+            if (child.name.toLocaleLowerCase().includes('leaf'))
+            {
+                this.leaves.push(child)
+            }
+        });
+
+        this.leafRoot = this.leaves.shift();
+
+        this.leaves.forEach((leaf, index) => 
+        {
+            // Generate a random color
+            const color = new THREE.Color(Math.random(), 1, Math.random());
+            
+            // Create a new material with the random color
+            const material = new THREE.MeshStandardMaterial({color: color});
+          
+            // Apply the new material to the leaf
+            leaf.material = material;
+        });
     }
 }
 
