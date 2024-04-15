@@ -29,15 +29,15 @@ export default class Grass
             this.debugObject = {};
         }
 
-        this.instanceCount = 200;
+        this.instanceCount = 2000;
         this.grassPositions = [];
         this.mesh = null;
 
-        this.createGrass();
-        this.createGrassInstaces();
+        this.createGrassBlade();
+        this.createGrassField();
     }
 
-    createGrass()
+    createGrassBlade()
     {
         // Create Textures
         const perlinTexture = this.experience.resources.items.perlinNoiseImage;
@@ -45,11 +45,11 @@ export default class Grass
 
         const noiseScale = 1.5;
 
-        let peakWidth = 0.01;
+        let peakWidth = 0.005;
         let baseWidth = 0.02;
         let height = 0.25;
 
-        this.geometry = new THREE.CylinderGeometry(peakWidth, baseWidth, height, 3, 4);
+        this.geometry = new THREE.CylinderGeometry(peakWidth, baseWidth, height, 3, 4, true);
         this.material1 = new THREE.MeshBasicMaterial();
         this.material = new THREE.ShaderMaterial({
             vertexShader: grassVertexShader,
@@ -65,22 +65,22 @@ export default class Grass
                 uNoiseTexture: { value: perlinTexture },
                 uNoiseScale: { value: noiseScale }
             },
-            wireframe: true
+            // wireframe: true
         });
 
         this.mesh = new THREE.Mesh( this.geometry, this.material );
-        this.mesh.position.x = 2
-        this.mesh.position.y = 0.1
-        this.mesh.position.z = 2
-        this.scene.add(this.mesh);
+        // this.mesh.position.x = 2
+        // this.mesh.position.y = 0.1
+        // this.mesh.position.z = 2
+        // this.scene.add(this.mesh);
     }
 
-    createGrassInstaces()
+    createGrassField()
     {
-        this.instanceMesh = new THREE.InstancedMesh( this.geometry, this.material1, this.instanceCount );
+        this.instanceMesh = new THREE.InstancedMesh( this.geometry, this.material, this.instanceCount );
         this.scene.add( this.instanceMesh );
 
-        let planeSize = 5;
+        let planeSize = 15;
         for(let i = 0; i < this.instanceCount; i++)
         {
             let tempPositionX = Math.random() * planeSize - planeSize / 2;
