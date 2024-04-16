@@ -80,11 +80,11 @@ export default class Grass
         this.instanceMesh = new THREE.InstancedMesh( this.geometry, this.material, this.instanceCount );
         this.scene.add( this.instanceMesh );
 
-        let planeSize = 15;
+        let planeSize = 8.0;
         for(let i = 0; i < this.instanceCount; i++)
         {
-            let tempPositionX = Math.random() * planeSize - planeSize / 2;
-            let tempPositionZ = Math.random() * planeSize - planeSize / 2;
+            let tempPositionX = (Math.random() * planeSize - planeSize / 2);
+            let tempPositionZ = (Math.random() * planeSize - planeSize / 2);
 
             const matrix = new THREE.Matrix4();
             matrix.setPosition(tempPositionX, 0, tempPositionZ);

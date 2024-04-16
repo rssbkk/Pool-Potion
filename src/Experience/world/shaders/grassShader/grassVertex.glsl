@@ -27,7 +27,6 @@ varying vec2 vWindColor;
 
 //     float terrainSize = 100.;
 //     // vGlobalUV = (terrainSize-vec2(modelPosition.xz))/terrainSize;
-
 //     vec4 noise = texture2D(uNoiseTexture,vGlobalUV+uTime*uNoiseSpeed);
 
 //     float sinWaveX = sin(uWindFreq*dot(windDirection, vGlobalUV) + noise.g*uNoiseFactor + uTime * uSpeed) * uWindAmp * (uv.y);
@@ -55,14 +54,20 @@ varying vec2 vWindColor;
 
 void main()
 {
-    float uWindStrength = 3.0;
+    float uWindStrength = 4.5;
     float uGrassBend = 1.85;
+    float uNoiseSpeed = 0.01;
+    float terrainSize = 400.;
     
     vec3 newPosition = position;
 
+    vec4 modelPosition = modelMatrix * instanceMatrix * vec4(position, 1.0); // (* instanceMatrix)
+    vGlobalUV = (terrainSize-vec2(modelPosition.xz))/terrainSize;
+    vec4 noise = texture2D(uNoiseTexture,vGlobalUV+uTime*uNoiseSpeed);
+
     vec2 windOffset = vec2(
-        texture(uNoiseTexture, vec2(0.25, uTime * 0.05)).r - 0.25,
-        texture(uNoiseTexture, vec2(0.75, uTime * 0.025)).r - 0.5
+        texture(uNoiseTexture, vec2(0.25, uTime * 0.05) + noise.xz).r - 0.25,
+        texture(uNoiseTexture, vec2(0.75, uTime * 0.025) + noise.xz).r - 0.5
     );
     windOffset *= pow(uv.y, uGrassBend) / uWindStrength;
     newPosition.xz += windOffset;
