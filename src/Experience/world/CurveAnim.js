@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import gsap from 'gsap';
 
 import Experience from '../Experience.js';
 
@@ -16,7 +17,7 @@ export default class curveAnim
         {
             this.debugFolder = this.debug.pane.addFolder({
                 title: 'curve',
-                expanded: false
+                expanded: true
             });
             this.debugObject = {};
         }
@@ -47,6 +48,7 @@ export default class curveAnim
 
         this.createSpline();
         this.createBox();
+        this.animate();
     }
 
     createSpline()
@@ -65,21 +67,33 @@ export default class curveAnim
 
         this.line = new THREE.Line( geometry, material );
         this.scene.add(this.line);
-
-        console.log(this.curve);
     }
 
     createBox()
     {
-        const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-        const material = new THREE.MeshBasicMaterial();
+        const geometry = new THREE.BoxGeometry( 0.25, 0.25, 0.25 );
+        const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
         this.box = new THREE.Mesh( geometry, material );
-        this.box.position.copy(this.curve.v0);
+        this.box.position.copy(this.curve.getPoint(0));
         this.scene.add(this.box);
+
+        // // Add a slider to control t
+        // this.debugFolder.addBinding(params, 't', { min: 0, max: 1, step: 0.01 }).on('change', (value) => {
+        //     this.updateBoxPosition(value);
+        // });
     }
 
     animate()
     {
-        
+        gsap.to(this, {
+            t: 1,
+            duration: 1.5,
+            repeat: -1, // Repeat the animation infinitely
+            ease: "power3.in",
+            onUpdate: () => {
+                const point = this.curve.getPoint(this.t); // Use the updated value of t to get a new point
+                this.box.position.copy(point); // Update the box's position to this point
+            }
+        });
     }
 }
