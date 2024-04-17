@@ -1,10 +1,5 @@
 export default [
     {
-        name: 'background',
-        type: 'gltf',
-        path: 'models/ruin-scene-draft-one.glb'
-    },
-    {
         name: 'environmentMapTexture',
         type: 'cubeTexture',
         path:
@@ -23,19 +18,19 @@ export default [
         path: 'models/potionGeometry.glb'
     },
     {
-        name: 'grass',
-        type: 'gltf',
-        path: 'models/gass-anim-draft-two.glb'
-    },
-    {
         name: 'landscape',
         type: 'gltf',
-        path: 'models/ruin-scene-draft-one.glb'
+        path: 'models/ruin-scene-draft-two.glb'
     },
     {
         name: 'leaf',
         type: 'gltf',
-        path: 'models/Leaf-draft-one.glb'
+        path: 'models/leaf-draft-one.glb'
+    },
+    {
+        name: 'leafRoot',
+        type: 'gltf',
+        path: 'models/LeafRoot-draft-one.glb'
     },
     {
         name: 'perlinNoiseImage',

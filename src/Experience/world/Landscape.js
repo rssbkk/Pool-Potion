@@ -28,7 +28,6 @@ export default class Landscape
     createLandscape()
     {
         this.model = this.experience.resources.items.landscape.scene;
-        this.model.scale.set(0.25, 0.25, 0.25);
 
         this.model.traverse((child) =>
         {

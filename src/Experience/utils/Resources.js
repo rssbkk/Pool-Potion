@@ -40,6 +40,10 @@ export default class Resources extends EventEmitter
                     (file) =>
                     {
                         this.sourceLoaded(source, file);
+                    },
+                    undefined,
+                    function (error) {
+                        console.error('An error happened:', error);
                     }
                 )
             }
@@ -50,6 +54,10 @@ export default class Resources extends EventEmitter
                     (file) =>
                     {
                         this.sourceLoaded(source, file);
+                    },
+                    undefined,
+                    function (error) {
+                        console.error('An error happened:', error);
                     }
                 )
             }
@@ -60,6 +68,10 @@ export default class Resources extends EventEmitter
                     (file) =>
                     {
                         this.sourceLoaded(source, file);
+                    },
+                    undefined,
+                    function (error) {
+                        console.error('An error happened:', error);
                     }
                 )
             }

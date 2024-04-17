@@ -52,9 +52,9 @@ export default class Leaf
     
     createLeaves()
     {
-        this.samplerMesh = this.Landscape.leafRoot;
-        // this.samplerMesh.scale.set(0.25, 0.25, 0.25);
-
+        this.samplerMesh = this.experience.resources.items.leafRoot.scene.children[0];
+        // this.samplerMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4));
+        
         const sampler = new MeshSurfaceSampler(this.samplerMesh).build();
 
         // dependancies for the loop
