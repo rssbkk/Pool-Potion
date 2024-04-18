@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
+import CustomEase from 'gsap/CustomEase';
+
 
 import Experience from '../Experience.js';
 
@@ -12,6 +14,7 @@ export default class curveAnim
         this.camera = this.experience.camera;
         this.time = this.experience.time;
         this.debug = this.experience.debug;
+        gsap.registerPlugin(CustomEase)
 
         if(this.debug.active)
         {
@@ -26,37 +29,17 @@ export default class curveAnim
         this.leafPositions = [];
         this.mesh = null;
 
-        // // Keep a dictionary of Curve instances
-		// 	this.splines = {
-		// 		GrannyKnot: new Curves.GrannyKnot(),
-		// 		HeartCurve: new Curves.HeartCurve( 3.5 ),
-		// 		VivianiCurve: new Curves.VivianiCurve( 70 ),
-		// 		KnotCurve: new Curves.KnotCurve(),
-		// 		HelixCurve: new Curves.HelixCurve(),
-		// 		TrefoilKnot: new Curves.TrefoilKnot(),
-		// 		TorusKnot: new Curves.TorusKnot( 20 ),
-		// 		CinquefoilKnot: new Curves.CinquefoilKnot( 20 ),
-		// 		TrefoilPolynomialKnot: new Curves.TrefoilPolynomialKnot( 14 ),
-		// 		FigureEightPolynomialKnot: new Curves.FigureEightPolynomialKnot(),
-		// 		DecoratedTorusKnot4a: new Curves.DecoratedTorusKnot4a(),
-		// 		DecoratedTorusKnot4b: new Curves.DecoratedTorusKnot4b(),
-		// 		DecoratedTorusKnot5a: new Curves.DecoratedTorusKnot5a(),
-		// 		DecoratedTorusKnot5c: new Curves.DecoratedTorusKnot5c(),
-		// 		PipeSpline: pipeSpline,
-		// 		SampleClosedSpline: sampleClosedSpline
-		// 	};
-
-        this.createSpline();
         this.createBox();
+        this.createSpline();
         this.animate();
     }
 
     createSpline()
     {
         this.curve = new THREE.QuadraticBezierCurve3(
-            new THREE.Vector3( -5, 0, 0 ),
-            new THREE.Vector3( 10, 8, 0 ),
-            new THREE.Vector3( 5, 0, 0 )
+            new THREE.Vector3().copy(this.box.position),
+            new THREE.Vector3( 0, 5, 0 ),
+            new THREE.Vector3( 0, 0, 0 )
         );
 
         const points = this.curve.getPoints( 5 );
@@ -74,22 +57,20 @@ export default class curveAnim
         const geometry = new THREE.BoxGeometry( 0.25, 0.25, 0.25 );
         const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
         this.box = new THREE.Mesh( geometry, material );
-        this.box.position.copy(this.curve.getPoint(0));
+        this.box.position.set( -5, 0, 0 );
         this.scene.add(this.box);
 
-        // // Add a slider to control t
-        // this.debugFolder.addBinding(params, 't', { min: 0, max: 1, step: 0.01 }).on('change', (value) => {
-        //     this.updateBoxPosition(value);
-        // });
+        console.log(this.box.position);
     }
 
     animate()
     {
         gsap.to(this, {
             t: 1,
+            delay: 0.5,
             duration: 1.5,
             repeat: -1, // Repeat the animation infinitely
-            ease: "power3.in",
+            ease: CustomEase.create("custom", "M0,0 C0.439,0.118 0.355,0.443 0.642,0.512 0.846,0.56 0.939,0.74 1,1 "),ease: CustomEase.create("custom", "M0,0 C0.479,0.111 0.502,0.417 0.674,0.512 0.901,0.636 0.939,0.74 1,1 "),ease: CustomEase.create("custom", "M0,0 C0.523,0.164 0.58,0.472 0.688,0.542 0.89,0.671 0.939,0.74 1,1 "),
             onUpdate: () => {
                 const point = this.curve.getPoint(this.t); // Use the updated value of t to get a new point
                 this.box.position.copy(point); // Update the box's position to this point
