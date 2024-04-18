@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import CustomEase from 'gsap/CustomEase';
 
-
 import Experience from '../Experience.js';
 
 export default class curveAnim
