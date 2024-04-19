@@ -4,11 +4,13 @@ import Sizes from "./utils/Sizes.js";
 import Time from "./utils/Time.js";
 import Camera from './Camera.js';
 import Renderer from './Renderer.js';
+import Raycaster from './Raycaster.js';
 import World from './world/World.js';
 import Resources from './utils/Resources.js';
 import Debug from './utils/Debug.js';
 import sources from './sources.js';
 import ToonMaterial from './world/ToonMaterial.js';
+import InteractionAnimation from './world/InteractionAnimation.js';
 
 let instance = null;
 
@@ -35,8 +37,10 @@ export default class Experience
         this.time = new Time();
         this.scene = new THREE.Scene();
         this.resources = new Resources(sources);
+        this.interactionAnimation = new InteractionAnimation();
         this.toonMaterial = new ToonMaterial().toonMaterial;
         this.camera = new Camera();
+        this.raycaster = new Raycaster();
         this.renderer = new Renderer();
         this.world = new World();
 
@@ -64,5 +68,6 @@ export default class Experience
         this.camera.update();
         this.world.update();
         this.renderer.update();
+        this.raycaster.update();
     }
 }

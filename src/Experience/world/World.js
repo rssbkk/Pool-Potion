@@ -5,7 +5,7 @@ import Grass from './Grass2.js';
 import Landscape from './Landscape.js';
 import Potion from './Potion.js';
 import Leaf from './Leaf.js';
-import InteractionAnimation from './InteractionAnimation.js';
+import curveAnim from './CurveAnim.js';
 
 export default class World
 {
@@ -22,8 +22,8 @@ export default class World
             this.potion = new Potion();
             this.grass = new Grass();
             this.leaf = new Leaf();
-            this.landscape = new Landscape
-            this.InteractionAnimation = new interactionAnimation();
+            this.landscape = new Landscape();
+            this.curveAnim = new curveAnim();
             this.environment = new Environment();
         })
     }

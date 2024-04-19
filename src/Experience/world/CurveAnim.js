@@ -13,7 +13,9 @@ export default class curveAnim
         this.camera = this.experience.camera;
         this.time = this.experience.time;
         this.debug = this.experience.debug;
-        gsap.registerPlugin(CustomEase)
+        this.raycaster = this.experience.raycaster;
+        this.interactionAnimation = this.experience.interactionAnimation;
+
 
         if(this.debug.active)
         {
@@ -24,31 +26,10 @@ export default class curveAnim
             this.debugObject = {};
         }
 
-        this.instanceCount = 200;
-        this.leafPositions = [];
-        this.mesh = null;
+        this.objectsTotest = [];
 
         this.createBox();
-        this.createSpline();
-        this.animate();
-    }
-
-    createSpline()
-    {
-        this.curve = new THREE.QuadraticBezierCurve3(
-            new THREE.Vector3().copy(this.box.position),
-            new THREE.Vector3( 0, 5, 0 ),
-            new THREE.Vector3( 0, 0, 0 )
-        );
-
-        const points = this.curve.getPoints( 5 );
-
-        const geometry = new THREE.BufferGeometry().setFromPoints( points );
-
-        const material = new THREE.MeshBasicMaterial();
-
-        this.line = new THREE.Line( geometry, material );
-        this.scene.add(this.line);
+        this.createInteraction();
     }
 
     createBox()
@@ -58,22 +39,51 @@ export default class curveAnim
         this.box = new THREE.Mesh( geometry, material );
         this.box.position.set( -5, 0, 0 );
         this.scene.add(this.box);
-
-        console.log(this.box.position);
+        this.objectsTotest.push(this.box);
     }
 
-    animate()
+    animate(model)
     {
-        gsap.to(this, {
+        let modelOne = model;
+        const params = {
+            t: 0
+        }
+
+        // Create Animation Curve
+        this.spline = new THREE.QuadraticBezierCurve3(
+            new THREE.Vector3().copy(model),
+            new THREE.Vector3( 0, 5, 0 ),
+            new THREE.Vector3( 0, 0, 0 )
+        );
+
+        gsap.to(params, {
             t: 1,
-            delay: 0.5,
-            duration: 1.5,
-            repeat: -1, // Repeat the animation infinitely
-            ease: CustomEase.create("custom", "M0,0 C0.439,0.118 0.355,0.443 0.642,0.512 0.846,0.56 0.939,0.74 1,1 "),ease: CustomEase.create("custom", "M0,0 C0.479,0.111 0.502,0.417 0.674,0.512 0.901,0.636 0.939,0.74 1,1 "),ease: CustomEase.create("custom", "M0,0 C0.523,0.164 0.58,0.472 0.688,0.542 0.89,0.671 0.939,0.74 1,1 "),
+            delay: 0.5, //this.animationParameters.delay,
+            duration: 1.5, //this.animationParameters.duration,
+            repeat: 0, //this.animationParameters.repeat,
+            ease: CustomEase.create("custom", "M0,0 C0.523,0.164 0.58,0.472 0.688,0.542 0.89,0.671 0.939,0.74 1,1 "),
             onUpdate: () => {
-                const point = this.curve.getPoint(this.t); // Use the updated value of t to get a new point
-                this.box.position.copy(point); // Update the box's position to this point
+                const point = this.spline.getPoint(params.t);
+                model.copy(point);
+                console.log(params.t);
             }
         });
+    }
+
+    createInteraction()
+    {
+        window.addEventListener('click', () => 
+        {
+            if(this.raycaster.currentIntersect) 
+            {
+                let model = this.raycaster.currentIntersect.object;
+
+                // console.log(model);
+                // console.log(model.position);
+                console.log('anything');
+
+                this.animate(model.position)
+            }
+        })
     }
 }
