@@ -29,7 +29,7 @@ export default class Renderer
         this.composer = null;
 
         this.createInstance();
-        //this.postProcess();
+        this.postProcess();
     }
 
     createInstance()
@@ -67,25 +67,29 @@ export default class Renderer
         if(this.debug.active)
         {
             this.debugObject.pixelSize = 3;
-            
-            this.debugObject.pixelAlignedPanning= true;
 
-            this.debugFolder.add( this.debugObject, 'pixelSize' )
-                .min( 1 )
-                .max( 40 )
-                .step( 1 )
-                .onChange( () => {
-                    this.renderPixelatedPass.setPixelSize( this.debugObject.pixelSize );
-                } );
-            this.debugFolder.add( this.renderPixelatedPass, 'normalEdgeStrength' )
-                .min( 0 )
-                .max( 4 )
-                .step( .05 );
-            this.debugFolder.add( this.renderPixelatedPass, 'depthEdgeStrength' )
-                .min( 0 )
-                .max( 2 )
-                .step( .05 );
-            // this.debugFolder.add( this.debugObject, 'pixelAlignedPanning' );
+            this.debugFolder.addBinding( this.debugObject, 'pixelSize',
+            {
+                min: 1,
+                max: 40,
+                step: 1,
+            })
+            .on('change', () => 
+            {
+                this.renderPixelatedPass.setPixelSize( this.debugObject.pixelSize );
+            });
+            this.debugFolder.addBinding( this.renderPixelatedPass, 'normalEdgeStrength',
+            {
+                min: 0,
+                max: 4,
+                step: 0.05
+            });
+            this.debugFolder.addBinding( this.renderPixelatedPass, 'depthEdgeStrength',
+            {
+                min: 0,
+                max: 2,
+                step: 0.05
+            } )
         }
     }
 
@@ -97,7 +101,7 @@ export default class Renderer
 
     update()
     {
-        // this.composer.render();
         this.instance.render( this.scene, this.camera.instance)
+        this.composer.render();
     }
 }

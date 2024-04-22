@@ -25,10 +25,11 @@ export default class Environment
 
     setSunLight()
     {
-        this.sunLight = new THREE.DirectionalLight('#ffffff', 4);
+        let lightColor = { color: '#ffe1aa' };
+        this.sunLight = new THREE.DirectionalLight( lightColor.color, 3.5);
         this.sunLight.castShadow = true;
         this.sunLight.shadow.camera.far = 15;
-        this.sunLight.shadow.mapSize.set(1024, 1024);
+        this.sunLight.shadow.mapSize.set(24, 24);
         this.sunLight.shadow.normalBias = 0.05;
         this.sunLight.position.set(3.5, 2, - 1.25);
         this.scene.add(this.sunLight);
@@ -36,6 +37,13 @@ export default class Environment
         // Debug
         if(this.debug.active)
         {
+            // Sun Light Color
+            this.debugFolder.addBinding(lightColor, 'color')
+            .on('change', () => 
+            {
+                this.sunLight.color.set(lightColor.color)
+            })
+
             // Sun Light Intensity
             this.debugFolder.addBinding(this.sunLight, 'intensity', 
             {
