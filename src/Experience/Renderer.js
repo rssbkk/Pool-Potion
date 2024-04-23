@@ -46,6 +46,42 @@ export default class Renderer
         this.instance.setClearColor('#211d20');
         this.instance.setSize(this.sizes.width, this.sizes.height);
         this.instance.setPixelRatio(this.sizes.pixelRatio);
+
+        if(this.debug.active)
+        {
+            this.debugFolder.addBinding( this.instance.shadowMap, 'type',
+            {
+                options: {
+                    low: THREE.BasicShadowMap,
+                    medium: THREE.PCFShadowMap,
+                    high: THREE.PCFSoftShadowMap
+                }
+            })
+
+            this.debugFolder.addBinding( this.instance, 'toneMapping',
+            {
+                options: {
+                    none:   THREE.NoToneMapping ,
+                    linear: THREE.LinearToneMapping, 
+                    reinhard: THREE.ReinhardToneMapping,
+                    cineon: THREE.CineonToneMapping,
+                    filmic: THREE.ACESFilmicToneMapping,
+                    agX: THREE.AgXToneMapping,
+                    neutral: THREE.NeutralToneMapping
+                }
+            })
+
+            this.debugFolder.addBinding( this.instance, 'toneMappingExposure',
+            {
+                min: 0,
+                max: 4,
+                step: 0.01,
+            })
+            .on('change', () => 
+            {
+                this.renderPixelatedPass.setPixelSize( this.debugObject.pixelSize );
+            });
+        }
     }
 
     postProcess()

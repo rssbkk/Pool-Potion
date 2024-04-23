@@ -18,7 +18,7 @@ export default class InteractionAnimation
         {
             this.debugFolder = this.debug.pane.addFolder({
                 title: 'Interaction Animation',
-                expanded: true
+                expanded: false
             });
         }
 

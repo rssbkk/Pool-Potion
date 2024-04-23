@@ -13,11 +13,12 @@ export default class ToonMaterial {
                 expanded: false
             });
             this.debugObject = {
-                stepSize: this.stepSize
+                stepSize: 0.5,
+                anything: 8
             };
         }
 
-        this.stepSize = 0.3;
+        this.stepSize = 0.5;
         this.toonMaterial = null;
 
         this.createMaterial();
@@ -29,26 +30,34 @@ export default class ToonMaterial {
             gradientMap: this.createGradientMap(this.stepSize),
             precision: "lowp"
         })
+
+        if (this.debug.active) 
+        {
+            this.debugFolder.addBinding(this.toonMaterial, 'precision',
+            {
+                options: {
+                    low: 'lowp',
+                    medium: 'mediump',
+                    high: 'highp'
+                }
+            })
+        }
     }
 
     createGradientMap(stepSize) 
     {
         if (this.debug.active) 
         {
-            this.debugObject.stepSize = this.stepSize;
             this.debugFolder.addBinding(this.debugObject, 'stepSize', {
-                min: 0,
+                min: 0.01,
                 max: 2,
                 step: 0.01,
-                label: 'Step Size'
             })
-            .on('finish', () => 
-            {
-                this.stepSize = this.debugObject.stepSize;
-                this.toonMaterial.dispose(); // Dispose only if necessary
-                this.createMaterial();
-                // Here, propagate the update to all meshes using this.toonMaterial
-                this.updateAllMeshes(); // You'll need to implement this method
+            .on('finish', (value) => {
+                this.stepSize = value;
+                this.toonMaterial.gradientMap = this.createGradientMap(this.stepSize);
+                this.toonMaterial.gradientMap.needsUpdate = true;
+                this.toonMaterial.needsUpdate = true;
             })
         }
 

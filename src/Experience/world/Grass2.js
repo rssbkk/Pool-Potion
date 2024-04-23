@@ -20,50 +20,64 @@ export default class Grass
         this.toonMaterial = this.experience.toonMaterial;
         this.floor = new Floor();
 
-        if(this.debug.active)
-        {
-            this.debugFolder = this.debug.pane.addFolder({
-                title: 'Grass',
-                expanded: false
-            });
-            this.debugObject = {};
-        }
-
         this.instanceCount = 2000;
         this.grassPositions = [];
         this.mesh = null;
 
         this.createGrassBlade();
         this.createGrassField();
+        this.setupDebug();
     }
 
     createGrassBlade()
     {
         // Create Textures
-        const perlinTexture = this.experience.resources.items.perlinNoiseImage;
-        perlinTexture.wrapS = perlinTexture.wrapT = THREE.RepeatWrapping;
+        this.perlinTexture = this.experience.resources.items.perlinNoiseImage;
+        this.perlinTexture.wrapS = this.perlinTexture.wrapT = THREE.RepeatWrapping;
 
-        const noiseScale = 1.5;
+        this.grassDimentions =
+        {
+            peakWidth: 0.005,
+            baseWidth: 0.02,
+            height: 0.25,
+            heightSegments: 4
+        }
 
-        let peakWidth = 0.005;
-        let baseWidth = 0.02;
-        let height = 0.25;
+        this.grassUniforms =
+        {
+            uTime: 0, 
+            uWindStrength: 4.5 ,
+            uGrassBend: 1.85 ,
+            uNoiseSpeed: 0.01 ,
+            uTerrainSize: 400. ,
+            uTipColor1: new THREE.Color(0x9bd38d),
+            uTipColor2: new THREE.Color(0x1f352a),
+            uTipColor3: new THREE.Color(0xffff00) ,
+            uBaseColor1: new THREE.Color(0x228b22) ,
+            uBaseColor2: new THREE.Color(0x313f1b) ,
+            uNoiseScale: 1.5,
+            uColorOffset: 1
+        }
 
-        this.geometry = new THREE.CylinderGeometry(peakWidth, baseWidth, height, 3, 4, true);
+        this.geometry = new THREE.CylinderGeometry( this.grassDimentions.peakWidth, this.grassDimentions.baseWidth, this.grassDimentions.height, 3, this.grassDimentions.heightSegments, true);
         this.material1 = new THREE.MeshBasicMaterial();
         this.material = new THREE.ShaderMaterial({
             vertexShader: grassVertexShader,
             fragmentShader: grassFragmentShader,
             uniforms: {
-                uTime: { value: 0.0 },
-                uStrength: { value: 10 },
-                uTipColor1: { value: new THREE.Color(0x9bd38d)},
-                uTipColor2: { value: new THREE.Color(0x1f352a)},
-                uTipColor3: { value: new THREE.Color(0xffff00) }, // Bright yellow
-                uBaseColor1: { value: new THREE.Color(0x228b22) }, // Darker green
-                uBaseColor2: { value: new THREE.Color(0x313f1b) },
-                uNoiseTexture: { value: perlinTexture },
-                uNoiseScale: { value: noiseScale }
+                uTime: new THREE.Uniform(this.grassUniforms.uTime),
+                uWindStrength: new THREE.Uniform(this.grassUniforms.uWindStrength),
+                uGrassBend: new THREE.Uniform(this.grassUniforms.uGrassBend),
+                uNoiseSpeed: new THREE.Uniform(this.grassUniforms.uNoiseSpeed),
+                uTerrainSize: new THREE.Uniform(this.grassUniforms.uTerrainSize),
+                uTipColor1: new THREE.Uniform(this.grassUniforms.uTipColor1),
+                uTipColor2: new THREE.Uniform(this.grassUniforms.uTipColor2),
+                uTipColor3: new THREE.Uniform(this.grassUniforms.uTipColor3),
+                uBaseColor1: new THREE.Uniform(this.grassUniforms.uBaseColor1),
+                uBaseColor2: new THREE.Uniform(this.grassUniforms.uBaseColor2),
+                uNoiseTexture: new THREE.Uniform(this.perlinTexture),
+                uNoiseScale: new THREE.Uniform(this.grassUniforms.uNoiseScale),
+                uColorOffset: new THREE.Uniform(this.grassUniforms.uColorOffset)
             },
             // wireframe: true
         });
@@ -93,8 +107,187 @@ export default class Grass
         this.instanceMesh.instanceMatrix.needsUpdate = true;
     }
 
+    setupDebug()
+    {
+        if(this.debug.active)
+        {
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'Grass',
+                expanded: false
+            });
+
+        // Folder for geometry properties
+        const grassGeometry = this.debugFolder.addFolder({ title: 'Geometry Properties' });
+
+        grassGeometry.addBinding(this.grassDimentions, 'peakWidth', {
+            label: 'Peak Width',
+            min: 0.001,
+            max: 0.1,
+            step: 0.001
+        }).on('change', (value) => {
+            this.updateGeometry();
+        });
+
+        grassGeometry.addBinding(this.grassDimentions, 'baseWidth', {
+            label: 'Base Width',
+            min: 0.01,
+            max: 0.1,
+            step: 0.001
+        }).on('change', (value) => {
+            this.updateGeometry();
+        });
+
+        grassGeometry.addBinding(this.grassDimentions, 'height', {
+            label: 'Height',
+            min: 0.1,
+            max: 1.0,
+            step: 0.01
+        }).on('change', (value) => {
+            this.updateGeometry();
+        });
+        
+        grassGeometry.addBinding(this.grassDimentions, 'heightSegments', {
+            label: 'Height Segments',
+            min: 1,
+            max: 20,
+            step: 1
+        }).on('change', (value) => {
+            this.updateGeometry();
+        });
+
+        this.updateGeometry = () => {
+            const newGeometry = new THREE.CylinderGeometry(this.grassDimentions.peakWidth, this.grassDimentions.baseWidth, this.grassDimentions.height, 3, this.grassDimentions.heightSegments, true);
+            this.instanceMesh.geometry.dispose();
+            this.instanceMesh.geometry = newGeometry;
+        };
+
+        // // Folder for shader properties
+        const shaderFolder = this.debugFolder.addFolder({ title: 'Shader Properties' });
+
+        shaderFolder.addBinding(this.grassUniforms, 'uNoiseScale', {
+            label: 'Noise Scale',
+            min: 0.1,
+            max: 5,
+            step: 0.1
+        }).on('change', () => {
+            this.updateMaterial();
+        });
+
+        shaderFolder.addBinding(this.grassUniforms, 'uWindStrength', {
+            min: 0,
+            max: 10,
+            step: 0.1,
+            label: 'Wind Strength'
+        }).on('change', () => {
+            this.updateMaterial();
+        });
+        
+        shaderFolder.addBinding(this.grassUniforms, 'uGrassBend', {
+            min: 0,
+            max: 5,
+            step: 0.1,
+            label: 'Grass Bend'
+        }).on('change', (value) => {
+            this.updateMaterial();
+        });
+        
+        shaderFolder.addBinding(this.grassUniforms, 'uNoiseSpeed', {
+            min: 0,
+            max: 0.1,
+            step: 0.001,
+            label: 'Noise Speed'
+        }).on('change', () => {
+            this.updateMaterial();
+        });
+        
+        shaderFolder.addBinding(this.grassUniforms, 'uTerrainSize', {
+            min: 100,
+            max: 1000,
+            step: 10,
+            label: 'Terrain Size'
+        }).on('change', () => {
+            this.updateMaterial();
+        });
+        
+        // // Folder for grass color properties
+        const colorFolder = this.debugFolder.addFolder({ title: 'Color Properties' });
+
+        colorFolder.addBinding(this.grassUniforms, 'uColorOffset', {
+            min: 0,
+            max: 5,
+            step: 0.1
+        }).on('change', () => {
+            this.updateMaterial();
+        });
+
+        colorFolder.addBinding(this.grassUniforms, 'uTipColor1', {
+            view: 'color',
+            label: 'Tip Color 1',
+            format: 'hex'
+        }).on('change', () => {
+            this.updateMaterialColor();
+        });
+        
+        colorFolder.addBinding(this.grassUniforms, 'uTipColor2', {
+            view: 'color',
+            label: 'Tip Color 2',
+            format: 'hex'
+        }).on('change', () => {
+            this.updateMaterialColor();
+        });
+        
+        colorFolder.addBinding(this.grassUniforms, 'uTipColor3', {
+            view: 'color',
+            label: 'Tip Color 3',
+            format: 'hex'
+        }).on('change', () => {
+            this.updateMaterialColor();
+        });
+        
+        colorFolder.addBinding(this.grassUniforms, 'uBaseColor1', {
+            view: 'color',
+            label: 'Base Color 1',
+            format: 'hex'
+        }).on('change', () => {
+            this.updateMaterialColor();
+        });
+        
+        colorFolder.addBinding(this.grassUniforms, 'uBaseColor2', {
+            view: 'color',
+            label: 'Base Color 2',
+            format: 'hex'
+        }).on('change', () => {
+            this.updateMaterialColor();
+        });
+
+        this.updateMaterial = () => 
+        {
+            // Update only the uniform values directly instead of recreating the material
+            Object.keys(this.grassUniforms).forEach(key => 
+            {
+                if (key in this.material.uniforms) 
+                {
+                    this.material.uniforms[key].value = this.grassUniforms[key];
+                }
+            })
+        };
+        
+        this.updateMaterialColor = () => 
+        {
+            // Update only the uniform values directly instead of recreating the material
+            Object.keys(this.grassUniforms).forEach(key => 
+                {
+                    if (key in this.material.uniforms) 
+                    {
+                        this.material.uniforms[key].value.set(this.grassUniforms[key]);
+                    }
+                })
+            };
+        };
+    }
+
     update()
     {
-        this.material.uniforms.uTime.value = this.time.elapsed * 0.001;
+        this.material.uniforms.uTime.value = this.grassUniforms.uTime = this.time.elapsed * 0.001;
     }
 }

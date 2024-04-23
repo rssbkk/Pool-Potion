@@ -23,83 +23,9 @@ export default class Potion
             this.debugObject = {};
         }
 
-        this.createGeometry();
         this.createMaterial()
         this.createInteraction();
         this.createMesh()
-    }
-
-    createGeometry()
-    {
-        // Potion Dimension Tweaks
-        const potionDimensions = 
-        {
-            XScale : 1.565,
-            YScale : 1.565,
-            divisions: 64
-        }
-
-        this.geometry = this.resources.items.potionGeometry.scene.children[0].geometry
-
-        if (this.debug.active) 
-        {
-            const geometryTweaks = this.debugFolder.addFolder({
-              title: 'Geometry',
-            });
-          
-            // X Scale
-            geometryTweaks.addBinding(potionDimensions, 'XScale', 
-            {
-              label: 'X Size',
-              min: 0,
-              max: 10,
-              step: 0.005,
-            }).on('change', (value) => {
-              // Assuming createMesh is a method or an existing mesh you want to dispose of
-              // This might need to be potionMesh.dispose() depending on your setup
-              if (createMesh.dispose) createMesh.dispose();
-              potionMesh.geometry = new THREE.PlaneGeometry(
-                potionDimensions.XScale,
-                potionDimensions.YScale,
-                potionDimensions.divisions,
-                potionDimensions.divisions
-              );
-            });
-          
-            // Y Scale
-            geometryTweaks.addBinding(potionDimensions, 'YScale', 
-            {
-              label: 'Y Size',
-              min: 0,
-              max: 10,
-              step: 0.005,
-            }).on('change', () => {
-              potionMesh.geometry.dispose();
-              potionMesh.geometry = new THREE.PlaneGeometry(
-                potionDimensions.XScale,
-                potionDimensions.YScale,
-                potionDimensions.divisions,
-                potionDimensions.divisions
-              );
-            });
-          
-            // Divisions
-            geometryTweaks.addBinding(potionDimensions, 'divisions', 
-            {
-              label: 'Divisions',
-              min: 4,
-              max: 1028,
-              step: 8,
-            }).on('change', () => {
-              potionMesh.geometry.dispose();
-              potionMesh.geometry = new THREE.PlaneGeometry(
-                potionDimensions.XScale,
-                potionDimensions.YScale,
-                potionDimensions.divisions,
-                potionDimensions.divisions
-              );
-            });
-        }
     }
 
     createMaterial()
@@ -310,10 +236,8 @@ export default class Potion
 
     createMesh()
     {
-        
-        let potionMesh = new THREE.Mesh( this.geometry, this.material);
-        
-        // potionMesh.rotation.x = - Math.PI * 0.5;
+        const geometry = this.resources.items.potionGeometry.scene.children[0].geometry
+        let potionMesh = new THREE.Mesh( geometry, this.material);
         
         potionMesh.position.x = 0;
         potionMesh.position.y = 0.45;
@@ -322,33 +246,33 @@ export default class Potion
 
         if(this.debug.active)
         {
-            const positionTweaks = this.debugFolder.addFolder({
-                title: 'Potion Position',
-              });
-              
-              // X Position
-              positionTweaks.addBinding(potionMesh.position, 'x', {
-                min: -10,
-                max: 10,
-                step: 0.5,
-                label: 'X Position',
-              });
-              
-              // Y Position
-              positionTweaks.addBinding(potionMesh.position, 'y', {
-                min: -10,
-                max: 10,
-                step: 0.01,
-                label: 'Y Position',
-              });
-              
-              // Z Position
-              positionTweaks.addBinding(potionMesh.position, 'z', {
-                min: -10,
-                max: 10,
-                step: 0.5,
-                label: 'Z Position',
-              });
+          const positionTweaks = this.debugFolder.addFolder({
+              title: 'Potion Position',
+            });
+            
+            // X Position
+            positionTweaks.addBinding(potionMesh.position, 'x', {
+              min: -10,
+              max: 10,
+              step: 0.5,
+              label: 'X Position',
+            });
+            
+            // Y Position
+            positionTweaks.addBinding(potionMesh.position, 'y', {
+              min: -10,
+              max: 10,
+              step: 0.01,
+              label: 'Y Position',
+            });
+            
+            // Z Position
+            positionTweaks.addBinding(potionMesh.position, 'z', {
+              min: -10,
+              max: 10,
+              step: 0.5,
+              label: 'Z Position',
+            });
         }
     }
 

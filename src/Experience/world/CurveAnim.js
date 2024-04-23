@@ -17,14 +17,14 @@ export default class curveAnim
         this.interactionAnimation = this.experience.interactionAnimation;
 
 
-        if(this.debug.active)
-        {
-            this.debugFolder = this.debug.pane.addFolder({
-                title: 'curve',
-                expanded: true
-            });
-            this.debugObject = {};
-        }
+        // if(this.debug.active)
+        // {
+        //     this.debugFolder = this.debug.pane.addFolder({
+        //         title: 'curve',
+        //         expanded: true
+        //     });
+        //     this.debugObject = {};
+        // }
 
         this.objectsTotest = [];
 
