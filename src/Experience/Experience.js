@@ -59,6 +59,7 @@ export default class Experience
 
     resize()
     {
+        console.log('nd working here');
         this.camera.resize();
         this.renderer.resize();
     }

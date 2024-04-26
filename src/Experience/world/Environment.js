@@ -10,76 +10,36 @@ export default class Environment
         this.resources = this.experience.resources;
         this.debug = this.experience.debug;
 
-        if(this.debug.active)
-        {
-            this.debugFolder = this.debug.pane.addFolder({
-                title: 'environment',
-                expanded: false
-            });
-            this.debugObject = {};
-        }
-
         this.setSunLight();
+        this.setAmbient();
         this.setEnvironmentMap();
+        this.setupDebug();
+    }
+
+    setAmbient()
+    {
+        this.ambientightVariables = { 
+            color: '#b88f8f'
+        };
+
+        this.ambientLight = new THREE.AmbientLight( this.ambientightVariables.color, 1 );
+        this.scene.add( this.ambientLight );
     }
 
     setSunLight()
     {
-        let lightColor = { color: '#ffe1aa' };
-        this.sunLight = new THREE.DirectionalLight( lightColor.color, 3.5);
+        this.sunLightVariables = { 
+            color: '#ffe1aa',
+            shadowMapSize: 24
+        };
+
+        this.sunLight = new THREE.DirectionalLight( this.sunLightVariables.color, 3.5);
         this.sunLight.castShadow = true;
         this.sunLight.shadow.camera.far = 15;
-        this.sunLight.shadow.mapSize.set(24, 24);
+        this.sunLight.shadow.mapSize.set(this.sunLightVariables.shadowMapSize, this.sunLightVariables.shadowMapSize);
         this.sunLight.shadow.normalBias = 0.05;
         this.sunLight.position.set(3.5, 2, - 1.25);
         this.scene.add(this.sunLight);
-
-        // Debug
-        if(this.debug.active)
-        {
-            // Sun Light Color
-            this.debugFolder.addBinding(lightColor, 'color')
-            .on('change', () => 
-            {
-                this.sunLight.color.set(lightColor.color)
-            })
-
-            // Sun Light Intensity
-            this.debugFolder.addBinding(this.sunLight, 'intensity', 
-            {
-                label: 'sunLightIntensity',
-                min: 0,
-                max: 10,
-                step: 0.001,
-            });
-            
-            // Sun Light Position X
-            this.debugFolder.addBinding(this.sunLight.position, 'x', 
-            {
-                label: 'sunLightX',
-                min: -5,
-                max: 5,
-                step: 0.001,
-            });
-            
-            // Sun Light Position Y
-            this.debugFolder.addBinding(this.sunLight.position, 'y', 
-            {
-                label: 'sunLightY',
-                min: -5,
-                max: 5,
-                step: 0.001,
-            });
-            
-            // Sun Light Position Z
-            this.debugFolder.addBinding(this.sunLight.position, 'z', 
-            {
-                label: 'sunLightZ',
-                min: -5,
-                max: 5,
-                step: 0.001,
-            });
-        }
     }
 
     setEnvironmentMap()
@@ -104,12 +64,91 @@ export default class Environment
             })
         }
         this.environmentMap.updateMaterials();
-
-
-        // Debug
+    }
+    
+    setupDebug()
+    {
         if(this.debug.active)
         {
-            this.debugFolder.addBinding(this.environmentMap, 'intensity', 
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'Environment',
+                expanded: true
+            });
+            
+            // Ambient light Debug
+            const ambientDebug = this.debugFolder.addFolder({ title: 'Ambient Debug' });
+
+            ambientDebug.addBinding(this.ambientightVariables, 'color')
+            .on('change', () => 
+            {
+                this.ambientLight.color.set(this.ambientightVariables.color)
+            })
+
+            ambientDebug.addBinding(this.ambientLight, 'intensity', 
+            {
+                label: 'Ambient Intensity',
+                min: 0.1,
+                max: 10,
+                step: 0.1,
+            });
+
+            // Sun Light Debug
+            const sunDebug = this.debugFolder.addFolder({ title: 'Sun Debug' });
+        
+            sunDebug.addBinding(this.sunLightVariables, 'color')
+            .on('change', () => 
+            {
+                this.sunLight.color.set(this.sunLightVariables.color)
+            })
+
+            sunDebug.addBinding(this.sunLightVariables, 'shadowMapSize',
+            {
+                label: 'Sun Shadow Map',
+                min: 6,
+                max: 1024,
+                step: 6
+            })
+            .on('change', (value) =>
+            {
+                this.sunLight.shadow.mapSize.set(value, value)
+            })
+        
+            sunDebug.addBinding(this.sunLight, 'intensity', 
+            {
+                label: 'sunLightIntensity',
+                min: 0,
+                max: 10,
+                step: 0.001,
+            });
+            
+            sunDebug.addBinding(this.sunLight.position, 'x', 
+            {
+                label: 'sunLightX',
+                min: -5,
+                max: 5,
+                step: 0.001,
+            });
+            
+            sunDebug.addBinding(this.sunLight.position, 'y', 
+            {
+                label: 'sunLightY',
+                min: -5,
+                max: 5,
+                step: 0.001,
+            });
+            
+            sunDebug.addBinding(this.sunLight.position, 'z', 
+            {
+                label: 'sunLightZ',
+                min: -5,
+                max: 5,
+                step: 0.001,
+            });
+        
+            // Environment map debug
+            const envDebug = this.debugFolder.addFolder({ title: 'EnvMap Debug' });
+
+            envDebug.addBinding(this.environmentMap, 'intensity', 
             {
                 min: 0,
                 max: 4,

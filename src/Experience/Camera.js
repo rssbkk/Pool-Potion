@@ -37,12 +37,12 @@ export default class Camera
     setControls()
     {
         this.controls = new OrbitControls(this.instance, this.canvas);
-        this.controls.enableDamping = true;
+        // this.controls.enableDamping = true;
         // this.controls.enablePan = false;
         // this.controls.maxZoom = 1.3;
         // this.controls.minZoom = 0.45;
-        // this.controls.maxPolarAngle = 1.05;
-        // this.controls.minPolarAngle = 0.5;
+        // this.controls.maxPolarAngle = 1.2;
+        // this.controls.minPolarAngle = 0.65;
 
         if(this.debug.active)
         {
@@ -94,7 +94,8 @@ export default class Camera
 
     resize()
     {
-        this.instance.aspect = this.sizes.width / this.sizes.height
+        this.instance.left = - this.sizes.aspectRatio;
+        this.instance.right = this.sizes.aspectRatio;
         this.instance.updateProjectionMatrix()
     }
 

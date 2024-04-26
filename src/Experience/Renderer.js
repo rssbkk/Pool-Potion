@@ -131,6 +131,7 @@ export default class Renderer
 
     resize()
     {
+        this.composer.setSize(this.sizes.width, this.sizes.height);
         this.instance.setSize(this.sizes.width , this.sizes.height)
         this.instance.setPixelRatio(this.sizes.pixelRatio)
     }

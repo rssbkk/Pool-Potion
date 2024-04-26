@@ -13,14 +13,7 @@ export default class Landscape
         this.debug = this.experience.debug;
         this.toonMaterial = this.experience.toonMaterial;
 
-        if(this.debug.active)
-        {
-            this.LandscapeTweaks = this.debug.pane.addFolder({
-                title: 'Landscape',
-                expanded: false
-            });
-            this.debugObject = {};
-        }
+        this.setupDebug();
         this.createLandscape();
         this.seperateParts();
     }
@@ -66,5 +59,17 @@ export default class Landscape
             // Apply the new material to the leaf
             leaf.material = material;
         });
+    }
+
+    setupDebug()
+    {
+        if(this.debug.active)
+        {
+            this.LandscapeTweaks = this.debug.pane.addFolder({
+                title: 'Landscape',
+                expanded: false
+            });
+            this.debugObject = {};
+        }
     }
 }
