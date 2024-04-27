@@ -28,18 +28,24 @@ export default class curveAnim
 
         this.objectsTotest = [];
 
-        this.createBox();
+        this.createBox(5);
         this.createInteraction();
     }
 
-    createBox()
+    createBox(count)
     {
         const geometry = new THREE.BoxGeometry( 0.25, 0.25, 0.25 );
-        const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
-        this.box = new THREE.Mesh( geometry, material );
-        this.box.position.set( -5, 0, 0 );
-        this.scene.add(this.box);
-        this.objectsTotest.push(this.box);
+        const material = new THREE.MeshBasicMaterial({ color: Math.random(), Math.random(), Math.random()  });
+
+        for(let i = 0; i < count; i++ )
+        {
+            const name = "box" + i;
+            console.log(name);
+        }
+        this.box1 = new THREE.Mesh( geometry, material );
+        this.box1.position.set( -5, 0, 0 );
+        this.scene.add(this.box1);
+        this.objectsTotest.push(this.box1);
     }
 
     createInteraction()
