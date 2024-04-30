@@ -11,18 +11,12 @@ export default class InteractionAnimation
         this.experience = new Experience();
         this.debug = this.experience.debug;
         this.scene = this.experience.scene;
+        this.raycaster = this.experience.raycaster;
 
         gsap.registerPlugin(CustomEase)
 
-        if(this.debug.active)
-        {
-            this.debugFolder = this.debug.pane.addFolder({
-                title: 'Interaction Animation',
-                expanded: false
-            });
-        }
-
         this.animationParametersAndSetUp();
+        this.triggerAnimation()
     }
 
     animationParametersAndSetUp()
@@ -37,6 +31,11 @@ export default class InteractionAnimation
         // Debug
         if(this.debug.active)
         {
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'Interaction Animation',
+                expanded: false
+            });
+
             this.debugFolder.addBinding(this.animationParameters, 'delay', { min: 0, max: 2, step: 0.1, label: 'Delay' });
             this.debugFolder.addBinding(this.animationParameters, 'duration', { min: 0, max: 3, step: 0.1, label: 'Duration' });
             this.debugFolder.addBinding(this.animationParameters, 'repeat', { min: -1, max: 1, step: 1, label: 'Repeat' });
@@ -51,14 +50,14 @@ export default class InteractionAnimation
 
         // Create Animation Curve
         this.spline = new THREE.CatmullRomCurve3([
-            new THREE.Vector3().copy(model), // Assuming 'model' is a mesh and copying its position
+            new THREE.Vector3().copy(model),
             new THREE.Vector3(model.x * 0.95, model.y + 1.5, model.z * 0.95),
             new THREE.Vector3(model.x * 0.5, model.y + 0.75, model.z * 0.5),
             new THREE.Vector3(0, 3, 0),
             new THREE.Vector3(0, 0, 0)
         ]);
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 }); // Example: Red color
-        const points = this.spline.getPoints(50); // Generates 50 points along the curve
+        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        const points = this.spline.getPoints(50);
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const line = new THREE.Line(geometry, material);
         this.scene.add(line);
@@ -75,6 +74,16 @@ export default class InteractionAnimation
                 model.copy(point);
             }
             
+        });
+    }
+
+    triggerAnimation()
+    {
+        window.addEventListener('click', () => {
+            if (this.objectsToTest) {
+                console.log(this.raycaster.currentIntersect);
+                animate(this.raycaster.currentIntersect);
+            }
         });
     }
 }

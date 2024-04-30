@@ -1,51 +1,39 @@
 import * as THREE from 'three'
 import Experience from './Experience.js'
 
-import curveAnim from './world/CurveAnim.js';
-
-export default class Raycaster
-{
-    constructor()
-    {
+export default class Raycaster {
+    constructor() {
         this.experience = new Experience();
         this.camera = this.experience.camera;
         this.sizes = this.experience.sizes;
-        this.curveAnim = new curveAnim();
 
-        this.objectsToTest = this.curveAnim.objectsTotest;
         this.currentIntersect = null;
 
         this.createPointer();
         this.createInstance();
     }
 
-    createPointer()
-    {
-        this.pointer = new THREE.Vector2()
+    createPointer() {
+        this.pointer = new THREE.Vector2();
 
-        window.addEventListener('pointermove', (event) =>
-        {
-            this.pointer.x = (event.clientX / this.sizes.width) * 2 - 1
-            this.pointer.y = - (event.clientY / this.sizes.height) * 2 + 1
-        })
+        window.addEventListener('pointermove', (event) => {
+            this.pointer.x = (event.clientX / this.sizes.width) * 2 - 1;
+            this.pointer.y = - (event.clientY / this.sizes.height) * 2 + 1;
+        });
     }
 
-    createInstance()
-    {
+    createInstance() {
         this.instance = new THREE.Raycaster();
     }
 
-    update()
-    {
-        this.instance.setFromCamera(this.pointer, this.camera.instance)
+    update() {
+        this.instance.setFromCamera(this.pointer, this.camera.instance);
 
-        const intersects = this.instance.intersectObjects(this.objectsToTest)
-
-        if(intersects.length) {
+        const intersects = this.instance.intersectObjects(this.objectsToTest);
+        if (intersects.length) {
             this.currentIntersect = intersects[0];
         } else {
-            this.currentIntersect = null;
-        };
+            this.currentIntersect = [];
+        }
     }
-
 }

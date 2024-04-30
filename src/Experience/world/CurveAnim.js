@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import gsap from 'gsap';
-import CustomEase from 'gsap/CustomEase';
 
 import Experience from '../Experience.js';
 
@@ -26,41 +24,44 @@ export default class curveAnim
         //     this.debugObject = {};
         // }
 
-        this.objectsTotest = [];
-
         this.createBox(5);
-        this.createInteraction();
+        //this.createInteraction();
     }
 
     createBox(count)
     {
         const geometry = new THREE.BoxGeometry( 0.25, 0.25, 0.25 );
-        const material = new THREE.MeshBasicMaterial({ color: Math.random(), Math.random(), Math.random()  });
+        const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
 
         for(let i = 0; i < count; i++ )
         {
-            const name = "box" + i;
-            console.log(name);
+            this.box = new THREE.Mesh( geometry, material );
+            this.box.position.set( 5 * Math.random() - 2.5, 0.5, 5 * Math.random() - 2.5);
+            this.box.userData.type = "interactive";
+            this.scene.add(this.box);
         }
-        this.box1 = new THREE.Mesh( geometry, material );
-        this.box1.position.set( -5, 0, 0 );
-        this.scene.add(this.box1);
-        this.objectsTotest.push(this.box1);
     }
 
-    createInteraction()
-    {
-        window.addEventListener('click', () => 
-        {
-            if(this.raycaster.currentIntersect) 
-            {
-                let model = this.raycaster.currentIntersect.object;
-
-                // console.log(model);
-                // console.log(model.position);
-
-                this.interactionAnimation.animate(model.position)
-            }
-        })
-    }
+    // createInteraction()
+    // { 
+    //     window.addEventListener('click', () => 
+    //     {
+    //         if(this.raycaster.currentIntersect) 
+    //         {
+    //             this.interactionAnimation.animate(intersects[0])
+    //         }
+    //     })
+    //}
 }
+
+// update()
+//     {
+
+//         const intersects = this.raycaster.instance.intersectObjects(this.objectsToTest)
+
+//         if(intersects.length) {
+//             this.currentIntersect = intersects[0];
+//         } else {
+//             this.currentIntersect = null;
+//         };
+//     }
