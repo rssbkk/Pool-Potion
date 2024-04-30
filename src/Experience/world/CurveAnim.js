@@ -12,7 +12,6 @@ export default class curveAnim
         this.time = this.experience.time;
         this.debug = this.experience.debug;
         this.raycaster = this.experience.raycaster;
-        this.interactionAnimation = this.experience.interactionAnimation;
 
 
         // if(this.debug.active)
@@ -25,7 +24,6 @@ export default class curveAnim
         // }
 
         this.createBox(5);
-        //this.createInteraction();
     }
 
     createBox(count)
@@ -41,27 +39,4 @@ export default class curveAnim
             this.scene.add(this.box);
         }
     }
-
-    // createInteraction()
-    // { 
-    //     window.addEventListener('click', () => 
-    //     {
-    //         if(this.raycaster.currentIntersect) 
-    //         {
-    //             this.interactionAnimation.animate(intersects[0])
-    //         }
-    //     })
-    //}
 }
-
-// update()
-//     {
-
-//         const intersects = this.raycaster.instance.intersectObjects(this.objectsToTest)
-
-//         if(intersects.length) {
-//             this.currentIntersect = intersects[0];
-//         } else {
-//             this.currentIntersect = null;
-//         };
-//     }

@@ -11,12 +11,10 @@ export default class InteractionAnimation
         this.experience = new Experience();
         this.debug = this.experience.debug;
         this.scene = this.experience.scene;
-        this.raycaster = this.experience.raycaster;
 
         gsap.registerPlugin(CustomEase)
 
         this.animationParametersAndSetUp();
-        this.triggerAnimation()
     }
 
     animationParametersAndSetUp()
@@ -72,17 +70,6 @@ export default class InteractionAnimation
             onUpdate: () => {
                 const point = this.spline.getPoint(params.t);
                 model.copy(point);
-            }
-            
-        });
-    }
-
-    triggerAnimation()
-    {
-        window.addEventListener('click', () => {
-            if (this.objectsToTest) {
-                console.log(this.raycaster.currentIntersect);
-                animate(this.raycaster.currentIntersect);
             }
         });
     }
