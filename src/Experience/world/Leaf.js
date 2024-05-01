@@ -26,7 +26,7 @@ export default class Leaf
             this.debugObject = {};
         }
 
-        this.instanceCount = 200;
+        this.instanceCount = 250;
         this.leafPositions = [];
         this.mesh = null;
 
@@ -43,31 +43,57 @@ export default class Leaf
         this.leafGeometry.scale(0.05, 0.05, 0.05);
 
         this.leafMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff61d5
+            color: 0xff61d5,
+            side: THREE.DoubleSide
         });
 
         this.leafMesh = new THREE.InstancedMesh(this.leafGeometry, this.leafMaterial, this.instanceCount);
+        this.leafMesh.position.y = 3;
         this.scene.add(this.leafMesh);
     }
     
     createLeaves()
     {
-        this.samplerMesh = this.experience.resources.items.leafRoot.scene.children[0];
-        // this.samplerMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4));
+        // this.samplerMesh = this.experience.resources.items.leafRoot.scene.children[0];
+        this.samplerMesh = new THREE.Mesh(new THREE.SphereGeometry( 0.75, 9, 7 ));
         
         const sampler = new MeshSurfaceSampler(this.samplerMesh).build();
 
         // dependancies for the loop
         const tempPosition = new THREE.Vector3();
+        const tempNormal = new THREE.Vector3();
+        const quaternion = new THREE.Quaternion();
+        const upVector = new THREE.Vector3(0, 1, 0); // Assuming Y is up in your world space
+
         const tempObject = new THREE.Object3D();
 
         for (let i = 0; i < this.instanceCount; i++)
         {
-            sampler.sample(tempPosition);
-            tempObject.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
-            tempObject.updateMatrix();
-            this.leafMesh.setMatrixAt(i, tempObject.matrix);
+            sampler.sample(tempPosition, tempNormal);
+            //tempObject.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
+            quaternion.setFromUnitVectors(upVector, tempNormal.normalize());
+            const matrix = new THREE.Matrix4();
+                matrix.compose(
+                tempPosition,
+                quaternion,
+                new THREE.Vector3(1, 1, 1) // scale
+            );
+            this.leafMesh.setMatrixAt(i, matrix);
         }
+        for (let i = 0; i < this.instanceCount; i++)
+        {
+            sampler.sample(tempPosition, tempNormal);
+            //tempObject.position.set(tempPosition.x, tempPosition.y, tempPosition.z);
+            quaternion.setFromUnitVectors(upVector, tempNormal.normalize());
+            const matrix = new THREE.Matrix4();
+                matrix.compose(
+                tempPosition,
+                quaternion,
+                new THREE.Vector3(1, 1, 1) // scale
+            );
+            this.leafMesh.setMatrixAt(i, matrix);
+        }
+        this.leafMesh.instanceMatrix.needsUpdate = true;
     }
     
     update()
