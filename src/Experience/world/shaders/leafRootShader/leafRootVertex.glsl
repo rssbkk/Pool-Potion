@@ -8,8 +8,6 @@ uniform float uNoiseSpeed;
 uniform float uTerrainSize;
 uniform float uColorOffset;
 
-attribute float instancePhase;
-
 varying float vVertexHeight;
 varying vec3 vColor;
 varying vec2 vGlobalUV;
@@ -22,7 +20,7 @@ void main()
 {
     vec3 newPosition = position;
 
-    vec4 modelPosition = modelMatrix * instanceMatrix * vec4(position, 1.0);
+    vec4 modelPosition = modelMatrix * vec4(position, 1.0); // (* instanceMatrix)
     vGlobalUV = (uTerrainSize-vec2(modelPosition.xz)) / uTerrainSize;
     vec4 noise = texture2D(uNoiseTexture,vGlobalUV+uTime*uNoiseSpeed);
 
@@ -30,11 +28,14 @@ void main()
         texture(uNoiseTexture, vec2(0.25, uTime * 0.05) + noise.xz).r - 0.25,
         texture(uNoiseTexture, vec2(0.75, uTime * 0.025) + noise.xz).r - 0.5
     );
-    windOffset *= uLeafRootBend / uWindStrength;
+    windOffset *= pow(uv.y, uLeafRootBend) / uWindStrength;
     newPosition.xz += windOffset;
 
-    vec4 worldPosition = instanceMatrix * vec4(newPosition, 1.0);
-    worldPosition += sin(uTime * 2.0 + instancePhase) * 0.02;
+    vec4 worldPosition = vec4(newPosition, 1.0);
     gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
+
+    // Varyings
+    vVertexHeight = modelPosition.y;
+    vVertexHeight *= uColorOffset;
 
 }
