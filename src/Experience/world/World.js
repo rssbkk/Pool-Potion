@@ -38,9 +38,9 @@ export default class World
         {
             this.grass.update();
         }
-        if(this.leaf)
-        {
-            this.leaf.update();
-        }
+        // if(this.leaf)
+        // {
+        //     this.leaf.update();
+        // }
     }
 }
