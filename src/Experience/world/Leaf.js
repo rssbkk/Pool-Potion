@@ -35,14 +35,34 @@ export default class Leaf
 
     createLeaf()
     {
-        this.geometry = new THREE.PlaneGeometry( 0.5, 0.5 )
+        this.perlinTexture = this.experience.resources.items.perlinNoiseImage;
+        this.perlinTexture.wrapS = this.perlinTexture.wrapT = THREE.RepeatWrapping;
+
+        this.grassUniforms =
+        {
+            uTime: 0, 
+            uWindStrength: 4.5 ,
+            uGrassBend: 1.85 ,
+            uNoiseSpeed: 0.01 ,
+            uTerrainSize: 400. ,
+            uNoiseScale: 1.5 ,
+            uColorOffset: 1
+        }
+
+        this.geometry = new THREE.PlaneGeometry( 0.2, 0.2 )
         this.material = new THREE.ShaderMaterial({
             vertexShader: leafVertexShader,
             fragmentShader: leafFragmentShader,
             uniforms: {
-                uTime: new THREE.Uniform(0)
+                uTime: new THREE.Uniform(this.grassUniforms.uTime),
+                uWindStrength: new THREE.Uniform(this.grassUniforms.uWindStrength),
+                uGrassBend: new THREE.Uniform(this.grassUniforms.uGrassBend),
+                uNoiseSpeed: new THREE.Uniform(this.grassUniforms.uNoiseSpeed),
+                uTerrainSize: new THREE.Uniform(this.grassUniforms.uTerrainSize),
+                uNoiseTexture: new THREE.Uniform(this.perlinTexture),
+                uNoiseScale: new THREE.Uniform(this.grassUniforms.uNoiseScale),
+                uColorOffset: new THREE.Uniform(this.grassUniforms.uColorOffset)
             }
-
         })
         this.mesh = new THREE.InstancedMesh( this.geometry, this.material, this.instanceCount );
         this.mesh.position.set( 0, 2, 0 );
@@ -51,7 +71,6 @@ export default class Leaf
 
     createLeaves()
     {
-
         this.samplerGeometry = new THREE.SphereGeometry(1, 5, 5);
         this.samplerMesh = new THREE.Mesh( this.samplerGeometry );
 
