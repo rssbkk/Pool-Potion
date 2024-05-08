@@ -74,6 +74,6 @@ export default class Leaf
 
     update()
     {
-        this.material.uniforms.uTime = this.time.elapsed;
+        this.material.uniforms.uTime.value = this.time.elapsed;
     }
 }
