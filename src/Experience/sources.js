@@ -25,7 +25,7 @@ export default [
     {
         name: 'leaf',
         type: 'gltf',
-        path: 'models/Leaf-draft-one.glb'
+        path: 'models/leaf-draft-one.glb'
     },
     {
         name: 'leafRoot',

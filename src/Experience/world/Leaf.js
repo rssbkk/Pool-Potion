@@ -20,10 +20,12 @@ export default class Leaf
         this.debug = this.experience.debug;
         this.toonMaterial = this.experience.toonMaterial;
 
-        this.instanceCount = 5;
+        this.instanceCount = 500;
+        this.canopyCount = 4
 
         this.createLeaf();
-        this.createLeaves();
+        // this.createLeaves();
+        this.createCanopy(this.canopyCount);
         // this.setupDebug();
     }
 
@@ -38,15 +40,17 @@ export default class Leaf
         this.perlinTexture = this.experience.resources.items.perlinNoiseImage;
         this.perlinTexture.wrapS = this.perlinTexture.wrapT = THREE.RepeatWrapping;
 
-        this.grassUniforms =
+        this.leafUniforms =
         {
             uTime: 0, 
             uWindStrength: 4.5 ,
-            uGrassBend: 1.85 ,
+            uLeafBend: 1.85 ,
             uNoiseSpeed: 0.01 ,
             uTerrainSize: 400. ,
             uNoiseScale: 1.5 ,
-            uColorOffset: 1
+            uLeafColor1: new THREE.Color(0x9bd38d),
+            uLeafColor2: new THREE.Color(0x1f352a),
+            uLeafColor3: new THREE.Color(0xffff00)
         }
 
         this.geometry = new THREE.PlaneGeometry( 0.2, 0.2 )
@@ -54,41 +58,69 @@ export default class Leaf
             vertexShader: leafVertexShader,
             fragmentShader: leafFragmentShader,
             uniforms: {
-                uTime: new THREE.Uniform(this.grassUniforms.uTime),
-                uWindStrength: new THREE.Uniform(this.grassUniforms.uWindStrength),
-                uGrassBend: new THREE.Uniform(this.grassUniforms.uGrassBend),
-                uNoiseSpeed: new THREE.Uniform(this.grassUniforms.uNoiseSpeed),
-                uTerrainSize: new THREE.Uniform(this.grassUniforms.uTerrainSize),
+                uTime: new THREE.Uniform(this.leafUniforms.uTime),
+                uWindStrength: new THREE.Uniform(this.leafUniforms.uWindStrength),
+                uLeafBend: new THREE.Uniform(this.leafUniforms.uLeafBend),
+                uNoiseSpeed: new THREE.Uniform(this.leafUniforms.uNoiseSpeed),
+                uTerrainSize: new THREE.Uniform(this.leafUniforms.uTerrainSize),
                 uNoiseTexture: new THREE.Uniform(this.perlinTexture),
-                uNoiseScale: new THREE.Uniform(this.grassUniforms.uNoiseScale),
-                uColorOffset: new THREE.Uniform(this.grassUniforms.uColorOffset)
+                uNoiseScale: new THREE.Uniform(this.leafUniforms.uNoiseScale),
+                uLeafColor1: new THREE.Uniform(this.leafUniforms.uLeafColor1),
+                uLeafColor2: new THREE.Uniform(this.leafUniforms.uLeafColor2),
+                uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
             }
         })
-        this.mesh = new THREE.InstancedMesh( this.geometry, this.material, this.instanceCount );
-        this.mesh.position.set( 0, 2, 0 );
-        this.scene.add(this.mesh);
     }
 
-    createLeaves()
+    createLeaves(mesh)
     {
-        this.samplerGeometry = new THREE.SphereGeometry(1, 5, 5);
+        this.samplerGeometry = new THREE.SphereGeometry( 0.5, 5, 5 );
         this.samplerMesh = new THREE.Mesh( this.samplerGeometry );
 
         const sampler = new MeshSurfaceSampler(this.samplerMesh).build();
 
+        const heights = new Float32Array(this.instanceCount);
+
+        const bbox = new THREE.Box3().setFromObject(mesh);
+        const minY = bbox.min.y;
+        const maxY = bbox.max.y;
+
         const position = new THREE.Vector3();
+        const rotation = new THREE.Euler();
         const matrix = new THREE.Matrix4();
 
         for(let i = 0; i < this.instanceCount; i++ )
         {
             sampler.sample( position );
-            matrix.makeTranslation( position );
+            
+            rotation.x = THREE.MathUtils.randFloatSpread(2 * Math.PI);
+            rotation.y = THREE.MathUtils.randFloatSpread(2 * Math.PI);
+            rotation.z = THREE.MathUtils.randFloatSpread(2 * Math.PI);
 
-            this.mesh.setMatrixAt( i, matrix );
+            heights[i] = (position.y - minY) / (maxY - minY);
+
+            matrix.makeRotationFromEuler(rotation);
+            matrix.setPosition(position);
+
+            mesh.setMatrixAt( i, matrix );
         }
 
-        this.mesh.updateMatrix();
+        mesh.updateMatrix();
+        mesh.instanceMatrix.needsUpdate = true;
 
+        this.mesh.geometry.setAttribute('aHeightFactor', new THREE.InstancedBufferAttribute(heights, 1, false));
+    }
+
+    createCanopy(count)
+    {
+        for (let i = 0; i < count; i++)
+        {
+            this.mesh = new THREE.InstancedMesh( this.geometry, this.material, this.instanceCount );
+            this.mesh.position.set( Math.random() * 8, 2, Math.random() * 8);
+            this.scene.add(this.mesh)
+
+            this.createLeaves(this.mesh)
+        }
     }
 
     update()
