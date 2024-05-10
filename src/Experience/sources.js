@@ -25,12 +25,17 @@ export default [
     {
         name: 'leaf',
         type: 'gltf',
-        path: 'models/leaf-draft-one.glb'
+        path: 'models/Leaf-draft-one.glb'
     },
     {
         name: 'leafRoot',
         type: 'gltf',
         path: 'models/LeafRoot-draft-one.glb'
+    },
+    {
+        name: 'tree',
+        type: 'gltf',
+        path: 'models/tree.glb'
     },
     {
         name: 'perlinNoiseImage',

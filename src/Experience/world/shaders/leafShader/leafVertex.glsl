@@ -1,20 +1,39 @@
-
-uniform float uTime;
-uniform sampler2D uNoiseTexture;
-uniform float uNoiseScale;
-uniform float uWindStrength;
-uniform float uGrassBend;
-uniform float uNoiseSpeed;
-uniform float uTerrainSize;
-uniform float uColorOffset;
-
-attribute vec3 translate; // positions
-attribute vec3 offset; // positions
-attribute float aHeightFactor;
+uniform float uEffectBlend;
+uniform float uRemap;
+uniform float uNormalize;
 
 varying vec2 vUv;
-varying vec2 vGlobalUV;
-varying float vHeightFactor;
+
+float inverseLerp(float v, float minValue, float maxValue) {
+  return (v - minValue) / (maxValue - minValue);
+}
+
+float remap(float v, float prevMin, float prevMax, float newMin, float newMax) {
+  float t = inverseLerp(v, prevMin, prevMax);
+  return mix(newMin, newMax, t);
+}
+
+void main() {
+  vUv = uv;
+
+  vec2 vertexOffset = vec2(
+    remap(uv.x, 0.0, 1.0, -uRemap, 1.0),
+    remap(uv.y, 0.0, 1.0, -uRemap, 1.0)
+  );
+
+  vertexOffset *= vec2(-1.0, 1.0);
+
+  if (uRemap == 1.0) {
+    vertexOffset = mix(vertexOffset, normalize(vertexOffset), uNormalize);
+  }
+
+  vec4 worldViewPosition = modelViewMatrix * vec4(position, 1.0);
+
+  worldViewPosition += vec4(mix(vec3(0.0), vec3(vertexOffset, 1.0), uEffectBlend), 0.0);
+
+  gl_Position = projectionMatrix * worldViewPosition;
+}
+
 
 // void main()
 // {

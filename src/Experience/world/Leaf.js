@@ -27,13 +27,23 @@ export default class Leaf
         // this.createLeaves();
         this.createCanopy(this.canopyCount);
         // this.setupDebug();
+        this.createTree();
     }
 
-    // NOTES:
-    // 1. InstancedMeshes to always face the camera
-    // 2. instacned meshes to tilt from center along horizontal axis
-    // 3. offset that by perlinNoise and world position
-    // 4. test moving from under to remove normal and depth lines, same for grass
+    createTree()
+    {
+        this.model = this.experience.resources.items.tree.scene;
+        console.log(this.model);
+
+        this.aMat = new THREE.MeshBasicMaterial()
+
+        const foliage = this.model.getObjectByName('foliage');
+        if (foliage) foliage.material = this.material;
+        const trunk = this.model.getObjectByName('trunk');
+        if (trunk) trunk.material = this.toonMaterial;
+
+        this.scene.add(this.model);
+    }
 
     createLeaf()
     {
@@ -43,31 +53,37 @@ export default class Leaf
         this.leafUniforms =
         {
             uTime: 0, 
-            uWindStrength: 4.5 ,
-            uLeafBend: 1.85 ,
-            uNoiseSpeed: 0.01 ,
-            uTerrainSize: 400. ,
-            uNoiseScale: 1.5 ,
-            uLeafColor1: new THREE.Color(0x9bd38d),
-            uLeafColor2: new THREE.Color(0x1f352a),
-            uLeafColor3: new THREE.Color(0xffff00)
+            uEffectBlend: 1,
+            uRemap: 1,
+            uNormalize: 1,
+            // uWindStrength: 4.5 ,
+            // uLeafBend: 1.85 ,
+            // uNoiseSpeed: 0.01 ,
+            // uTerrainSize: 400. ,
+            // uNoiseScale: 1.5 ,
+            // uLeafColor1: new THREE.Color(0x9bd38d),
+            // uLeafColor2: new THREE.Color(0x1f352a),
+            // uLeafColor3: new THREE.Color(0xffff00)
         }
 
-        this.geometry = new THREE.PlaneGeometry( 0.2, 0.2 )
+        this.geometry = new THREE.PlaneGeometry( 0.02, 0.02 )
         this.material = new THREE.ShaderMaterial({
             vertexShader: leafVertexShader,
             fragmentShader: leafFragmentShader,
             uniforms: {
                 uTime: new THREE.Uniform(this.leafUniforms.uTime),
-                uWindStrength: new THREE.Uniform(this.leafUniforms.uWindStrength),
-                uLeafBend: new THREE.Uniform(this.leafUniforms.uLeafBend),
-                uNoiseSpeed: new THREE.Uniform(this.leafUniforms.uNoiseSpeed),
-                uTerrainSize: new THREE.Uniform(this.leafUniforms.uTerrainSize),
-                uNoiseTexture: new THREE.Uniform(this.perlinTexture),
-                uNoiseScale: new THREE.Uniform(this.leafUniforms.uNoiseScale),
-                uLeafColor1: new THREE.Uniform(this.leafUniforms.uLeafColor1),
-                uLeafColor2: new THREE.Uniform(this.leafUniforms.uLeafColor2),
-                uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
+                uEffectBlend: new THREE.Uniform(this.leafUniforms.uEffectBlend),
+                uRemap: new THREE.Uniform(this.leafUniforms.uRemap),
+                uNormalize: new THREE.Uniform(this.leafUniforms.uNormalize),
+                // uWindStrength: new THREE.Uniform(this.leafUniforms.uWindStrength),
+                // uLeafBend: new THREE.Uniform(this.leafUniforms.uLeafBend),
+                // uNoiseSpeed: new THREE.Uniform(this.leafUniforms.uNoiseSpeed),
+                // uTerrainSize: new THREE.Uniform(this.leafUniforms.uTerrainSize),
+                // uNoiseTexture: new THREE.Uniform(this.perlinTexture),
+                // uNoiseScale: new THREE.Uniform(this.leafUniforms.uNoiseScale),
+                // uLeafColor1: new THREE.Uniform(this.leafUniforms.uLeafColor1),
+                // uLeafColor2: new THREE.Uniform(this.leafUniforms.uLeafColor2),
+                // uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
             }
         })
         //this.material = new THREE.MeshBasicMaterial();
@@ -75,7 +91,7 @@ export default class Leaf
 
     createLeaves(mesh)
     {
-        this.samplerGeometry = new THREE.SphereGeometry( 0.5, 5, 5 );
+        this.samplerGeometry = new THREE.SphereGeometry( 5, 5, 5 );
         this.samplerMesh = new THREE.Mesh( this.samplerGeometry );
 
         const sampler = new MeshSurfaceSampler(this.samplerMesh).build();
