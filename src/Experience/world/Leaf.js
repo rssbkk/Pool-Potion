@@ -20,8 +20,8 @@ export default class Leaf
         this.debug = this.experience.debug;
         this.toonMaterial = this.experience.toonMaterial;
 
-        this.instanceCount = 500;
-        this.canopyCount = 4
+        this.instanceCount = 50;
+        this.canopyCount = 2
 
         this.createLeaf();
         // this.createLeaves();
@@ -70,6 +70,7 @@ export default class Leaf
                 uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
             }
         })
+        //this.material = new THREE.MeshBasicMaterial();
     }
 
     createLeaves(mesh)
@@ -79,36 +80,29 @@ export default class Leaf
 
         const sampler = new MeshSurfaceSampler(this.samplerMesh).build();
 
-        const heights = new Float32Array(this.instanceCount);
-
-        const bbox = new THREE.Box3().setFromObject(mesh);
-        const minY = bbox.min.y;
-        const maxY = bbox.max.y;
+        const offsets = new Float32Array(this.instanceCount * 3);
 
         const position = new THREE.Vector3();
-        const rotation = new THREE.Euler();
         const matrix = new THREE.Matrix4();
 
         for(let i = 0; i < this.instanceCount; i++ )
         {
             sampler.sample( position );
             
-            rotation.x = THREE.MathUtils.randFloatSpread(2 * Math.PI);
-            rotation.y = THREE.MathUtils.randFloatSpread(2 * Math.PI);
-            rotation.z = THREE.MathUtils.randFloatSpread(2 * Math.PI);
+            offsets[i * 3 + 0] = Math.random() * 2-1;  // Random X offset
+            offsets[i * 3 + 1] = Math.random() * 2-1;  // Random Y offset
+            offsets[i * 3 + 2] = Math.random() * 2-1;  // Random Z offset
 
-            heights[i] = (position.y - minY) / (maxY - minY);
-
-            matrix.makeRotationFromEuler(rotation);
             matrix.setPosition(position);
 
             mesh.setMatrixAt( i, matrix );
         }
 
+        const offsetAttribute = new THREE.InstancedBufferAttribute(offsets, 3);
+        this.mesh.geometry.setAttribute('offset', offsetAttribute);
+
         mesh.updateMatrix();
         mesh.instanceMatrix.needsUpdate = true;
-
-        this.mesh.geometry.setAttribute('aHeightFactor', new THREE.InstancedBufferAttribute(heights, 1, false));
     }
 
     createCanopy(count)

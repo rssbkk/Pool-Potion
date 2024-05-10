@@ -9,40 +9,42 @@ uniform float uTerrainSize;
 uniform float uColorOffset;
 
 attribute vec3 translate; // positions
-attribute float aHeightFactor; // positions
+attribute vec3 offset; // positions
+attribute float aHeightFactor;
 
+varying vec2 vUv;
 varying vec2 vGlobalUV;
 varying float vHeightFactor;
 
-void main()
-{
-    vec4 localPosition = vec4(position, 1.0);
+// void main()
+// {
+//     vec4 localPosition = vec4(position, 1.0);
 
-    vec4 modelPosition = modelMatrix * instanceMatrix * localPosition; // (* instanceMatrix)
-    vGlobalUV = (uTerrainSize-vec2(modelPosition.xz)) / uTerrainSize;
-    vec4 noise = texture2D( uNoiseTexture, vGlobalUV + uTime * 0.0001 );
-    float noiseValue = noise.r;
+//     vec4 modelPosition = modelMatrix * instanceMatrix * localPosition; // (* instanceMatrix)
+//     vGlobalUV = (uTerrainSize-vec2(modelPosition.xz)) / uTerrainSize;
+//     vec4 noise = texture2D( uNoiseTexture, vGlobalUV + uTime * 0.0001 );
+//     float noiseValue = noise.r;
 
-    float angle = mix(-2.14, 3.64, noiseValue);
-    float cosRoll = cos(angle);
-    float sinRoll = sin(angle);
+//     float angle = mix(-2.14, 3.64, noiseValue);
+//     float cosRoll = cos(angle);
+//     float sinRoll = sin(angle);
 
-    mat4 rollMatrix = mat4(
-        cosRoll, -sinRoll, 0.0, 0.0,
-        sinRoll, cosRoll, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 1.0
-    );
+//     mat4 rollMatrix = mat4(
+//         cosRoll, -sinRoll, 0.0, 0.0,
+//         sinRoll, cosRoll, 0.0, 0.0,
+//         0.0, 0.0, 1.0, 0.0,
+//         0.0, 0.0, 0.0, 1.0
+//     );
     
-    vec4 rotatedPosition = rollMatrix * localPosition;
+//     vec4 rotatedPosition = rollMatrix * localPosition;
 
-    vec4 mvPosition = modelViewMatrix * instanceMatrix * rotatedPosition;
-    mvPosition.xyz += position;
+//     vec4 mvPosition = modelViewMatrix * instanceMatrix * rotatedPosition;
+//     mvPosition.xyz += position;
 
-    gl_Position = projectionMatrix * mvPosition;
+//     gl_Position = projectionMatrix * mvPosition;
 
-    vHeightFactor = aHeightFactor;
-}
+//     vHeightFactor = aHeightFactor;
+// }
 
 // void main() 
 // {
