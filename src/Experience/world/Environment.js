@@ -72,7 +72,7 @@ export default class Environment
         {
             this.debugFolder = this.debug.pane.addFolder({
                 title: 'Environment',
-                expanded: true
+                expanded: false
             });
             
             // Ambient light Debug

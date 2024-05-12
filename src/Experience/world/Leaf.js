@@ -33,7 +33,6 @@ export default class Leaf
     createTree()
     {
         this.model = this.experience.resources.items.tree.scene;
-        console.log(this.model);
 
         this.aMat = new THREE.MeshBasicMaterial()
 
@@ -45,10 +44,23 @@ export default class Leaf
         this.scene.add(this.model);
     }
 
+    setupDebug()
+    {
+        if(this.debug.active)
+        {
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'leaf',
+                expanded: true
+            });
+
+        }
+    }
+
     createLeaf()
     {
         this.perlinTexture = this.experience.resources.items.perlinNoiseImage;
         this.perlinTexture.wrapS = this.perlinTexture.wrapT = THREE.RepeatWrapping;
+        this.foliageImage = this.experience.resources.items.foliageImage;
 
         this.leafUniforms =
         {
@@ -75,6 +87,7 @@ export default class Leaf
                 uEffectBlend: new THREE.Uniform(this.leafUniforms.uEffectBlend),
                 uRemap: new THREE.Uniform(this.leafUniforms.uRemap),
                 uNormalize: new THREE.Uniform(this.leafUniforms.uNormalize),
+                uFoliageImage: new THREE.Uniform(this.foliageImage),
                 // uWindStrength: new THREE.Uniform(this.leafUniforms.uWindStrength),
                 // uLeafBend: new THREE.Uniform(this.leafUniforms.uLeafBend),
                 // uNoiseSpeed: new THREE.Uniform(this.leafUniforms.uNoiseSpeed),
@@ -84,7 +97,8 @@ export default class Leaf
                 // uLeafColor1: new THREE.Uniform(this.leafUniforms.uLeafColor1),
                 // uLeafColor2: new THREE.Uniform(this.leafUniforms.uLeafColor2),
                 // uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
-            }
+            },
+            transparent: true
         })
         //this.material = new THREE.MeshBasicMaterial();
     }
