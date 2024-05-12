@@ -114,166 +114,166 @@ export default class Grass
                 expanded: false
             });
 
-        // Folder for geometry properties
-        const grassGeometry = this.debugFolder.addFolder({ title: 'Geometry Properties' });
+            // Folder for geometry properties
+            const grassGeometry = this.debugFolder.addFolder({ title: 'Geometry Properties' });
 
-        grassGeometry.addBinding(this.grassDimentions, 'peakWidth', {
-            label: 'Peak Width',
-            min: 0.001,
-            max: 0.1,
-            step: 0.001
-        }).on('change', (value) => {
-            this.updateGeometry();
-        });
+            grassGeometry.addBinding(this.grassDimentions, 'peakWidth', {
+                label: 'Peak Width',
+                min: 0.001,
+                max: 0.1,
+                step: 0.001
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
 
-        grassGeometry.addBinding(this.grassDimentions, 'baseWidth', {
-            label: 'Base Width',
-            min: 0.01,
-            max: 0.1,
-            step: 0.001
-        }).on('change', (value) => {
-            this.updateGeometry();
-        });
+            grassGeometry.addBinding(this.grassDimentions, 'baseWidth', {
+                label: 'Base Width',
+                min: 0.01,
+                max: 0.1,
+                step: 0.001
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
 
-        grassGeometry.addBinding(this.grassDimentions, 'height', {
-            label: 'Height',
-            min: 0.1,
-            max: 1.0,
-            step: 0.01
-        }).on('change', (value) => {
-            this.updateGeometry();
-        });
-        
-        grassGeometry.addBinding(this.grassDimentions, 'heightSegments', {
-            label: 'Height Segments',
-            min: 1,
-            max: 20,
-            step: 1
-        }).on('change', (value) => {
-            this.updateGeometry();
-        });
+            grassGeometry.addBinding(this.grassDimentions, 'height', {
+                label: 'Height',
+                min: 0.1,
+                max: 1.0,
+                step: 0.01
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
+            
+            grassGeometry.addBinding(this.grassDimentions, 'heightSegments', {
+                label: 'Height Segments',
+                min: 1,
+                max: 20,
+                step: 1
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
 
-        this.updateGeometry = () => {
-            const newGeometry = new THREE.CylinderGeometry(this.grassDimentions.peakWidth, this.grassDimentions.baseWidth, this.grassDimentions.height, 3, this.grassDimentions.heightSegments, true);
-            this.instanceMesh.geometry.dispose();
-            this.instanceMesh.geometry = newGeometry;
-        };
+            this.updateGeometry = () => {
+                const newGeometry = new THREE.CylinderGeometry(this.grassDimentions.peakWidth, this.grassDimentions.baseWidth, this.grassDimentions.height, 3, this.grassDimentions.heightSegments, true);
+                this.instanceMesh.geometry.dispose();
+                this.instanceMesh.geometry = newGeometry;
+            };
 
-        // // Folder for shader properties
-        const shaderFolder = this.debugFolder.addFolder({ title: 'Shader Properties' });
+            // // Folder for shader properties
+            const shaderFolder = this.debugFolder.addFolder({ title: 'Shader Properties' });
 
-        shaderFolder.addBinding(this.grassUniforms, 'uNoiseScale', {
-            label: 'Noise Scale',
-            min: 0.1,
-            max: 5,
-            step: 0.1
-        }).on('change', () => {
-            this.updateMaterial();
-        });
+            shaderFolder.addBinding(this.grassUniforms, 'uNoiseScale', {
+                label: 'Noise Scale',
+                min: 0.1,
+                max: 5,
+                step: 0.1
+            }).on('change', () => {
+                this.updateMaterial();
+            });
 
-        shaderFolder.addBinding(this.grassUniforms, 'uWindStrength', {
-            min: 0,
-            max: 10,
-            step: 0.1,
-            label: 'Wind Strength'
-        }).on('change', () => {
-            this.updateMaterial();
-        });
-        
-        shaderFolder.addBinding(this.grassUniforms, 'uGrassBend', {
-            min: 0,
-            max: 5,
-            step: 0.1,
-            label: 'Grass Bend'
-        }).on('change', (value) => {
-            this.updateMaterial();
-        });
-        
-        shaderFolder.addBinding(this.grassUniforms, 'uNoiseSpeed', {
-            min: 0,
-            max: 0.1,
-            step: 0.001,
-            label: 'Noise Speed'
-        }).on('change', () => {
-            this.updateMaterial();
-        });
-        
-        shaderFolder.addBinding(this.grassUniforms, 'uTerrainSize', {
-            min: 100,
-            max: 1000,
-            step: 10,
-            label: 'Terrain Size'
-        }).on('change', () => {
-            this.updateMaterial();
-        });
-        
-        // // Folder for grass color properties
-        const colorFolder = this.debugFolder.addFolder({ title: 'Color Properties' });
+            shaderFolder.addBinding(this.grassUniforms, 'uWindStrength', {
+                min: 0,
+                max: 10,
+                step: 0.1,
+                label: 'Wind Strength'
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            
+            shaderFolder.addBinding(this.grassUniforms, 'uGrassBend', {
+                min: 0,
+                max: 5,
+                step: 0.1,
+                label: 'Grass Bend'
+            }).on('change', (value) => {
+                this.updateMaterial();
+            });
+            
+            shaderFolder.addBinding(this.grassUniforms, 'uNoiseSpeed', {
+                min: 0,
+                max: 0.1,
+                step: 0.001,
+                label: 'Noise Speed'
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            
+            shaderFolder.addBinding(this.grassUniforms, 'uTerrainSize', {
+                min: 100,
+                max: 1000,
+                step: 10,
+                label: 'Terrain Size'
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            
+            // // Folder for grass color properties
+            const colorFolder = this.debugFolder.addFolder({ title: 'Color Properties' });
 
-        colorFolder.addBinding(this.grassUniforms, 'uColorOffset', {
-            min: 0,
-            max: 5,
-            step: 0.1
-        }).on('change', () => {
-            this.updateMaterial();
-        });
+            colorFolder.addBinding(this.grassUniforms, 'uColorOffset', {
+                min: 0,
+                max: 5,
+                step: 0.1
+            }).on('change', () => {
+                this.updateMaterial();
+            });
 
-        colorFolder.addBinding(this.grassUniforms, 'uTipColor1', {
-            view: 'color',
-            label: 'Tip Color 1',
-            format: 'hex'
-        }).on('change', () => {
-            this.updateMaterialColor();
-        });
-        
-        colorFolder.addBinding(this.grassUniforms, 'uTipColor2', {
-            view: 'color',
-            label: 'Tip Color 2',
-            format: 'hex'
-        }).on('change', () => {
-            this.updateMaterialColor();
-        });
-        
-        colorFolder.addBinding(this.grassUniforms, 'uTipColor3', {
-            view: 'color',
-            label: 'Tip Color 3',
-            format: 'hex'
-        }).on('change', () => {
-            this.updateMaterialColor();
-        });
-        
-        colorFolder.addBinding(this.grassUniforms, 'uBaseColor1', {
-            view: 'color',
-            label: 'Base Color 1',
-            format: 'hex'
-        }).on('change', () => {
-            this.updateMaterialColor();
-        });
-        
-        colorFolder.addBinding(this.grassUniforms, 'uBaseColor2', {
-            view: 'color',
-            label: 'Base Color 2',
-            format: 'hex'
-        }).on('change', () => {
-            this.updateMaterialColor();
-        });
+            colorFolder.addBinding(this.grassUniforms, 'uTipColor1', {
+                view: 'color',
+                label: 'Tip Color 1',
+                format: 'hex'
+            }).on('change', () => {
+                this.updateMaterialColor();
+            });
+            
+            colorFolder.addBinding(this.grassUniforms, 'uTipColor2', {
+                view: 'color',
+                label: 'Tip Color 2',
+                format: 'hex'
+            }).on('change', () => {
+                this.updateMaterialColor();
+            });
+            
+            colorFolder.addBinding(this.grassUniforms, 'uTipColor3', {
+                view: 'color',
+                label: 'Tip Color 3',
+                format: 'hex'
+            }).on('change', () => {
+                this.updateMaterialColor();
+            });
+            
+            colorFolder.addBinding(this.grassUniforms, 'uBaseColor1', {
+                view: 'color',
+                label: 'Base Color 1',
+                format: 'hex'
+            }).on('change', () => {
+                this.updateMaterialColor();
+            });
+            
+            colorFolder.addBinding(this.grassUniforms, 'uBaseColor2', {
+                view: 'color',
+                label: 'Base Color 2',
+                format: 'hex'
+            }).on('change', () => {
+                this.updateMaterialColor();
+            });
 
-        this.updateMaterial = () => 
-        {
-            // Update only the uniform values directly instead of recreating the material
-            Object.keys(this.grassUniforms).forEach(key => 
+            this.updateMaterial = () => 
             {
-                if (key in this.material.uniforms) 
+                // Update only the uniform values directly instead of recreating the material
+                Object.keys(this.grassUniforms).forEach(key => 
                 {
-                    this.material.uniforms[key].value = this.grassUniforms[key];
-                }
-            })
-        };
-        
-        this.updateMaterialColor = () => 
-        {
-            // Update only the uniform values directly instead of recreating the material
-            Object.keys(this.grassUniforms).forEach(key => 
+                    if (key in this.material.uniforms) 
+                    {
+                        this.material.uniforms[key].value = this.grassUniforms[key];
+                    }
+                })
+            };
+            
+            this.updateMaterialColor = () => 
+            {
+                // Update only the uniform values directly instead of recreating the material
+                Object.keys(this.grassUniforms).forEach(key => 
                 {
                     if (key in this.material.uniforms) 
                     {

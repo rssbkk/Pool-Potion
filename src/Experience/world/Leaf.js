@@ -26,7 +26,7 @@ export default class Leaf
         this.createLeaf();
         // this.createLeaves();
         this.createCanopy(this.canopyCount);
-        // this.setupDebug();
+        this.setupDebug();
         this.createTree();
     }
 
@@ -52,6 +52,46 @@ export default class Leaf
                 title: 'leaf',
                 expanded: true
             });
+
+            // SHADER LEAF MATERIAL DEBUG
+            const shaderFolder = this.debugFolder.addFolder({ title: 'Shader Properties' });
+
+            shaderFolder.addBinding(this.leafUniforms, 'uEffectBlend', {
+                label: 'Effect Blend',
+                min: 0,
+                max: 2,
+                step: 0.1
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            shaderFolder.addBinding(this.leafUniforms, 'uRemap', {
+                label: 'Remap',
+                min: 0,
+                max: 3,
+                step: 0.1
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            shaderFolder.addBinding(this.leafUniforms, 'uNormalize', {
+                label: 'Normalize',
+                min: 0,
+                max: 3,
+                step: 0.1
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+
+            this.updateMaterial = () => 
+            {
+                // Update only the uniform values directly instead of recreating the material
+                Object.keys(this.leafUniforms).forEach(key => 
+                {
+                    if (key in this.material.uniforms) 
+                    {
+                        this.material.uniforms[key].value = this.leafUniforms[key];
+                    }
+                })
+            };
 
         }
     }
