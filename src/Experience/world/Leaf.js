@@ -34,8 +34,6 @@ export default class Leaf
     {
         this.model = this.experience.resources.items.tree.scene;
 
-        this.aMat = new THREE.MeshBasicMaterial()
-
         const foliage = this.model.getObjectByName('foliage');
         if (foliage) foliage.material = this.material;
         const trunk = this.model.getObjectByName('trunk');
@@ -57,23 +55,31 @@ export default class Leaf
             const shaderFolder = this.debugFolder.addFolder({ title: 'Shader Properties' });
 
             shaderFolder.addBinding(this.leafUniforms, 'uEffectBlend', {
-                label: 'Effect Blend',
+                label: 'uEffectBlend',
                 min: 0,
                 max: 2,
                 step: 0.1
             }).on('change', () => {
                 this.updateMaterial();
             });
-            shaderFolder.addBinding(this.leafUniforms, 'uRemap', {
-                label: 'Remap',
+            shaderFolder.addBinding(this.leafUniforms, 'uInflate', {
+                label: 'uInflate',
                 min: 0,
                 max: 3,
                 step: 0.1
             }).on('change', () => {
                 this.updateMaterial();
             });
-            shaderFolder.addBinding(this.leafUniforms, 'uNormalize', {
-                label: 'Normalize',
+            shaderFolder.addBinding(this.leafUniforms, 'uScale', {
+                label: 'uScale',
+                min: 0,
+                max: 3,
+                step: 0.1
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            shaderFolder.addBinding(this.leafUniforms, 'uWindSpeed', {
+                label: 'uWindSpeed',
                 min: 0,
                 max: 3,
                 step: 0.1
@@ -104,15 +110,11 @@ export default class Leaf
 
         this.leafUniforms =
         {
-            uTime: 0, 
-            uEffectBlend: 1,
-            uRemap: 1,
-            uNormalize: 1,
-            // uWindStrength: 4.5 ,
-            // uLeafBend: 1.85 ,
-            // uNoiseSpeed: 0.01 ,
-            // uTerrainSize: 400. ,
-            // uNoiseScale: 1.5 ,
+            uEffectBlend: 1.0,
+            uInflate: 1,
+            uScale: 1,
+            uWindSpeed: 1,
+            uWindTime: 0.0,
             // uLeafColor1: new THREE.Color(0x9bd38d),
             // uLeafColor2: new THREE.Color(0x1f352a),
             // uLeafColor3: new THREE.Color(0xffff00)
@@ -123,17 +125,12 @@ export default class Leaf
             vertexShader: leafVertexShader,
             fragmentShader: leafFragmentShader,
             uniforms: {
-                uTime: new THREE.Uniform(this.leafUniforms.uTime),
                 uEffectBlend: new THREE.Uniform(this.leafUniforms.uEffectBlend),
-                uRemap: new THREE.Uniform(this.leafUniforms.uRemap),
-                uNormalize: new THREE.Uniform(this.leafUniforms.uNormalize),
+                uInflate: new THREE.Uniform(this.leafUniforms.uInflate),
+                uScale: new THREE.Uniform(this.leafUniforms.uScale),
+                uWindSpeed: new THREE.Uniform(this.leafUniforms.uWindSpeed),
+                uWindTime: new THREE.Uniform(this.leafUniforms.uWindTime),
                 uFoliageImage: new THREE.Uniform(this.foliageImage),
-                // uWindStrength: new THREE.Uniform(this.leafUniforms.uWindStrength),
-                // uLeafBend: new THREE.Uniform(this.leafUniforms.uLeafBend),
-                // uNoiseSpeed: new THREE.Uniform(this.leafUniforms.uNoiseSpeed),
-                // uTerrainSize: new THREE.Uniform(this.leafUniforms.uTerrainSize),
-                // uNoiseTexture: new THREE.Uniform(this.perlinTexture),
-                // uNoiseScale: new THREE.Uniform(this.leafUniforms.uNoiseScale),
                 // uLeafColor1: new THREE.Uniform(this.leafUniforms.uLeafColor1),
                 // uLeafColor2: new THREE.Uniform(this.leafUniforms.uLeafColor2),
                 // uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
@@ -189,6 +186,6 @@ export default class Leaf
 
     update()
     {
-        this.material.uniforms.uTime.value = this.time.elapsed;
+        this.material.uniforms.uWindTime.value = this.leafUniforms.uWindTime += this.material.uniforms.uWindSpeed.value * this.time.delta * 0.002;
     }
 }
