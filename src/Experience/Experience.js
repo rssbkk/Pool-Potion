@@ -40,7 +40,7 @@ export default class Experience
         this.resources = new Resources(sources);
         this.interactionAnimation = new InteractionAnimation();
         this.toonMaterial = new ToonMaterial().toonMaterial;
-        this.leafMaterial = new LeafMaterial();
+        //this.leafMaterial = new LeafMaterial().leafMaterial;
         this.camera = new Camera();
         this.raycaster = new Raycaster();
         this.renderer = new Renderer();

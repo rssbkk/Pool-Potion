@@ -20,7 +20,7 @@ export default [
     {
         name: 'landscape',
         type: 'gltf',
-        path: 'models/ruin-scene-draft-two.glb'
+        path: 'models/ruin-scene-draft-one-fixed-uvs.glb'
     },
     {
         name: 'tree',

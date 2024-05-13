@@ -19,6 +19,22 @@ export default class Leaf
 
         this.createLeafMaterial();
         this.setupDebug();
+        //this.testTree();
+    }
+
+    testTree()
+    {
+        this.treeModel = this.experience.resources.items.tree.scene;
+        const foliage = this.treeModel.children[3];
+        if (foliage) foliage.material = this.leafMaterial;
+
+        const BoxGeometry = new THREE.BoxGeometry(2, 2, 2)
+
+        const model = new THREE.Mesh(BoxGeometry, this.leafMaterial)
+        model.position.set(5, 2, 5);
+        
+        this.scene.add(this.treeModel);
+        this.scene.add(model);
     }
 
     createLeafMaterial()

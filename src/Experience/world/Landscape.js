@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import Experience from '../Experience.js';
+import Leaf from './LeafMaterial.js';
 
 export default class Landscape
 {
@@ -12,7 +13,7 @@ export default class Landscape
         this.time = this.experience.time;
         this.debug = this.experience.debug;
         this.toonMaterial = this.experience.toonMaterial;
-        this.leafMaterial = this.experience.leafMaterial;
+        this.leafMaterial = new Leaf().leafMaterial;
 
         this.setupDebug();
         this.createLandscape();
@@ -37,22 +38,22 @@ export default class Landscape
 
     seperateParts()
     {
+        console.log(this.leafMaterial);
+
         this.leaves = [];
 
         this.scene.traverse((child) =>
         {
-            if (child.name.toLocaleLowerCase().includes('leaf'))
+            if (child.name.toLocaleLowerCase().includes('cube'))
             {
-                this.leaves.push(child)
+                child.material = this.leafMaterial
             }
         });
 
-        this.leafRoot = this.leaves.shift();
-
-        this.leaves.forEach((leaf, index) => 
-        { 
-            leaf.material = this.leafMaterial;
-        });
+        // this.leaves.forEach((leaf, index) => 
+        // { 
+        //     leaf.material = this.leafMaterial;
+        // });
     }
 
     setupDebug()
