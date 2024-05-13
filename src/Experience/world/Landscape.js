@@ -12,12 +12,13 @@ export default class Landscape
         this.time = this.experience.time;
         this.debug = this.experience.debug;
         this.toonMaterial = this.experience.toonMaterial;
+        this.leafMaterial = this.experience.leafMaterial;
 
         this.setupDebug();
         this.createLandscape();
         this.seperateParts();
     }
-
+    
     createLandscape()
     {
         this.model = this.experience.resources.items.landscape.scene;
@@ -49,15 +50,8 @@ export default class Landscape
         this.leafRoot = this.leaves.shift();
 
         this.leaves.forEach((leaf, index) => 
-        {
-            // Generate a random color
-            const color = new THREE.Color(Math.random(), 1, Math.random());
-            
-            // Create a new material with the random color
-            const material = new THREE.MeshStandardMaterial({color: color});
-          
-            // Apply the new material to the leaf
-            leaf.material = material;
+        { 
+            leaf.material = this.leafMaterial;
         });
     }
 

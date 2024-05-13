@@ -14,7 +14,8 @@ export default class Leaf
         this.time = this.experience.time;
         this.debug = this.experience.debug;
 
-        this.leafMaterial = null;
+        this.instanceCount = 50;
+        this.canopyCount = 2
 
         this.createLeafMaterial();
         this.setupDebug();
@@ -38,7 +39,6 @@ export default class Leaf
             // uLeafColor3: new THREE.Color(0xffff00)
         }
 
-        this.geometry = new THREE.PlaneGeometry( 0.02, 0.02 )
         this.leafMaterial = new THREE.ShaderMaterial({
             vertexShader: leafVertexShader,
             fragmentShader: leafFragmentShader,
@@ -52,7 +52,8 @@ export default class Leaf
                 // uLeafColor1: new THREE.Uniform(this.leafUniforms.uLeafColor1),
                 // uLeafColor2: new THREE.Uniform(this.leafUniforms.uLeafColor2),
                 // uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
-            }
+            },
+            transparent: true
         })
     }
 
@@ -112,6 +113,7 @@ export default class Leaf
                     }
                 })
             };
+
         }
     }
 

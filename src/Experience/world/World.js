@@ -20,6 +20,7 @@ export default class World
             this.floor = new Floor();
             this.potion = new Potion();
             this.grass = new Grass();
+            this.leafMaterial = this.experience.leafMaterial;
             this.landscape = new Landscape();
             this.curveAnim = new curveAnim();
             this.environment = new Environment();
@@ -35,6 +36,10 @@ export default class World
         if(this.grass)
         {
             this.grass.update();
+        }
+        if(this.leafMaterial)
+        {
+            this.leafMaterial.update();
         }
     }
 }

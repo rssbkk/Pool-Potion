@@ -31,6 +31,7 @@ void main()
     windOffset *= pow(uv.y, uGrassBend) / uWindStrength;
     newPosition.xz += windOffset;
 
+
     vec4 worldPosition = instanceMatrix * vec4(newPosition, 1.0);
     gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
 
