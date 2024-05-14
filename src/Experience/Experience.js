@@ -10,7 +10,6 @@ import Resources from './utils/Resources.js';
 import Debug from './utils/Debug.js';
 import sources from './sources.js';
 import ToonMaterial from './world/ToonMaterial.js';
-import LeafMaterial from './world/LeafMaterial.js';
 import InteractionAnimation from './world/InteractionAnimation.js';
 
 let instance = null;
@@ -40,7 +39,6 @@ export default class Experience
         this.resources = new Resources(sources);
         this.interactionAnimation = new InteractionAnimation();
         this.toonMaterial = new ToonMaterial().toonMaterial;
-        //this.leafMaterial = new LeafMaterial().leafMaterial;
         this.camera = new Camera();
         this.raycaster = new Raycaster();
         this.renderer = new Renderer();

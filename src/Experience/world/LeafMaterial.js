@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 
 import Experience from '../Experience.js';
 
@@ -14,6 +14,8 @@ export default class Leaf
         this.scene = this.experience.scene;
         this.time = this.experience.time;
         this.debug = this.experience.debug;
+        this.debug = this.experience.debug;
+        this.toonMaterial = this.experience.toonMaterial;
 
         this.leafMaterial = null;
 
@@ -34,14 +36,17 @@ export default class Leaf
             uScale: 1,
             uWindSpeed: 1,
             uWindTime: 0.0,
-            // uLeafColor1: new THREE.Color(0x9bd38d),
-            // uLeafColor2: new THREE.Color(0x1f352a),
-            // uLeafColor3: new THREE.Color(0xffff00)
+            uLeafColor: new THREE.Color(0x228b22),
         }
 
-        this.leafMaterial = new THREE.ShaderMaterial({
+        // (0x3f6d21)
+        // (0x9bd38d),
+        // (0x1f352a),
+        // (0x228b22) ,
+
+        this.leafMaterial = new CustomShaderMaterial({
+            baseMaterial: new THREE.MeshToonMaterial({color: this.leafUniforms.uLeafColor}),
             vertexShader: leafVertexShader,
-            fragmentShader: leafFragmentShader,
             uniforms: {
                 uEffectBlend: new THREE.Uniform(this.leafUniforms.uEffectBlend),
                 uInflate: new THREE.Uniform(this.leafUniforms.uInflate),
@@ -49,12 +54,13 @@ export default class Leaf
                 uWindSpeed: new THREE.Uniform(this.leafUniforms.uWindSpeed),
                 uWindTime: new THREE.Uniform(this.leafUniforms.uWindTime),
                 uFoliageImage: new THREE.Uniform(this.foliageImage),
-                // uLeafColor1: new THREE.Uniform(this.leafUniforms.uLeafColor1),
-                // uLeafColor2: new THREE.Uniform(this.leafUniforms.uLeafColor2),
-                // uLeafColor3: new THREE.Uniform(this.leafUniforms.uLeafColor3)
             },
-            transparent: true
+            transparent: true,
+            alphaMap: this.foliageImage,
+            alphaTest: 0.5,
         })
+
+        console.log(this.leafMaterial);
     }
 
     setupDebug()
@@ -62,14 +68,19 @@ export default class Leaf
         if(this.debug.active)
         {
             this.debugFolder = this.debug.pane.addFolder({
-                title: 'leaf',
+                title: 'Leaf Material',
                 expanded: true
             });
 
-            // SHADER LEAF MATERIAL DEBUG
-            const shaderFolder = this.debugFolder.addFolder({ title: 'Shader Properties' });
+            this.debugFolder.addBinding(this.leafUniforms, 'uLeafColor', {
+                view: 'color',
+                label: 'Leaf Color',
+                format: 'hex'
+            }).on('change', (value) => {
+                this.updateMaterialColor(value);
+            });
 
-            shaderFolder.addBinding(this.leafUniforms, 'uEffectBlend', {
+            this.debugFolder.addBinding(this.leafUniforms, 'uEffectBlend', {
                 label: 'uEffectBlend',
                 min: 0,
                 max: 2,
@@ -77,7 +88,7 @@ export default class Leaf
             }).on('change', () => {
                 this.updateMaterial();
             });
-            shaderFolder.addBinding(this.leafUniforms, 'uInflate', {
+            this.debugFolder.addBinding(this.leafUniforms, 'uInflate', {
                 label: 'uInflate',
                 min: 0,
                 max: 3,
@@ -85,7 +96,7 @@ export default class Leaf
             }).on('change', () => {
                 this.updateMaterial();
             });
-            shaderFolder.addBinding(this.leafUniforms, 'uScale', {
+            this.debugFolder.addBinding(this.leafUniforms, 'uScale', {
                 label: 'uScale',
                 min: 0,
                 max: 3,
@@ -93,7 +104,7 @@ export default class Leaf
             }).on('change', () => {
                 this.updateMaterial();
             });
-            shaderFolder.addBinding(this.leafUniforms, 'uWindSpeed', {
+            this.debugFolder.addBinding(this.leafUniforms, 'uWindSpeed', {
                 label: 'uWindSpeed',
                 min: 0,
                 max: 3,
@@ -112,6 +123,12 @@ export default class Leaf
                         this.leafMaterial.uniforms[key].value = this.leafUniforms[key];
                     }
                 })
+            };
+
+            this.updateMaterialColor = (value) => 
+            {
+                console.log(value);
+                this.leafMaterial.color.value.set(value);
             };
 
         }

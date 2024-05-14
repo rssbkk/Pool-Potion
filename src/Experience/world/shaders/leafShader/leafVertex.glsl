@@ -67,7 +67,5 @@ void main() {
 
   worldViewPosition = applyWind(worldViewPosition);
 
-  gl_Position = projectionMatrix * worldViewPosition;
-
-  vUv = uv;
+  csm_PositionRaw = projectionMatrix * worldViewPosition;
 }

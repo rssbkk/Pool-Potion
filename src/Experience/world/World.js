@@ -5,7 +5,6 @@ import Grass from './Grass2.js';
 import Landscape from './Landscape.js';
 import Potion from './Potion.js';
 import curveAnim from './CurveAnim.js';
-//import Leaf from './LeafMaterialTest.js';
 
 export default class World
 {
@@ -21,7 +20,6 @@ export default class World
             this.floor = new Floor();
             this.potion = new Potion();
             this.grass = new Grass();
-            //this.leafMaterial = new Leaf();
             this.landscape = new Landscape();
             this.curveAnim = new curveAnim();
             this.environment = new Environment();

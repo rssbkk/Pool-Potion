@@ -38,7 +38,7 @@ export default class Landscape
 
     seperateParts()
     {
-        console.log(this.leafMaterial);
+        console.log(this.toonMaterial);
 
         this.leaves = [];
 
