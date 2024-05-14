@@ -69,15 +69,7 @@ export default class Leaf
         {
             this.debugFolder = this.debug.pane.addFolder({
                 title: 'Leaf Material',
-                expanded: true
-            });
-
-            this.debugFolder.addBinding(this.leafUniforms, 'uLeafColor', {
-                view: 'color',
-                label: 'Leaf Color',
-                format: 'hex'
-            }).on('change', (value) => {
-                this.updateMaterialColor(value);
+                expanded: false
             });
 
             this.debugFolder.addBinding(this.leafUniforms, 'uEffectBlend', {
