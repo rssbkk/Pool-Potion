@@ -38,22 +38,14 @@ export default class Landscape
 
     seperateParts()
     {
-        console.log(this.toonMaterial);
-
-        this.leaves = [];
-
+        // Seperate Leaves
         this.scene.traverse((child) =>
         {
-            if (child.name.toLocaleLowerCase().includes('cube'))
+            if (child.name.toLocaleLowerCase().includes('canopy'))
             {
                 child.material = this.leafMaterial
             }
         });
-
-        // this.leaves.forEach((leaf, index) => 
-        // { 
-        //     leaf.material = this.leafMaterial;
-        // });
     }
 
     setupDebug()

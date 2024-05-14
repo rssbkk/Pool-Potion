@@ -20,7 +20,7 @@ export default [
     {
         name: 'landscape',
         type: 'gltf',
-        path: 'models/ruin-scene-draft-one-fixed-uvs.glb'
+        path: 'models/poolpotion-landscape-draft-three.glb'
     },
     {
         name: 'tree',

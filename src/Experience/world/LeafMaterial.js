@@ -31,9 +31,9 @@ export default class Leaf
 
         this.leafUniforms =
         {
-            uEffectBlend: 1.0,
-            uInflate: 1,
-            uScale: 1,
+            uEffectBlend: 0.9,
+            uInflate: 0.7,
+            uScale: 0.7,
             uWindSpeed: 1,
             uWindTime: 0.0,
             uLeafColor: new THREE.Color(0x228b22),
