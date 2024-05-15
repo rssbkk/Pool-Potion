@@ -18,7 +18,7 @@ export default class Grass
         this.toonMaterial = this.experience.toonMaterial;
         this.floor = new Floor();
 
-        this.instanceCount = 2000;
+        this.instanceCount = 100000;
         this.grassPositions = [];
         this.mesh = null;
 
@@ -92,7 +92,7 @@ export default class Grass
         this.instanceMesh = new THREE.InstancedMesh( this.geometry, this.material, this.instanceCount );
         this.scene.add( this.instanceMesh );
 
-        let planeSize = 8.0;
+        let planeSize = 15.0;
         for(let i = 0; i < this.instanceCount; i++)
         {
             let tempPositionX = (Math.random() * planeSize - planeSize / 2);

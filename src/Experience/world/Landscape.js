@@ -43,7 +43,18 @@ export default class Landscape
         {
             if (child.name.toLocaleLowerCase().includes('canopy'))
             {
-                child.material = this.leafMaterial
+                child.material = this.leafMaterial;
+                child.frustumCulled = false;
+            }
+        });
+
+        // Seperate Trunks
+        this.scene.traverse((child) =>
+        {
+            if (child.name.toLocaleLowerCase().includes('trunk'))
+            {
+                child.material = this.toonMaterial;
+                child.material.color = new THREE.Color(0xffff00);
             }
         });
     }
