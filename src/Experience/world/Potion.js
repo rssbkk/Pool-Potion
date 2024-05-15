@@ -174,37 +174,37 @@ export default class Potion
 
     animateProperty(propertyKey)
     {
-		// this.animationCount += 1;
+		this.animationCount += 1;
 
-		// let config = animationConfig[propertyKey];
-		// let previous = this.material.uniforms[propertyKey].value;
-		// let tinyRandom = (Math.random() - 0.5) / 5;
-		// let newValue;
+		let config = this.animationConfig[propertyKey];
+		let previous = this.material.uniforms[propertyKey].value;
+		let tinyRandom = (Math.random() - 0.5) / 5;
+		let newValue;
 
-		// // console.log('config = ' + config);
+		// console.log('config = ' + config);
 
-		// if (config.isIterations) {
-		// 	newValue = Math.round(Math.random() * 4);
-		// } else {
-		// 	newValue = Math.max(config.min, Math.min(config.max, (previous + tinyRandom)));
-		// 	if(newValue === previous) {
-		// 		newValue = (config.max - config.min) / 2;
-		// 	}
-		// }
+		if (config.isIterations) {
+			newValue = Math.round(Math.random() * 4);
+		} else {
+			newValue = Math.max(config.min, Math.min(config.max, (previous + tinyRandom)));
+			if(newValue === previous) {
+				newValue = (config.max - config.min) / 2;
+			}
+		}
 
-		// // console.log("config min = " + config.min);
-		// // console.log("config max = " + config.max);
-		// // console.log("tr = " + tinyRandom);
-		// // console.log("prv = " + previous);
-		// // console.log("nv = " + newValue);
+		// console.log("config min = " + config.min);
+		// console.log("config max = " + config.max);
+		// console.log("tr = " + tinyRandom);
+		// console.log("prv = " + previous);
+		// console.log("nv = " + newValue);
 
-		// gsap.to(this.material.uniforms[propertyKey], {
-		// 	value: newValue,
-		// 	duration: 1,
-		// 	ease: "power2.inOut"
-		// });
+		gsap.to(this.material.uniforms[propertyKey], {
+			value: newValue,
+			duration: 1,
+			ease: "power2.inOut"
+		});
 
-		// console.log(`${propertyKey} ${this.material.uniforms[propertyKey].value}`);
+		console.log(`${propertyKey} ${this.material.uniforms[propertyKey].value}`);
 
 		//Color Animation
 		gsap.to(this.material.uniforms.uDepthColor.value, {
@@ -233,8 +233,19 @@ export default class Potion
     {
       	console.log('potion recieving: ' + color);
 
-		this.animateProperty();
-        
+		const animationMap = {
+			red: 'uBigWavesElevation',
+			blue: 'uBigWavesSpeed',
+			green: 'uSmallWavesElevation',
+			magenta: 'uSmallWavesSpeed',
+			cyan: 'uSmallWavesFrequency',
+			yellow: 'uSmallIterations'
+		};
+		
+		// Check if the color is in the map and call animateProperty
+		if (animationMap[color]) {
+			this.animateProperty(animationMap[color]);
+		}
     }
 
     createMesh()

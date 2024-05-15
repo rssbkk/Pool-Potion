@@ -58,8 +58,6 @@ export default class Experience
 
         // Ingredient Added Event
         const colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta'];
-
-        // Attach event listeners in a loop
         colors.forEach(color => {
             this.interactionAnimation.on(`added${color}`, () => {
                 this.added(color);
