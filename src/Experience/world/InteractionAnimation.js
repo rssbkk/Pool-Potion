@@ -44,7 +44,7 @@ export default class InteractionAnimation extends EventEmitter
         }
     }
 
-    animate(model)
+    animate(model, color)
     {
         const params = {
             t: 0
@@ -76,7 +76,8 @@ export default class InteractionAnimation extends EventEmitter
                 model.copy(point);
             },
             onComplete: () => {
-                this.trigger('blob');
+                this.trigger('added' + color);
+                // console.log(color);
             }
         });
     }

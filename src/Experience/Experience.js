@@ -55,6 +55,21 @@ export default class Experience
         {
             this.update();
         })
+
+        // Ingredient Added Event
+        const colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta'];
+
+        // Attach event listeners in a loop
+        colors.forEach(color => {
+            this.interactionAnimation.on(`added${color}`, () => {
+                this.added(color);
+            });
+        });        
+    }
+
+    added(color)
+    {
+        this.world.potion.createInteraction(color)
     }
 
     resize()

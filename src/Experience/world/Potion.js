@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import Experience from '../Experience.js';
 
+import gsap from 'gsap';
+
 import potionVertexShader from './shaders/potionShader/potionVertex.glsl';
 import potionFragmentShader from './shaders/potionShader/potionFragment.glsl';
 
@@ -23,8 +25,18 @@ export default class Potion
             this.debugObject = {};
         }
 
+		this.animationCount = 0;
+
+      	this.animationConfig = {
+			uBigWavesElevation: { min: 0.25, max: 1 },
+			uBigWavesSpeed: { min: 0.25, max: 2.5 },
+			uSmallWavesElevation: { min: 0.15, max: 1 },
+			uSmallWavesFrequency: { min: 2, max: 15 },
+			uSmallWavesSpeed: { min: 0, max: 2 },
+			uSmallIterations: { isIterations: true }
+		};
+
         this.createMaterial()
-        this.createInteraction();
         this.createMesh()
     }
 
@@ -54,21 +66,21 @@ export default class Potion
             // side: THREE.DoubleSide,
             uniforms:
             {
-                uTime: { value: 0 },
+                uTime: new THREE.Uniform(0),
                 
-                uBigWavesElevation: { value: 0.055 },
-                uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
-                uBigWavesSpeed: { value: 0.2 },
+                uBigWavesElevation: new THREE.Uniform(0.055),
+                uBigWavesFrequency: new THREE.Uniform(new THREE.Vector2(4, 1.5)),
+                uBigWavesSpeed: new THREE.Uniform(0.2),
         
-                uSmallWavesElevation: { value: 0.055 },
-                uSmallWavesFrequency: { value: 3 },
-                uSmallWavesSpeed: { value: 0.45 },
-                uSmallIterations: { value: 4 },
+                uSmallWavesElevation: new THREE.Uniform(0.055),
+                uSmallWavesFrequency: new THREE.Uniform(3),
+                uSmallWavesSpeed: new THREE.Uniform(0.45),
+                uSmallIterations: new THREE.Uniform(4),
         
-                uDepthColor: { value: new THREE.Color(depthColor) },
-                uSurfaceColor: { value: new THREE.Color(surfaceColor) },
-                uColorOffset: { value: 0 },
-                uColorMultiplier: { value: 7 }
+                uDepthColor: new THREE.Uniform(new THREE.Color(depthColor)),
+                uSurfaceColor: new THREE.Uniform(new THREE.Color(surfaceColor)),
+                uColorOffset: new THREE.Uniform(0),
+                uColorMultiplier: new THREE.Uniform(7)
             }
         });
 
@@ -160,78 +172,69 @@ export default class Potion
         }
     }
 
-    createInteraction()
+    animateProperty(propertyKey)
     {
-        // Animation configuration
-        let animationCount = 0;
+		// this.animationCount += 1;
 
-        const animationConfig = {
-            uBigWavesElevation: { min: 0.25, max: 1 },
-            uBigWavesSpeed: { min: 0.25, max: 2.5 },
-            uSmallWavesElevation: { min: 0.15, max: 1 },
-            uSmallWavesFrequency: { min: 2, max: 15 },
-            uSmallWavesSpeed: { min: 0, max: 2 },
-            // Special case without min/max
-            uSmallIterations: { isIterations: true }
-        };
+		// let config = animationConfig[propertyKey];
+		// let previous = this.material.uniforms[propertyKey].value;
+		// let tinyRandom = (Math.random() - 0.5) / 5;
+		// let newValue;
 
-        // Generalized animate function
-        const animateProperty = (propertyKey) => {
-            animationCount += 1;
+		// // console.log('config = ' + config);
 
-            let config = animationConfig[propertyKey];
-            let previous = potionMaterial.uniforms[propertyKey].value;
-            let tinyRandom = (Math.random() - 0.5) / 5;
-            let newValue;
+		// if (config.isIterations) {
+		// 	newValue = Math.round(Math.random() * 4);
+		// } else {
+		// 	newValue = Math.max(config.min, Math.min(config.max, (previous + tinyRandom)));
+		// 	if(newValue === previous) {
+		// 		newValue = (config.max - config.min) / 2;
+		// 	}
+		// }
 
-            // console.log('config = ' + config);
+		// // console.log("config min = " + config.min);
+		// // console.log("config max = " + config.max);
+		// // console.log("tr = " + tinyRandom);
+		// // console.log("prv = " + previous);
+		// // console.log("nv = " + newValue);
 
-            if (config.isIterations) {
-                newValue = Math.round(Math.random() * 4);
-            } else {
-                newValue = Math.max(config.min, Math.min(config.max, (previous + tinyRandom)));
-                if(newValue === previous) {
-                    newValue = (config.max - config.min) / 2;
-                }
-            }
+		// gsap.to(this.material.uniforms[propertyKey], {
+		// 	value: newValue,
+		// 	duration: 1,
+		// 	ease: "power2.inOut"
+		// });
 
-            // console.log("config min = " + config.min);
-            // console.log("config max = " + config.max);
-            // console.log("tr = " + tinyRandom);
-            // console.log("prv = " + previous);
-            // console.log("nv = " + newValue);
+		// console.log(`${propertyKey} ${this.material.uniforms[propertyKey].value}`);
 
-            gsap.to(potionMaterial.uniforms[propertyKey], {
-                value: newValue,
-                duration: 1,
-                ease: "power2.inOut"
-            });
+		//Color Animation
+		gsap.to(this.material.uniforms.uDepthColor.value, {
+			r: Math.random(),
+			g: Math.random(),
+			b: Math.random(),
+			duration: 2,
+			ease: "power1.inOut",
+			onUpdate: function () {
+				this.material.uniforms.uDepthColor.value.needsUpdate = true;
+			}.bind(this)  
+		});
+		gsap.to(this.material.uniforms.uSurfaceColor.value, {
+			r: Math.random(),
+			g: Math.random(),
+			b: Math.random(),
+			duration: 2,
+			ease: "power1.inOut",
+			onUpdate: function () {
+				this.material.uniforms.uSurfaceColor.value.needsUpdate = true;
+			}.bind(this) 
+		});
+    }
 
-            console.log(`${propertyKey} ${potionMaterial.uniforms[propertyKey].value}`);
+    createInteraction(color)
+    {
+      	console.log('potion recieving: ' + color);
 
-            //Color Animation
-            gsap.to(potionMaterial.uniforms.uDepthColor.value, {
-                r: Math.random(),
-                g: Math.random(),
-                b: Math.random(),
-                duration: 2,
-                ease: "power1.inOut",
-                onUpdate: function () {
-                    potionMaterial.uniforms.uDepthColor.value.needsUpdate = true;
-                }
-            });
-            gsap.to(potionMaterial.uniforms.uSurfaceColor.value, {
-                r: Math.random(),
-                g: Math.random(),
-                b: Math.random(),
-                duration: 2,
-                ease: "power1.inOut",
-                onUpdate: function () {
-                    potionMaterial.uniforms.uSurfaceColor.value.needsUpdate = true;
-                }
-            });
-        };
-
+		this.animateProperty();
+        
     }
 
     createMesh()

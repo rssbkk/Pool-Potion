@@ -51,7 +51,7 @@ export default class Raycaster {
         window.addEventListener('click', () => {
             if(this.currentIntersect)
             {
-                this.interactionAnimation.animate(this.currentIntersect.object.position);
+                this.interactionAnimation.animate(this.currentIntersect.object.position, this.currentIntersect.object.name);
             }
         });
     }
