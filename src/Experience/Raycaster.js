@@ -52,7 +52,6 @@ export default class Raycaster {
             if(this.currentIntersect)
             {
                 this.interactionAnimation.animate(this.currentIntersect.object.position);
-                console.log(this.currentIntersect);
             }
         });
     }

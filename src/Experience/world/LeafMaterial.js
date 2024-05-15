@@ -55,12 +55,11 @@ export default class Leaf
                 uWindTime: new THREE.Uniform(this.leafUniforms.uWindTime),
                 uFoliageImage: new THREE.Uniform(this.foliageImage),
             },
+            silent: true,
             transparent: true,
             alphaMap: this.foliageImage,
             alphaTest: 0.5,
         })
-
-        console.log(this.leafMaterial);
     }
 
     setupDebug()
