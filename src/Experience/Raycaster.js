@@ -44,7 +44,6 @@ export default class Raycaster {
         this.scene.traverse((object) => {
             if(object.userData.type === 'interactive')
                 {
-                    console.log(object);
                     this.objectsToTest.push(object)
                 }
         })
