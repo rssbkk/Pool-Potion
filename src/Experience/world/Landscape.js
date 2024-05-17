@@ -17,10 +17,10 @@ export default class Landscape
         this.leafMaterial = new Leaf().leafMaterial;
 
         this.sceneObject = {};
-
         this.sceneObjectColumns = [];
         this.sceneObjectRocks = [];
         this.sceneObjectTrunks = [];
+        this.sceneObjectLeaves = [];
 
         this.createLandscape();
         this.seperateParts();
@@ -51,7 +51,9 @@ export default class Landscape
         {
             if (child.name.toLocaleLowerCase().includes('canopy'))
             {
+                this.sceneObjectLeaves.push(child);
                 child.material = this.leafMaterial;
+                child.material.color = new THREE.Color(0x228b22);
                 child.frustumCulled = false;
             }
         });
@@ -99,8 +101,6 @@ export default class Landscape
                 child.material.color = new THREE.Color(0xa5a192);
             }
         });
-
-        console.log(this.sceneObjectRocks);
     }
 
     setupDebug()
@@ -116,13 +116,15 @@ export default class Landscape
                 wellColor: `#${this.sceneObject.well.material.color.getHexString()}`,
                 columnColor: `#${this.sceneObjectColumns[0].material.color.getHexString()}`,
                 trunkColor: `#${this.sceneObjectTrunks[0].material.color.getHexString()}`,
-                rockColor: `#${this.sceneObjectRocks[0].material.color.getHexString()}`
+                rockColor: `#${this.sceneObjectRocks[0].material.color.getHexString()}`,
+                leavesColor: `#${this.sceneObjectLeaves[0].material.color.getHexString()}`
             };
 
             this.LandscapeTweaks.addBinding(this.debugObject, 'wellColor').on('change', () => this.sceneObject.well.material.color.set(this.debugObject.wellColor)),
             this.LandscapeTweaks.addBinding(this.debugObject, 'columnColor').on('change', () => this.sceneObjectColumns.forEach(column => { column.material.color.set(this.debugObject.columnColor) })),
             this.LandscapeTweaks.addBinding(this.debugObject, 'trunkColor').on('change', () => this.sceneObjectTrunks.forEach(trunk => { trunk.material.color.set(this.debugObject.trunkColor) })),
             this.LandscapeTweaks.addBinding(this.debugObject, 'rockColor').on('change', () => this.sceneObjectRocks.forEach(rock => { rock.material.color.set(this.debugObject.rockColor) }))
+            this.LandscapeTweaks.addBinding(this.debugObject, 'leavesColor').on('change', () => this.sceneObjectLeaves.forEach(leaves => { leaves.material.color.set(this.debugObject.leavesColor) }))
         }
     }
 }

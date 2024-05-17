@@ -36,7 +36,6 @@ export default class Leaf
             uScale: 0.7,
             uWindSpeed: 1,
             uWindTime: 0.0,
-            uLeafColor: new THREE.Color(0x228b22),
         }
 
         // (0x3f6d21)
@@ -45,7 +44,7 @@ export default class Leaf
         // (0x228b22) ,
 
         this.leafMaterial = new CustomShaderMaterial({
-            baseMaterial: new THREE.MeshToonMaterial({color: this.leafUniforms.uLeafColor}),
+            baseMaterial: new THREE.MeshToonMaterial(),
             vertexShader: leafVertexShader,
             uniforms: {
                 uEffectBlend: new THREE.Uniform(this.leafUniforms.uEffectBlend),
