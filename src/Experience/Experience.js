@@ -11,6 +11,7 @@ import Debug from './utils/Debug.js';
 import sources from './sources.js';
 import ToonMaterial from './world/worldUtils/ToonMaterial.js';
 import InteractionAnimation from './world/worldUtils/InteractionAnimation.js';
+import SpawningManager from './world/worldUtils/SpawningManager.js';
 
 let instance = null;
 
@@ -38,6 +39,7 @@ export default class Experience
         this.scene = new THREE.Scene();
         this.resources = new Resources(sources);
         this.interactionAnimation = new InteractionAnimation();
+        this.spawningManager = new SpawningManager();
         this.toonMaterial = new ToonMaterial().toonMaterial;
         this.camera = new Camera();
         this.raycaster = new Raycaster();
@@ -59,15 +61,28 @@ export default class Experience
         // Ingredient Added Event
         const colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta'];
         colors.forEach(color => {
-            this.interactionAnimation.on(`added${color}`, () => {
+            this.interactionAnimation.on(`added${color}`, () => 
+            {
                 this.added(color);
             });
-        });        
+        });
+        
+        colors.forEach(color => {
+            this.interactionAnimation.on(`respawn${color}`, () => 
+            {
+                this.respawn(color);
+            });
+        });
     }
 
     added(color)
     {
-        this.world.potion.createInteraction(color)
+        this.world.potion.createInteraction(color);
+    }
+
+    respawn(color)
+    {
+        this.world.curveAnim.createBox(color)
     }
 
     resize()

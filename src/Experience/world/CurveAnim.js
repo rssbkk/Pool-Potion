@@ -23,22 +23,33 @@ export default class curveAnim
         //     this.debugObject = {};
         // }
 
-        // this.createBox(5);
         this.createBoxes();
     }
 
-    createBox(count)
+    createBox(name)
     {
-        const geometry = new THREE.BoxGeometry( 0.25, 0.25, 0.25 );
-        const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+        const interactionObjectGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+        const colors = [
+            { color: new THREE.Color(1, 0, 0), name: "red" },
+            { color: new THREE.Color(0, 1, 0), name: "green" },
+            { color: new THREE.Color(0, 0, 1), name: "blue" },
+            { color: new THREE.Color(1, 1, 0), name: "yellow" },
+            { color: new THREE.Color(0, 1, 1), name: "cyan" },
+            { color: new THREE.Color(1, 0, 1), name: "magenta" }
+        ];
 
-        for(let i = 0; i < count; i++ )
-        {
-            this.box = new THREE.Mesh( geometry, material );
-            this.box.position.set( 5 * Math.random() - 2.5, 0.5, 5 * Math.random() - 2.5);
-            this.box.userData.type = "interactive";
-            this.scene.add(this.box);
-        }
+        const positions = [[2, 0, 2], [-2, 0, -2], [2, 0, -2], [-2, 0, 2]];
+        const randomNumber = Math.round(Math.random() * 3);
+        console.log(randomNumber);
+    
+        const objectInfo = colors.find( color => color.name === name );
+        const material = new THREE.MeshToonMaterial({ color: objectInfo.color });
+        const mesh = new THREE.Mesh(interactionObjectGeometry, material);
+        mesh.position.set(...positions[randomNumber]);
+        console.log(positions[randomNumber]);
+        mesh.name = name;
+        mesh.userData.type = "interactive";
+        this.scene.add(mesh);
     }
 
     createBoxes() {

@@ -78,6 +78,7 @@ export default class InteractionAnimation extends EventEmitter
             onComplete: () => {
                 this.scene.remove(mesh);
                 this.trigger('added' + color);
+                this.trigger('respawn' + color);
             }
         });
     }
