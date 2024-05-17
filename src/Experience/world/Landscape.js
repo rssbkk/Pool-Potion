@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import Experience from '../Experience.js';
-import Leaf from './LeafMaterial.js';
+import Leaf from './worldUtils/LeafMaterial.js';
 
 export default class Landscape
 {

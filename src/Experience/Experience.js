@@ -9,8 +9,8 @@ import World from './world/World.js';
 import Resources from './utils/Resources.js';
 import Debug from './utils/Debug.js';
 import sources from './sources.js';
-import ToonMaterial from './world/ToonMaterial.js';
-import InteractionAnimation from './world/InteractionAnimation.js';
+import ToonMaterial from './world/worldUtils/ToonMaterial.js';
+import InteractionAnimation from './world/worldUtils/InteractionAnimation.js';
 
 let instance = null;
 

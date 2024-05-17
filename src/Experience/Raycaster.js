@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import Experience from './Experience.js'
-import InteractionAnimation from './world/InteractionAnimation.js';
+import InteractionAnimation from './world/worldUtils/InteractionAnimation.js';
 
 export default class Raycaster {
     constructor() {
@@ -51,7 +51,7 @@ export default class Raycaster {
         window.addEventListener('click', () => {
             if(this.currentIntersect)
             {
-                this.interactionAnimation.animate(this.currentIntersect.object.position, this.currentIntersect.object.name);
+                this.interactionAnimation.animate(this.currentIntersect.object, this.currentIntersect.object.position, this.currentIntersect.object.name);
             }
         });
     }
