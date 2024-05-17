@@ -80,7 +80,8 @@ export default class Experience
 
     respawn(color)
     {
-        this.world.curveAnim.createBox(color)
+        this.world.curveAnim.createBox(color);
+        this.raycaster.populateArray();
     }
 
     resize()

@@ -63,13 +63,6 @@ export default class Raycaster {
     update() {
         this.instance.setFromCamera(this.pointer, this.camera.instance);
 
-        const now = this.time.current;
-        if(now - this.lastUpdate > this.updateInterval)
-        {
-            this.populateArray();
-            this.lastUpdate = now;
-        }
-
         const intersects = this.instance.intersectObjects(this.objectsToTest);
         if (intersects.length) {
             this.currentIntersect = intersects[0];

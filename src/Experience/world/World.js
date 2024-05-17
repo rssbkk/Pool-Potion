@@ -13,6 +13,7 @@ export default class World
         this.experience = new Experience();
         this.scene = this.experience.scene;
         this.resources = this.experience.resources;
+        this.raycaster = this.experience.raycaster;
 
         this.resources.on('ready', ()=>
         {
@@ -23,6 +24,7 @@ export default class World
             this.landscape = new Landscape();
             this.curveAnim = new curveAnim();
             this.environment = new Environment();
+            this.raycaster.populateArray();
         })
     }
 
