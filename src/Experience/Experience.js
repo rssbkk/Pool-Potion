@@ -11,7 +11,6 @@ import Debug from './utils/Debug.js';
 import sources from './sources.js';
 import ToonMaterial from './world/worldUtils/ToonMaterial.js';
 import InteractionAnimation from './world/worldUtils/InteractionAnimation.js';
-import SpawningManager from './world/worldUtils/SpawningManager.js';
 
 let instance = null;
 
@@ -39,7 +38,6 @@ export default class Experience
         this.scene = new THREE.Scene();
         this.resources = new Resources(sources);
         this.interactionAnimation = new InteractionAnimation();
-        this.spawningManager = new SpawningManager();
         this.toonMaterial = new ToonMaterial().toonMaterial;
         this.camera = new Camera();
         this.raycaster = new Raycaster();

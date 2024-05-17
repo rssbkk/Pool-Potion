@@ -23,6 +23,7 @@ export default class Landscape
     createLandscape()
     {
         this.model = this.experience.resources.items.landscape.scene;
+        this.model.layers.set(1);
 
         this.model.traverse((child) =>
         {

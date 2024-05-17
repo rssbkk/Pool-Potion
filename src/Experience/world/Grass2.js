@@ -90,6 +90,7 @@ export default class Grass
     createGrassField()
     {
         this.instanceMesh = new THREE.InstancedMesh( this.geometry, this.material, this.instanceCount );
+        this.instanceMesh.layers.set(1);
         this.scene.add( this.instanceMesh );
 
         let planeSize = 15.0;

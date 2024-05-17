@@ -34,13 +34,17 @@ export default class Raycaster {
 
     createInstance() {
         this.instance = new THREE.Raycaster();
+
+        // Raycaster to ignore grass and trees
+        this.instance.layers.set(0);
     }
 
     populateArray()
     {
         this.scene.traverse((object) => {
-            if(object.userData.type)
+            if(object.userData.type === 'interactive')
                 {
+                    console.log(object);
                     this.objectsToTest.push(object)
                 }
         })

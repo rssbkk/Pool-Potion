@@ -76,6 +76,7 @@ export default class InteractionAnimation extends EventEmitter
                 position.copy(point);
             },
             onComplete: () => {
+                mesh.layers.set(5);
                 this.scene.remove(mesh);
                 this.trigger('added' + color);
                 this.trigger('respawn' + color);
