@@ -27,7 +27,7 @@ export default class Potion
 
 		this.animationCount = 0;
 
-      	this.animationConfig = {
+    	this.animationConfig = {
 			uBigWavesElevation: { min: 0.25, max: 1 },
 			uBigWavesSpeed: { min: 0.25, max: 2.5 },
 			uSmallWavesElevation: { min: 0.15, max: 1 },
@@ -185,6 +185,7 @@ export default class Potion
 
 		if (config.isIterations) {
 			newValue = Math.round(Math.random() * 4);
+			this.material.uniforms.uSmallIterations.value = newValue;
 		} else {
 			newValue = Math.max(config.min, Math.min(config.max, (previous + tinyRandom)));
 			if(newValue === previous) {
@@ -204,7 +205,23 @@ export default class Potion
 			ease: "power2.inOut"
 		});
 
-		console.log(`${propertyKey} ${this.material.uniforms[propertyKey].value}`);
+		console.log(`${propertyKey}: ${newValue} was ${this.material.uniforms[propertyKey].value}`);
+
+		// Cant See under waves
+		if(propertyKey === 'uBigWavesElevation') {
+			function mix( x, y, a) {
+				return x * (1 - a) + y * a;
+			}
+
+			const result = mix(0.5, -0.5, newValue)
+
+			gsap.to(this.potionMesh.position, {
+				y: result,
+				duration: 1,
+				ease: "power2.inOut"
+			});
+
+		}
 
 		//Color Animation
 		gsap.to(this.material.uniforms.uDepthColor.value, {
@@ -251,12 +268,12 @@ export default class Potion
     createMesh()
     {
         const geometry = this.resources.items.potionGeometry.scene.children[0].geometry
-        let potionMesh = new THREE.Mesh( geometry, this.material);
+        this.potionMesh = new THREE.Mesh( geometry, this.material);
         
-        potionMesh.position.x = 0;
-        potionMesh.position.y = 0.45;
-        potionMesh.position.z = 0;
-        this.scene.add(potionMesh);
+        this.potionMesh.position.x = 0;
+        this.potionMesh.position.y = 0.45;
+        this.potionMesh.position.z = 0;
+        this.scene.add(this.potionMesh);
 
         if(this.debug.active)
         {
@@ -265,7 +282,7 @@ export default class Potion
             });
             
             // X Position
-            positionTweaks.addBinding(potionMesh.position, 'x', {
+            positionTweaks.addBinding(this.potionMesh.position, 'x', {
               min: -10,
               max: 10,
               step: 0.5,
@@ -273,7 +290,7 @@ export default class Potion
             });
             
             // Y Position
-            positionTweaks.addBinding(potionMesh.position, 'y', {
+            positionTweaks.addBinding(this.potionMesh.position, 'y', {
               min: -10,
               max: 10,
               step: 0.01,
@@ -281,7 +298,7 @@ export default class Potion
             });
             
             // Z Position
-            positionTweaks.addBinding(potionMesh.position, 'z', {
+            positionTweaks.addBinding(this.potionMesh.position, 'z', {
               min: -10,
               max: 10,
               step: 0.5,
