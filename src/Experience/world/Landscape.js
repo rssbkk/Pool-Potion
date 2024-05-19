@@ -109,7 +109,7 @@ export default class Landscape
         {
             this.LandscapeTweaks = this.debug.pane.addFolder({
                 title: 'Landscape',
-                expanded: true
+                expanded: false
             });
 
             this.debugObject = {

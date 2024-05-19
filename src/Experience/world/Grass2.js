@@ -112,7 +112,7 @@ export default class Grass
         {
             this.debugFolder = this.debug.pane.addFolder({
                 title: 'Grass',
-                expanded: false
+                expanded: true
             });
 
             // Folder for geometry properties
@@ -211,57 +211,26 @@ export default class Grass
             // // Folder for grass color properties
             const colorFolder = this.debugFolder.addFolder({ title: 'Color Properties' });
 
-            colorFolder.addBinding(this.grassUniforms, 'uColorOffset', {
-                min: 0,
-                max: 5,
-                step: 0.1
-            }).on('change', () => {
-                this.updateMaterial();
-            });
+            this.debugObject = { 
+                uTipColor1: `#${this.grassUniforms.uTipColor1.getHexString()}`,
+                uTipColor2: `#${this.grassUniforms.uTipColor2.getHexString()}`,
+                uTipColor3: `#${this.grassUniforms.uTipColor3.getHexString()}`,
+                uBaseColor1: `#${this.grassUniforms.uBaseColor1.getHexString()}`,
+                uBaseColor2: `#${this.grassUniforms.uBaseColor2.getHexString()}`,
+            }
+            // this.debugObject.uBaseColor1 = this.grassUniforms.uBaseColor1.value;
+            // this.debugObject.uBaseColor2 = this.grassUniforms.uBaseColor2.value;
 
-            colorFolder.addBinding(this.grassUniforms, 'uTipColor1', {
-                view: 'color',
-                label: 'Tip Color 1',
-                format: 'hex'
-            }).on('change', () => {
-                this.updateMaterialColor();
-            });
-            
-            colorFolder.addBinding(this.grassUniforms, 'uTipColor2', {
-                view: 'color',
-                label: 'Tip Color 2',
-                format: 'hex'
-            }).on('change', () => {
-                this.updateMaterialColor();
-            });
-            
-            colorFolder.addBinding(this.grassUniforms, 'uTipColor3', {
-                view: 'color',
-                label: 'Tip Color 3',
-                format: 'hex'
-            }).on('change', () => {
-                this.updateMaterialColor();
-            });
-            
-            colorFolder.addBinding(this.grassUniforms, 'uBaseColor1', {
-                view: 'color',
-                label: 'Base Color 1',
-                format: 'hex'
-            }).on('change', () => {
-                this.updateMaterialColor();
-            });
-            
-            colorFolder.addBinding(this.grassUniforms, 'uBaseColor2', {
-                view: 'color',
-                label: 'Base Color 2',
-                format: 'hex'
-            }).on('change', () => {
-                this.updateMaterialColor();
-            });
+            console.log(this.debugObject);
+
+            colorFolder.addBinding(this.debugObject, 'uTipColor1').on('change', () => { this.material.uniforms.uTipColor1.value.set(this.debugObject.uTipColor1)});
+            colorFolder.addBinding(this.debugObject, 'uTipColor2').on('change', () => { this.material.uniforms.uTipColor2.value.set(this.debugObject.uTipColor2)});
+            colorFolder.addBinding(this.debugObject, 'uTipColor3').on('change', () => { this.material.uniforms.uTipColor3.value.set(this.debugObject.uTipColor3)});
+            colorFolder.addBinding(this.debugObject, 'uBaseColor1').on('change', () => { this.material.uniforms.uBaseColor1.value.set(this.debugObject.uBaseColor1)});
+            colorFolder.addBinding(this.debugObject, 'uBaseColor2').on('change', () => { this.material.uniforms.uBaseColor2.value.set(this.debugObject.uBaseColor2)});
 
             this.updateMaterial = () => 
             {
-                // Update only the uniform values directly instead of recreating the material
                 Object.keys(this.grassUniforms).forEach(key => 
                 {
                     if (key in this.material.uniforms) 
@@ -273,7 +242,6 @@ export default class Grass
             
             this.updateMaterialColor = () => 
             {
-                // Update only the uniform values directly instead of recreating the material
                 Object.keys(this.grassUniforms).forEach(key => 
                 {
                     if (key in this.material.uniforms) 
