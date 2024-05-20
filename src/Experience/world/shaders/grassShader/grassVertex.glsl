@@ -9,12 +9,10 @@ uniform float uTerrainSize;
 uniform float uColorOffset;
 
 varying float vVertexHeight;
-varying vec3 vColor;
 varying vec2 vGlobalUV;
 varying vec2 vUv;
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-varying vec2 vWindColor;
+varying vec2 vGuv;
+
 
 void main()
 {
@@ -38,5 +36,6 @@ void main()
     // Varyings
     vVertexHeight = modelPosition.y;
     vVertexHeight *= uColorOffset;
+    vUv = uv;
 
 }

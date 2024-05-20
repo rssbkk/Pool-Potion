@@ -103,6 +103,7 @@ export default class Grass
             matrix.setPosition(tempPositionX, 0, tempPositionZ);
             this.instanceMesh.setMatrixAt(i, matrix);
         }
+
         this.instanceMesh.instanceMatrix.needsUpdate = true;
     }
 
@@ -112,7 +113,7 @@ export default class Grass
         {
             this.debugFolder = this.debug.pane.addFolder({
                 title: 'Grass',
-                expanded: true
+                expanded: false
             });
 
             // Folder for geometry properties
@@ -218,10 +219,6 @@ export default class Grass
                 uBaseColor1: `#${this.grassUniforms.uBaseColor1.getHexString()}`,
                 uBaseColor2: `#${this.grassUniforms.uBaseColor2.getHexString()}`,
             }
-            // this.debugObject.uBaseColor1 = this.grassUniforms.uBaseColor1.value;
-            // this.debugObject.uBaseColor2 = this.grassUniforms.uBaseColor2.value;
-
-            console.log(this.debugObject);
 
             colorFolder.addBinding(this.debugObject, 'uTipColor1').on('change', () => { this.material.uniforms.uTipColor1.value.set(this.debugObject.uTipColor1)});
             colorFolder.addBinding(this.debugObject, 'uTipColor2').on('change', () => { this.material.uniforms.uTipColor2.value.set(this.debugObject.uTipColor2)});
@@ -236,17 +233,6 @@ export default class Grass
                     if (key in this.material.uniforms) 
                     {
                         this.material.uniforms[key].value = this.grassUniforms[key];
-                    }
-                })
-            };
-            
-            this.updateMaterialColor = () => 
-            {
-                Object.keys(this.grassUniforms).forEach(key => 
-                {
-                    if (key in this.material.uniforms) 
-                    {
-                        this.material.uniforms[key].value.set(this.grassUniforms[key]);
                     }
                 })
             };
