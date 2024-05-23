@@ -1,17 +1,24 @@
 
 uniform float uTime;
 uniform sampler2D uNoiseTexture;
+uniform float uPerlinRange;
 uniform float uNoiseScale;
+uniform float uTextureScale;
 uniform float uWindStrength;
 uniform float uGrassBend;
 uniform float uNoiseSpeed;
 uniform float uTerrainSize;
 uniform float uColorOffset;
 
+attribute vec3 instancePosition;
+
 varying float vVertexHeight;
 varying vec2 vGlobalUV;
 varying vec2 vUv;
 varying vec2 vGuv;
+varying vec4 vNoise;
+varying vec3 textureColor;
+varying float noiseControl;
 
 
 void main()
@@ -36,6 +43,9 @@ void main()
     // Varyings
     vVertexHeight = modelPosition.y;
     vVertexHeight *= uColorOffset;
-    vUv = uv;
+
+    vec4 vNoise = texture2D(uNoiseTexture, instancePosition.xz * uTextureScale);
+    textureColor = pow(vNoise.rgb, vec3(uPerlinRange));
+    noiseControl = clamp(textureColor.r * 10.5 - 1.25, 0.0, 1.0);
 
 }

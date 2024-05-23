@@ -1,21 +1,21 @@
 precision mediump float;
 
+uniform sampler2D uNoiseTexture;
 uniform vec3 uTipColor1;
 uniform vec3 uTipColor2;
 uniform vec3 uTipColor3;
 uniform vec3 uBaseColor1;
 uniform vec3 uBaseColor2;
 
-
-uniform sampler2D uNoiseTexture;
-
 varying float vVertexHeight;
-varying vec2 vUv;
+varying vec4 vNoise;
+varying vec3 textureColor;
+varying float noiseControl;
 
 void main() 
 {
-    float testTexture = texture2D(uNoiseTexture, vUv).r;
+    vec3 tipColor = mix(uTipColor3, uTipColor1, noiseControl);
+    vec3 grassColor = mix(uBaseColor1, tipColor, vVertexHeight);
 
-    vec3 grassColor = mix(uBaseColor1, uTipColor3, vVertexHeight);
-    gl_FragColor = vec4(0.0, vUv, 1.0);
+    gl_FragColor = vec4(grassColor, 1.0);
 }

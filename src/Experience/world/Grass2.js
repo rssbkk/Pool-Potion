@@ -48,12 +48,14 @@ export default class Grass
             uGrassBend: 1.85 ,
             uNoiseSpeed: 0.01 ,
             uTerrainSize: 400. ,
-            uTipColor1: new THREE.Color(0x9bd38d),
+            uTipColor1: new THREE.Color(0xa8b243),
             uTipColor2: new THREE.Color(0x1f352a),
             uTipColor3: new THREE.Color(0xffff00) ,
             uBaseColor1: new THREE.Color(0x228b22) ,
             uBaseColor2: new THREE.Color(0x313f1b) ,
             uNoiseScale: 1.5,
+            uTextureScale: 50.0,
+            uPerlinRange: 2.25,
             uColorOffset: 1
         }
 
@@ -75,6 +77,8 @@ export default class Grass
                 uBaseColor2: new THREE.Uniform(this.grassUniforms.uBaseColor2),
                 uNoiseTexture: new THREE.Uniform(this.perlinTexture),
                 uNoiseScale: new THREE.Uniform(this.grassUniforms.uNoiseScale),
+                uTextureScale: new THREE.Uniform(this.grassUniforms.uTextureScale),
+                uPerlinRange: new THREE.Uniform(this.grassUniforms.uPerlinRange),
                 uColorOffset: new THREE.Uniform(this.grassUniforms.uColorOffset)
             },
             // wireframe: true
@@ -93,11 +97,13 @@ export default class Grass
         this.instanceMesh.layers.set(1);
         this.scene.add( this.instanceMesh );
 
+        const instancePositions = new Float32Array(this.instanceCount * 3);
+
         let planeSize = 15.0;
         for(let i = 0; i < this.instanceCount; i++)
         {
-            let tempPositionX = (Math.random() * planeSize - planeSize / 2);
-            let tempPositionZ = (Math.random() * planeSize - planeSize / 2);
+            let tempPositionX = instancePositions[i * 3 + 0] = (Math.random() * planeSize - planeSize / 2);
+            let tempPositionZ = instancePositions[i * 3 + 2] = (Math.random() * planeSize - planeSize / 2);
 
             const matrix = new THREE.Matrix4();
             matrix.setPosition(tempPositionX, 0, tempPositionZ);
@@ -105,6 +111,9 @@ export default class Grass
         }
 
         this.instanceMesh.instanceMatrix.needsUpdate = true;
+
+        const instancedPositionAttribute = new THREE.InstancedBufferAttribute(instancePositions, 3);
+        this.geometry.setAttribute('instancePosition', instancedPositionAttribute);
     }
 
     setupDebug()
@@ -169,6 +178,24 @@ export default class Grass
                 min: 0.1,
                 max: 5,
                 step: 0.1
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            
+            shaderFolder.addBinding(this.grassUniforms, 'uTextureScale', {
+                label: 'Texture Scale',
+                min: -200.0,
+                max: 200.0,
+                step: 1.0
+            }).on('change', () => {
+                this.updateMaterial();
+            });
+            
+            shaderFolder.addBinding(this.grassUniforms, 'uPerlinRange', {
+                label: 'Perlin Range',
+                min: -20.0,
+                max: 20.0,
+                step: 0.25
             }).on('change', () => {
                 this.updateMaterial();
             });
