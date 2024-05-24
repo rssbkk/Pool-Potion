@@ -28,7 +28,7 @@ export default class Potion
 		this.animationCount = 0;
 		this.animationStep = null;
 
-    this.animationConfig = {
+    	this.animationConfig = {
 			uBigWavesElevation: { min: 0.25, max: 1 },
 			uBigWavesSpeed: { min: 0.25, max: 2.5 },
 			uSmallWavesElevation: { min: 0.15, max: 1 },
@@ -230,14 +230,13 @@ export default class Potion
 				return x * (1 - a) + y * a;
 			}
 
-			const result = mix(0.5, -0.5, newValue)
+			const result = mix(0.5, -0.25, newValue)
 
 			gsap.to(this.potionMesh.position, {
 				y: result,
 				duration: 1,
 				ease: "power2.inOut"
 			});
-
 		}
 
 		//Color Animation

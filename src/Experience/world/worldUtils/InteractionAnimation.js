@@ -25,7 +25,7 @@ export default class InteractionAnimation extends EventEmitter
     {
         this.animationParameters = 
         {
-            delay: 0.5,
+            delay: 0,
             duration: 1.5,
             repeat: 0
         }

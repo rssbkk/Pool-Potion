@@ -17,7 +17,7 @@ export default class Grass
         this.toonMaterial = this.experience.toonMaterial;
         this.floor = this.experience.world.floor.groundMesh;
 
-        this.instanceCount = 100000;
+        this.instanceCount = 200000;
         this.grassPositions = [];
         this.mesh = null;
 
