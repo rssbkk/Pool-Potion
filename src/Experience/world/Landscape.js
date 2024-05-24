@@ -101,6 +101,17 @@ export default class Landscape
                 child.material.color = new THREE.Color(0xa5a192);
             }
         });
+        
+        this.scene.traverse((child) =>
+        {
+            if (child.name.toLocaleLowerCase().includes('underground'))
+            {
+                this.sceneObject.well = child;
+                child.material = this.toonMaterial.clone();
+                child.material.color = new THREE.Color(0xa5a192);
+                child.material.side = THREE.BackSide;
+            }
+        });
     }
 
     setupDebug()

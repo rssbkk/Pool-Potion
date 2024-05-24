@@ -12,7 +12,6 @@ export default class Environment
 
         this.setSunLight();
         this.setAmbient();
-        this.setEnvironmentMap();
         this.setupDebug();
     }
 
@@ -145,20 +144,20 @@ export default class Environment
                 step: 0.001,
             });
         
-            // Environment map debug
-            const envDebug = this.debugFolder.addFolder({ title: 'EnvMap Debug' });
+            // // Environment map debug
+            // const envDebug = this.debugFolder.addFolder({ title: 'EnvMap Debug' });
 
-            envDebug.addBinding(this.environmentMap, 'intensity', 
-            {
-                min: 0,
-                max: 4,
-                step: 0.001,
-                label: 'envMapIntensity'
-            })
-            .on('change', () => 
-            {
-                this.environmentMap.updateMaterials
-            })
+            // envDebug.addBinding(this.environmentMap, 'intensity', 
+            // {
+            //     min: 0,
+            //     max: 4,
+            //     step: 0.001,
+            //     label: 'envMapIntensity'
+            // })
+            // .on('change', () => 
+            // {
+            //     this.environmentMap.updateMaterials
+            // })
         }
     }
 }

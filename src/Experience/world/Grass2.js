@@ -1,7 +1,6 @@
 import * as THREE from 'three';
+import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js';
 import Experience from '../Experience.js';
-
-import Floor from './Floor.js';
 
 import grassVertexShader from "./shaders/grassShader/grassVertex.glsl";
 import grassFragmentShader from "./shaders/grassShader/grassFragment.glsl";
@@ -16,7 +15,7 @@ export default class Grass
         this.time = this.experience.time;
         this.debug = this.experience.debug;
         this.toonMaterial = this.experience.toonMaterial;
-        this.floor = new Floor();
+        this.floor = this.experience.world.floor.groundMesh;
 
         this.instanceCount = 100000;
         this.grassPositions = [];
@@ -97,20 +96,34 @@ export default class Grass
         this.instanceMesh.layers.set(1);
         this.scene.add( this.instanceMesh );
 
-        const instancePositions = new Float32Array(this.instanceCount * 3);
+        const samplingMesh = this.floor;
+        const sampler = new MeshSurfaceSampler(samplingMesh).build();
 
-        let planeSize = 15.0;
+        const instancePositions = new Float32Array(this.instanceCount * 3);
+        const rotationMatrix = new THREE.Matrix4().makeRotationX( - Math.PI / 2 );
+
+        const defaultTransform = new THREE.Matrix4()
+					.makeRotationX( Math.PI / 2 );
+
+		this.geometry.applyMatrix4( defaultTransform );
+        
         for(let i = 0; i < this.instanceCount; i++)
         {
-            let tempPositionX = instancePositions[i * 3 + 0] = (Math.random() * planeSize - planeSize / 2);
-            let tempPositionZ = instancePositions[i * 3 + 2] = (Math.random() * planeSize - planeSize / 2);
+            const positions = new THREE.Vector3();
+
+            sampler.sample(positions);
+
+            instancePositions[i * 3 + 0] = positions.x;
+            instancePositions[i * 3 + 1] = positions.y;
+            instancePositions[i * 3 + 2] = positions.z;
 
             const matrix = new THREE.Matrix4();
-            matrix.setPosition(tempPositionX, 0, tempPositionZ);
+            matrix.setPosition(positions.x, positions.y, positions.z);
             this.instanceMesh.setMatrixAt(i, matrix);
         }
 
         this.instanceMesh.instanceMatrix.needsUpdate = true;
+        this.instanceMesh.rotation.x = ( - Math.PI / 2 );
 
         const instancedPositionAttribute = new THREE.InstancedBufferAttribute(instancePositions, 3);
         this.geometry.setAttribute('instancePosition', instancedPositionAttribute);

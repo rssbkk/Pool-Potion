@@ -53,24 +53,24 @@ export default class InteractionAnimation extends EventEmitter
         // Create Animation Curve
         this.spline = new THREE.CatmullRomCurve3([
             new THREE.Vector3().copy(position),
-            new THREE.Vector3(position.x * 0.95, position.y + 1.5, position.z * 0.95),
+            new THREE.Vector3(position.x * 0.95, position.y + 1.25, position.z * 0.95),
             new THREE.Vector3(position.x * 0.5, position.y + 0.75, position.z * 0.5),
-            new THREE.Vector3(0, 3, 0),
+            new THREE.Vector3(0, 2, 0),
             new THREE.Vector3(0, 0, 0)
         ]);
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-        const points = this.spline.getPoints(5);
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const line = new THREE.Line(geometry, material);
-        this.scene.add(line);
 
+        // const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        // const points = this.spline2.getPoints(25);
+        // const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        // const line = new THREE.Line(geometry, material);
+        // this.scene.add(line);
 
         gsap.to(params, {
             t: 1,
             delay: this.animationParameters.delay,
             duration: this.animationParameters.duration,
             repeat: this.animationParameters.repeat,
-            ease: CustomEase.create("custom", "M0,0 C0.523,0.164 0.58,0.472 0.688,0.542 0.89,0.671 0.939,0.74 1,1 "),
+            ease: "power1.in",
             onUpdate: () => {
                 const point = this.spline.getPoint(params.t);
                 position.copy(point);

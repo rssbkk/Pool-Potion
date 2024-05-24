@@ -14,7 +14,7 @@ export default class Floor
 
     createMesh()
     {
-        const groundGeometry = new THREE.CircleGeometry( 10, 8 );
+        const groundGeometry = new THREE.RingGeometry(1, 10, 8);
         const groundMaterial = new THREE.MeshStandardMaterial();
         this.groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
         

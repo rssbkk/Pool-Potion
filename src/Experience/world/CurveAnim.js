@@ -24,6 +24,25 @@ export default class curveAnim
         // }
 
         this.createBoxes();
+        this.createIngredients();
+    }
+
+    createIngredients()
+    {
+        this.model = this.experience.resources.items.ingredients.scene;
+        this.model.scale.set(0.15, 0.15, 0.15);
+        this.model.position.set(2, 0, 2);
+
+        this.model.traverse((child) =>
+            {
+                if (child.name.toLocaleLowerCase().includes('penta'))
+                {
+                    child.material.side = THREE.DoubleSide;
+                    child.material.color = new THREE.Color(0xffff00);
+                }
+            });
+
+        this.scene.add(this.model);
     }
 
     createBox(name)
