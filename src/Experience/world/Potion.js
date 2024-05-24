@@ -26,8 +26,9 @@ export default class Potion
         }
 
 		this.animationCount = 0;
+		this.animationStep = null;
 
-    	this.animationConfig = {
+    this.animationConfig = {
 			uBigWavesElevation: { min: 0.25, max: 1 },
 			uBigWavesSpeed: { min: 0.25, max: 2.5 },
 			uSmallWavesElevation: { min: 0.15, max: 1 },
@@ -176,9 +177,20 @@ export default class Potion
     {
 		this.animationCount += 1;
 
+    if(this.animationCount < 5) 
+    {
+    	this.animationStep = 0.1;
+    } else if (this.animationCount < 10)
+    {
+		this.animationStep = 0.2;
+    } else {
+		this.animationStep = 0.3;
+	}
+
 		let config = this.animationConfig[propertyKey];
 		let previous = this.material.uniforms[propertyKey].value;
-		let tinyRandom = (Math.random() - 0.5) / 5;
+    	let range = config.max - config.min;
+		let minChange = range * this.animationStep;
 		let newValue;
 
 		// console.log('config = ' + config);
@@ -187,9 +199,14 @@ export default class Potion
 			newValue = Math.round(Math.random() * 4);
 			this.material.uniforms.uSmallIterations.value = newValue;
 		} else {
-			newValue = Math.max(config.min, Math.min(config.max, (previous + tinyRandom)));
+			let randomChange = (Math.random() - 0.5) * range;
+			randomChange = Math.sign(randomChange) * Math.max(Math.abs(randomChange), minChange);
+
+			//console.log('random change: ' + randomChange);
+			newValue = Math.max(config.min, Math.min(config.max, previous + randomChange));
+
 			if(newValue === previous) {
-				newValue = (config.max - config.min) / 2;
+				newValue = previous + Math.sign(randomChange) * minChange;
 			}
 		}
 
@@ -248,7 +265,7 @@ export default class Potion
 
     createInteraction(color)
     {
-      	console.log('potion recieving: ' + color);
+      	// console.log('potion recieving: ' + color);
 
 		const animationMap = {
 			red: 'uBigWavesElevation',
