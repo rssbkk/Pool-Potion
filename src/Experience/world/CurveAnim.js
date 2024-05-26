@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import Experience from '../Experience.js';
+import { log } from 'three/examples/jsm/nodes/Nodes.js';
 
 export default class curveAnim
 {
@@ -31,7 +32,7 @@ export default class curveAnim
         this.createFoxGlove();
         this.createToadstool();
         this.createSkinnyShroom();
-        this.setupDebug();
+        //this.setupDebug();
     }
 
     createBellaBowl()
@@ -165,27 +166,19 @@ export default class curveAnim
         this.scene.add(this.skinnyShroom);
     }
     
-    createFoxGlove()
+    createFoxGlove(position)
     {
         this.foxGlove = new THREE.Group;
         this.foxGloveModel = this.experience.resources.items.foxGlove.scene;
-        this.foxGlove.add(this.foxGloveModel)
-        //this.foxGlove.scale.set(0.125, 0.125, 0.125);
-
-        this.foxGlove.position.set(0, 0, 0);
-
-        var pos = new THREE.Vector3();
-        this.foxGlove.getWorldPosition( pos );
-
-        this.foxGlove.updateMatrixWorld(true)
-
+        this.foxGlove.add(this.foxGloveModel);
+        this.foxGlove.position.set(2, 0, 2);
+        this.foxGlove.updateMatrixWorld(true);
         this.foxGlove.name = 'foxGlove';
         this.foxGlove.userData.type = "interactive";
         this.foxGloveGlove = [];
         this.foxGloveLeaf = [];
 
         console.log(this.foxGlove);
-        console.log("Initial World Position:", new THREE.Vector3().setFromMatrixPosition(this.foxGlove.matrixWorld));
 
         this.foxGlove.traverse((child) =>
             {
@@ -228,8 +221,6 @@ export default class curveAnim
         const objectInfo = ingredients.find( ingredient => ingredient.name === name );
         const randomNumber = Math.round(Math.random() * (objectInfo.positions.length - 1));
         const randomPosition = objectInfo.positions[randomNumber];
-
-        const mesh = new this.foxGlove;
         
         mesh.position.set(randomPosition.x, randomPosition.y, randomPosition.z);
         mesh.name = name;
@@ -285,6 +276,7 @@ export default class curveAnim
 
     setupDebug()
     {
+        console.log(this.foxGloveLeaf);
     if(this.debug.active)
         {
             this.debugFolder = this.debug.pane.addFolder({

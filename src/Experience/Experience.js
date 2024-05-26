@@ -76,7 +76,6 @@ export default class Experience
     added(ingredient)
     {
         this.world.potion.createInteraction(ingredient);
-        console.log('here');
     }
 
     respawn(ingredient)

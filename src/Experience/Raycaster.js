@@ -56,9 +56,8 @@ export default class Raycaster {
             {
                 const worldPosition = new THREE.Vector3();
                 this.currentIntersect.object.parent.getWorldPosition(worldPosition);
-                console.log(worldPosition);
 
-                this.interactionAnimation.animate(this.currentIntersect.object.parent, worldPosition, this.currentIntersect.object.parent.name);
+                this.interactionAnimation.animate(this.currentIntersect.object.parent, worldPosition, this.currentIntersect.object.parent.parent.name);
             }
         });
     }

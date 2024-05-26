@@ -262,22 +262,20 @@ export default class Potion
 		});
     }
 
-    createInteraction(color)
+    createInteraction(ingredient)
     {
-      	// console.log('potion recieving: ' + color);
 
 		const animationMap = {
-			red: 'uBigWavesElevation',
-			blue: 'uBigWavesSpeed',
-			green: 'uSmallWavesElevation',
-			magenta: 'uSmallWavesSpeed',
-			cyan: 'uSmallWavesFrequency',
-			yellow: 'uSmallIterations'
+			bellaBowl: 'uBigWavesElevation',
+			toadstool: 'uBigWavesSpeed',
+			skinnyShroom: 'uSmallWavesElevation',
+			foxGlove: 'uSmallWavesSpeed',
+			pentaFlora: 'uSmallWavesFrequency',
+			starShroom: 'uSmallIterations'
 		};
 		
-		// Check if the color is in the map and call animateProperty
-		if (animationMap[color]) {
-			this.animateProperty(animationMap[color]);
+		if (animationMap[ingredient]) {
+			this.animateProperty(animationMap[ingredient]);
 		}
     }
 

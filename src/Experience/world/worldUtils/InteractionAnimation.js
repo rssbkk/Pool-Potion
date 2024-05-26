@@ -50,24 +50,20 @@ export default class InteractionAnimation extends EventEmitter
             t: 0
         }
 
-        console.log(position);
-
         // Create Animation Curve
         this.spline = new THREE.CatmullRomCurve3([
             new THREE.Vector3().copy(position),
             new THREE.Vector3(position.x * 0.95, position.y + 1.25, position.z * 0.95),
             new THREE.Vector3(position.x * 0.5, position.y + 0.75, position.z * 0.5),
             new THREE.Vector3(0, 2, 0),
-            new THREE.Vector3(0, 0, 0)
+            new THREE.Vector3(0, -1, 0)
         ]);
 
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-        const points = this.spline.getPoints(25);
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const line = new THREE.Line(geometry, material);
-        this.scene.add(line);
-
-        console.log(mesh);
+        // const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        // const points = this.spline.getPoints(25);
+        // const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        // const line = new THREE.Line(geometry, material);
+        // this.scene.add(line);
 
         gsap.to(params, {
             t: 1,
@@ -77,11 +73,11 @@ export default class InteractionAnimation extends EventEmitter
             ease: "power1.in",
             onUpdate: () => {
                 const point = this.spline.getPoint(params.t);
-                mesh.position.copy(point);
+                mesh.parent.position.copy(point);
             },
             onComplete: () => {
-                mesh.layers.set(5);
-                this.scene.remove(mesh);
+                mesh.parent.layers.set(5);
+                this.scene.remove(mesh.parent);
                 this.trigger('added' + ingredient);
                 this.trigger('respawn' + ingredient);
             }
