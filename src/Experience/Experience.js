@@ -57,30 +57,31 @@ export default class Experience
         })
 
         // Ingredient Added Event
-        const colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta'];
-        colors.forEach(color => {
-            this.interactionAnimation.on(`added${color}`, () => 
+        const ingredients = ['bellaBowl', 'toadstool', 'skinnyShroom', 'foxGlove', 'pentaFlora', 'starShroom'];
+        ingredients.forEach(ingredient => {
+            this.interactionAnimation.on(`added${ingredient}`, () => 
             {
-                this.added(color);
+                this.added(ingredient);
             });
         });
         
-        colors.forEach(color => {
-            this.interactionAnimation.on(`respawn${color}`, () => 
+        ingredients.forEach(ingredient => {
+            this.interactionAnimation.on(`respawn${ingredient}`, () => 
             {
-                this.respawn(color);
+                this.respawn(ingredient);
             });
         });
     }
 
-    added(color)
+    added(ingredient)
     {
-        this.world.potion.createInteraction(color);
+        this.world.potion.createInteraction(ingredient);
+        console.log('here');
     }
 
-    respawn(color)
+    respawn(ingredient)
     {
-        this.world.curveAnim.createBox(color);
+        this.world.curveAnim.spawnIngredient(ingredient);
         this.raycaster.populateArray();
     }
 

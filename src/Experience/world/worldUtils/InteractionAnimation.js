@@ -44,11 +44,13 @@ export default class InteractionAnimation extends EventEmitter
         }
     }
 
-    animate(mesh, position, color)
+    animate(mesh, position, ingredient)
     {
         const params = {
             t: 0
         }
+
+        console.log(position);
 
         // Create Animation Curve
         this.spline = new THREE.CatmullRomCurve3([
@@ -59,11 +61,13 @@ export default class InteractionAnimation extends EventEmitter
             new THREE.Vector3(0, 0, 0)
         ]);
 
-        // const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-        // const points = this.spline2.getPoints(25);
-        // const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        // const line = new THREE.Line(geometry, material);
-        // this.scene.add(line);
+        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        const points = this.spline.getPoints(25);
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(geometry, material);
+        this.scene.add(line);
+
+        console.log(mesh);
 
         gsap.to(params, {
             t: 1,
@@ -73,13 +77,13 @@ export default class InteractionAnimation extends EventEmitter
             ease: "power1.in",
             onUpdate: () => {
                 const point = this.spline.getPoint(params.t);
-                position.copy(point);
+                mesh.position.copy(point);
             },
             onComplete: () => {
                 mesh.layers.set(5);
                 this.scene.remove(mesh);
-                this.trigger('added' + color);
-                this.trigger('respawn' + color);
+                this.trigger('added' + ingredient);
+                this.trigger('respawn' + ingredient);
             }
         });
     }
