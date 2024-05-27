@@ -1,7 +1,12 @@
 import * as THREE from 'three';
+import gsap from 'gsap';
+
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 
 import Experience from '../Experience.js';
-import { log } from 'three/examples/jsm/nodes/Nodes.js';
+
+import shroomVertexShader from "./shaders/shroomShader/shroomVertexShader.glsl";
+import shroomFragmentShader from "./shaders/shroomShader/shroomFragmentShader.glsl";
 
 export default class curveAnim
 {
@@ -25,6 +30,7 @@ export default class curveAnim
         //     this.debugObject = {};
         // }
 
+        this.animationParametersAndSetUp();
         this.createBellaBowl();
         this.createPentaFlora();
         this.createStarShroom();
@@ -40,6 +46,7 @@ export default class curveAnim
         this.bellaBowlModel = this.experience.resources.items.bellaBowl.scene;
         this.bellaBowl.add(this.bellaBowlModel);
         this.bellaBowl.position.set(position.x, position.y, position.z);
+        this.bellaBowl.scale.set(0.1, 0.1, 0.1);
         this.bellaBowl.updateMatrixWorld(true);
         this.bellaBowl.name = 'bellaBowl';
         this.bellaBowl.userData.type = 'interactive';
@@ -50,13 +57,55 @@ export default class curveAnim
                 if (child.name.toLocaleLowerCase().includes('bowl'))
                 {
                     this.bellaBowlPart.push(child);
-                    child.material = this.toonMaterial.clone();
-                    child.material.color = new THREE.Color(0x00ffff);
-                    this.bellaBowlPart.color = new THREE.Color(0x00ffff);
+                    this.bellaBowlPart.color = new THREE.Color(0xff5ac5);
+                    let baseColor = new THREE.Color(0xff5ac5);
+
+                    // Set the initial material and color for the first part
+                    this.bellaBowlPart[0].material = this.toonMaterial.clone();
+                    this.bellaBowlPart[0].material.color.set(baseColor);
+
+                    // Iterate over each part after the first
+                    for (let i = 1; i < this.bellaBowlPart.length; i++) {
+                        let child = this.bellaBowlPart[i];
+
+                        // Clone the material from the first part
+                        child.material = this.bellaBowlPart[0].material.clone();
+
+                        // Darken the color by reducing the lightness
+                        // Assuming each subsequent part gets 10% darker than the previous
+                        let factor = 0.55;  // Adjust the factor to control how much darker each part gets
+                        let darkerColor = baseColor.clone().multiplyScalar(factor);
+
+                        // Set the darker color for this part
+                        child.material.color.set(darkerColor);
+
+                        // Update baseColor to the new darker color for the next iteration
+                        baseColor = darkerColor;
+                    }
                 }
             });
 
         this.scene.add(this.bellaBowl);
+
+        gsap.to(this.bellaBowl.scale, {
+            x: 0.5,
+            y: 1.75,
+            z: 0.5,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration,
+            repeat: this.animationParameters.repeat,
+            ease: "bounce.in"
+        });
+        
+        gsap.to(this.bellaBowl.scale, {
+            x: 1,
+            y: 1.75,
+            z: 1,
+            delay: this.animationParameters.delay + 1.25,
+            duration: this.animationParameters.duration,
+            repeat: this.animationParameters.repeat,
+            ease: "elastic.out"
+        });
     }
     
     createStarShroom(position = { x:2, y:0, z:2})
@@ -65,6 +114,7 @@ export default class curveAnim
         this.starShroomModel = this.experience.resources.items.starShroom.scene;
         this.starShroom.add(this.starShroomModel);
         this.starShroom.position.set(position.x, position.y, position.z);
+        this.starShroom.scale.set(0.1, 0.1, 0.1);
         this.starShroom.updateMatrixWorld(true);
         this.starShroom.name = 'starShroom';
         this.starShroom.userData.type = 'interactive';
@@ -74,12 +124,30 @@ export default class curveAnim
                 if (child.name.toLocaleLowerCase().includes('cylinder'))
                 {
                     this.starShroomPart = child;
-                    child.material = this.toonMaterial.clone();
-                    child.material.color = new THREE.Color(0x00ffff);
+                    child.material = new CustomShaderMaterial({
+                        baseMaterial: new THREE.MeshToonMaterial(),
+                        vertexShader: shroomVertexShader,
+                        fragmentShader: shroomFragmentShader,
+                        uniforms: {
+                            uTipColor: new THREE.Uniform( new THREE.Color(0xFF0000)),
+                            uBaseColor: new THREE.Uniform( new THREE.Color(0x0000FF)),
+                        },
+                        silent: true,
+                    })
                 }
             });
 
         this.scene.add(this.starShroom);
+
+        gsap.to(this.starShroom.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration * 1.25,
+            repeat: this.animationParameters.repeat,
+            ease: "steps(5)"
+        });
     }
     
     createPentaFlora(position = { x:2, y:0, z:2})
@@ -88,6 +156,7 @@ export default class curveAnim
         this.pentaFloraModel = this.experience.resources.items.pentaFlora.scene;
         this.pentaFlora.add(this.pentaFloraModel);
         this.pentaFlora.position.set(position.x, position.y, position.z);
+        this.pentaFlora.scale.set(0.1, 0.1, 0.1);
         this.pentaFlora.updateMatrixWorld(true);
         this.pentaFlora.name = 'pentaFlora';
         this.pentaFlora.userData.type = 'interactive';
@@ -113,6 +182,23 @@ export default class curveAnim
             });
 
         this.scene.add(this.pentaFlora);
+
+        gsap.to(this.pentaFlora.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration / 2,
+            ease: "bounce.out"
+        });
+        
+        gsap.to(this.pentaFlora.rotation, {
+            y: - Math.PI * 2,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration,
+            repeat: this.animationParameters.repeat,
+            ease: "power2.out"
+        });
     }
     
     createToadstool(position = { x:2, y:0, z:2})
@@ -121,6 +207,7 @@ export default class curveAnim
         this.toadstoolModel = this.experience.resources.items.toadstool.scene;
         this.toadstool.add(this.toadstoolModel);
         this.toadstool.position.set(position.x, position.y, position.z);
+        this.toadstool.scale.set(0.1, 0.1, 0.1);
         this.toadstool.updateMatrixWorld(true);
         this.toadstool.name = 'toadstool';
         this.toadstool.userData.type = 'interactive';
@@ -150,6 +237,24 @@ export default class curveAnim
             });
 
         this.scene.add(this.toadstool);
+
+        gsap.to(this.toadstool.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration / 2,
+            ease: "bounce.in"
+        });
+        
+        gsap.to(this.toadstool.rotation, {
+            y: Math.PI * 4,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration,
+            repeat: this.animationParameters.repeat,
+            ease: "power2.out"
+        });
+        
     }
     
     createSkinnyShroom(position = { x:2, y:0, z:2})
@@ -158,9 +263,10 @@ export default class curveAnim
         this.skinnyShroomModel = this.experience.resources.items.skinnyShroom.scene;
         this.skinnyShroom.add(this.skinnyShroomModel);
         this.skinnyShroom.position.set(position.x, position.y, position.z);
-        this.foxGlove.updateMatrixWorld(true);
-        this.foxGlove.name = 'foxGlove';
-        this.foxGlove.userData.type = 'interactive';
+        this.skinnyShroom.scale.set(0.1, 0.1, 0.1);
+        this.skinnyShroom.updateMatrixWorld(true);
+        this.skinnyShroom.name = 'skinnyShroom';
+        this.skinnyShroom.userData.type = 'interactive';
         this.skinnyShroomHead = [];
         this.skinnyShroomStalk = [];
 
@@ -183,6 +289,16 @@ export default class curveAnim
             });
 
         this.scene.add(this.skinnyShroom);
+
+        gsap.to(this.skinnyShroom.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration,
+            repeat: this.animationParameters.repeat,
+            ease: "elastic.out"
+        });
     }
     
     createFoxGlove(position = { x:2, y:0, z:2})
@@ -191,6 +307,7 @@ export default class curveAnim
         this.foxGloveModel = this.experience.resources.items.foxGlove.scene;
         this.foxGlove.add(this.foxGloveModel);
         this.foxGlove.position.set( position.x, position.y, position.z );
+        this.foxGlove.scale.set( 0.1, 0.1, 0.1 );
         this.foxGlove.updateMatrixWorld(true);
         this.foxGlove.name = 'foxGlove';
         this.foxGlove.userData.type = "interactive";
@@ -222,6 +339,16 @@ export default class curveAnim
             });
 
         this.scene.add(this.foxGlove);
+
+        gsap.to(this.foxGlove.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            delay: this.animationParameters.delay,
+            duration: this.animationParameters.duration,
+            repeat: this.animationParameters.repeat,
+            ease: "bounce.in"
+        });
     }
 
     spawnIngredient(name)
@@ -239,7 +366,26 @@ export default class curveAnim
         const randomNumber = Math.round(Math.random() * (objectInfo.positions.length - 1));
         const randomPosition = objectInfo.positions[randomNumber];
         
-        this.createFoxGlove(randomPosition);
+        switch(name) {
+            case 'bellaBowl':
+                this.createBellaBowl(randomPosition);
+                break;
+            case 'toadstool':
+                this.createToadstool(randomPosition);
+                break;
+            case 'skinnyShroom':
+                this.createSkinnyShroom(randomPosition);
+                break;
+            case 'foxGlove':
+                this.createFoxGlove(randomPosition);
+                break;
+            case 'pentaFlora':
+                this.createPentaFlora(randomPosition);
+                break;
+            case 'starShroom':
+                this.createStarShroom(randomPosition);
+                break;
+        }
     
     }
 
@@ -291,12 +437,8 @@ export default class curveAnim
 
     setupDebug()
     {
-    if(this.debug.active)
+        if(this.debug.active)
         {
-            this.debugFolder = this.debug.pane.addFolder({
-                title: 'Ingredients',
-                expanded: false
-            });
             this.debugObject = {
                 bellaBowlColor: `#${this.bellaBowlPart.color.getHexString()}`,
 
@@ -496,6 +638,34 @@ export default class curveAnim
 
             pentaFloraTweaks.addBinding(this.debugObject, 'pentaFloraPetalColor').on('change', () => this.pentaFloraPetal.forEach(petal => {petal.material.color.set(this.debugObject.pentaFloraPetalColor)}));
             pentaFloraTweaks.addBinding(this.debugObject, 'pentaFloraStalkColor').on('change', () => this.pentaFloraStalk.material.color.set(this.debugObject.pentaFloraStalkColor));
+        }
+    }
+
+    animationParametersAndSetUp()
+    {
+        this.animationParameters = 
+        {
+            delay: 0,
+            duration: 1.5,
+            repeat: 0
+        }
+
+        // Debug
+        this.debugFolder = this.debug.pane.addFolder({
+            title: 'Ingredients',
+            expanded: false
+        });
+
+        if(this.debug.active)
+        {
+            const spawningAnimationTweaks = this.debugFolder.addFolder({
+                title: 'Spawning Animation',
+                expanded: false
+            });
+
+            spawningAnimationTweaks.addBinding(this.animationParameters, 'delay', { min: 0, max: 2, step: 0.1, label: 'Delay' });
+            spawningAnimationTweaks.addBinding(this.animationParameters, 'duration', { min: 0, max: 3, step: 0.1, label: 'Duration' });
+            spawningAnimationTweaks.addBinding(this.animationParameters, 'repeat', { min: -1, max: 1, step: 1, label: 'Repeat' });
         }
     }
 }

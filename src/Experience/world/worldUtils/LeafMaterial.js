@@ -1,10 +1,9 @@
 import * as THREE from 'three';
-import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 
 import Experience from '../../Experience.js';
 
 import leafVertexShader from"../shaders/leafShader/leafVertex.glsl";
-import leafFragmentShader from "../shaders/leafShader/leafFragment.glsl";
 
 export default class Leaf
 {
