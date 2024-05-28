@@ -3,12 +3,9 @@ precision mediump float;
 uniform vec3 uBaseColor;
 uniform vec3 uTipColor;
 
-varying float vVertexHeight;
+varying vec2 vUv;
 
 void main() 
 {
-    vec3 shroomColor = mix(uBaseColor, uTipColor, vVertexHeight);
-    float intensity = vVertexHeight;  
-
-    gl_FragColor = vec4(intensity, 0.0, intensity, 1.0);
+    gl_FragColor = vec4( vUv.x * 0.15,vUv.y * 0.25, 0, 0.2);
 }

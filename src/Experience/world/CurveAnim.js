@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 
-import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-
 import Experience from '../Experience.js';
 
 import shroomVertexShader from "./shaders/shroomShader/shroomVertexShader.glsl";
@@ -20,16 +18,6 @@ export default class curveAnim
         this.raycaster = this.experience.raycaster;
         this.toonMaterial = this.experience.toonMaterial;
 
-
-        // if(this.debug.active)
-        // {
-        //     this.debugFolder = this.debug.pane.addFolder({
-        //         title: 'curve',
-        //         expanded: true
-        //     });
-        //     this.debugObject = {};
-        // }
-
         this.animationParametersAndSetUp();
         this.createBellaBowl();
         this.createPentaFlora();
@@ -38,9 +26,20 @@ export default class curveAnim
         this.createToadstool();
         this.createSkinnyShroom();
         this.setupDebug();
+        this.test();
     }
 
-    createBellaBowl(position = { x:2, y:0, z:2})
+    test()
+    {
+        this.createBellaBowl(new THREE.Vector3(2.9, 0.0, 1.2));
+        this.createBellaBowl(new THREE.Vector3(3.1, 0.0, 1.4));
+        this.createBellaBowl(new THREE.Vector3(2.6, 0.0, 2.0));
+        this.createBellaBowl(new THREE.Vector3(2.6, 0.0, 2.0));
+        this.createBellaBowl(new THREE.Vector3(3.4, 0.0, 1.7));
+        this.createBellaBowl(new THREE.Vector3(3.8, 0.0, 0.6));
+    }
+
+    createBellaBowl(position = { x:1.5, y:0, z:-2.6})
     {
         this.bellaBowl = new THREE.Group;
         this.bellaBowlModel = this.experience.resources.items.bellaBowl.scene;
@@ -108,7 +107,7 @@ export default class curveAnim
         });
     }
     
-    createStarShroom(position = { x:2, y:0, z:2})
+    createStarShroom(position = { x:-1.5, y:0, z:-2.6})
     {
         this.starShroom = new THREE.Group;
         this.starShroomModel = this.experience.resources.items.starShroom.scene;
@@ -124,15 +123,13 @@ export default class curveAnim
                 if (child.name.toLocaleLowerCase().includes('cylinder'))
                 {
                     this.starShroomPart = child;
-                    child.material = new CustomShaderMaterial({
-                        baseMaterial: new THREE.MeshToonMaterial(),
+                    child.material = new THREE.ShaderMaterial({
                         vertexShader: shroomVertexShader,
                         fragmentShader: shroomFragmentShader,
                         uniforms: {
                             uTipColor: new THREE.Uniform( new THREE.Color(0xFF0000)),
                             uBaseColor: new THREE.Uniform( new THREE.Color(0x0000FF)),
-                        },
-                        silent: true,
+                        }
                     })
                 }
             });
@@ -150,7 +147,7 @@ export default class curveAnim
         });
     }
     
-    createPentaFlora(position = { x:2, y:0, z:2})
+    createPentaFlora(position = { x:-3, y:0, z:0})
     {
         this.pentaFlora = new THREE.Group;
         this.pentaFloraModel = this.experience.resources.items.pentaFlora.scene;
@@ -201,7 +198,7 @@ export default class curveAnim
         });
     }
     
-    createToadstool(position = { x:2, y:0, z:2})
+    createToadstool(position = { x:-1.5, y:0, z:2.6})
     {
         this.toadstool = new THREE.Group;
         this.toadstoolModel = this.experience.resources.items.toadstool.scene;
@@ -257,7 +254,7 @@ export default class curveAnim
         
     }
     
-    createSkinnyShroom(position = { x:2, y:0, z:2})
+    createSkinnyShroom(position = { x:1.5, y:0, z:2.6})
     {
         this.skinnyShroom = new THREE.Group;
         this.skinnyShroomModel = this.experience.resources.items.skinnyShroom.scene;
@@ -301,7 +298,7 @@ export default class curveAnim
         });
     }
     
-    createFoxGlove(position = { x:2, y:0, z:2})
+    createFoxGlove(position = { x:3, y:0, z:0})
     {
         this.foxGlove = new THREE.Group;
         this.foxGloveModel = this.experience.resources.items.foxGlove.scene;
@@ -368,7 +365,7 @@ export default class curveAnim
         
         switch(name) {
             case 'bellaBowl':
-                this.createBellaBowl(randomPosition);
+                //this.createBellaBowl(randomPosition);
                 break;
             case 'toadstool':
                 this.createToadstool(randomPosition);
@@ -456,7 +453,7 @@ export default class curveAnim
                 pentaFloraPetalColor: `#${this.pentaFloraPetal.color.getHexString()}`,
                 pentaFloraStalkColor: `#${this.pentaFloraStalk.material.color.getHexString()}`,
                 
-                starShroomColor: `#${this.starShroomPart.material.color.getHexString()}`,
+                //starShroomColor: `#${this.starShroomPart.material.color.getHexString()}`,
             };
 
             // BellaBowl Tweaks
@@ -515,7 +512,7 @@ export default class curveAnim
                 label: 'Z Position',
             });
 
-            starShroomTweaks.addBinding(this.debugObject, 'starShroomColor').on('change', () => this.starShroomPart.material.color.set(this.debugObject.starShroomColor));
+            // starShroomTweaks.addBinding(this.debugObject, 'starShroomColor').on('change', () => this.starShroomPart.material.color.set(this.debugObject.starShroomColor));
 
             // Toadstool Tweaks
             const toadstoolTweaks = this.debugFolder.addFolder({
@@ -649,15 +646,15 @@ export default class curveAnim
             duration: 1.5,
             repeat: 0
         }
-
-        // Debug
-        this.debugFolder = this.debug.pane.addFolder({
-            title: 'Ingredients',
-            expanded: false
-        });
-
+        
+        
         if(this.debug.active)
         {
+            this.debugFolder = this.debug.pane.addFolder({
+                title: 'Ingredients',
+                expanded: false
+            });
+
             const spawningAnimationTweaks = this.debugFolder.addFolder({
                 title: 'Spawning Animation',
                 expanded: false
