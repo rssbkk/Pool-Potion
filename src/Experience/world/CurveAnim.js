@@ -19,74 +19,86 @@ export default class curveAnim
         this.toonMaterial = this.experience.toonMaterial;
 
         this.animationParametersAndSetUp();
-        this.createBellaBowl();
-        this.createPentaFlora();
-        this.createStarShroom();
-        this.createFoxGlove();
-        this.createToadstool();
-        this.createSkinnyShroom();
+        // this.createBellaBowl();
+        // this.createPentaFlora();
+        // this.createStarShroom();
+        // this.createFoxGlove();
+        // this.createToadstool();
+        // this.createSkinnyShroom();
         this.setupDebug();
-        this.test();
+        this.start();
     }
 
-    test()
+    generateRandomPosition(minRadius, maxRadius) 
     {
-        this.createBellaBowl(new THREE.Vector3(2.9, 0.0, 1.2));
-        this.createBellaBowl(new THREE.Vector3(3.1, 0.0, 1.4));
-        this.createBellaBowl(new THREE.Vector3(2.6, 0.0, 2.0));
-        this.createBellaBowl(new THREE.Vector3(2.6, 0.0, 2.0));
-        this.createBellaBowl(new THREE.Vector3(3.4, 0.0, 1.7));
-        this.createBellaBowl(new THREE.Vector3(3.8, 0.0, 0.6));
+        const angle = Math.random() * 2 * Math.PI;
+        const radius = Math.random() * (maxRadius - minRadius) + minRadius;
+        return new THREE.Vector3(radius * Math.cos(angle), 0, radius * Math.sin(angle));
+    }
+
+    start() {
+        const functions = [
+            this.createBellaBowl(this.generateRandomPosition), this.createBellaBowl(this.generateRandomPosition), this.createBellaBowl(this.generateRandomPosition), this.createBellaBowl(this.generateRandomPosition),
+            this.createPentaFlora(this.generateRandomPosition), this.createPentaFlora(this.generateRandomPosition), this.createPentaFlora(this.generateRandomPosition), this.createPentaFlora(this.generateRandomPosition),
+            this.createStarShroom(this.generateRandomPosition), this.createStarShroom(this.generateRandomPosition), this.createStarShroom(this.generateRandomPosition), this.createStarShroom(this.generateRandomPosition),
+            this.createFoxGlove(this.generateRandomPosition), this.createFoxGlove(this.generateRandomPosition), this.createFoxGlove(this.generateRandomPosition), this.createFoxGlove(this.generateRandomPosition),
+            this.createToadstool(this.generateRandomPosition), this.createToadstool(this.generateRandomPosition), this.createToadstool(this.generateRandomPosition), this.createToadstool(this.generateRandomPosition),
+            this.createSkinnyShroom(this.generateRandomPosition), this.createSkinnyShroom(this.generateRandomPosition), this.createSkinnyShroom(this.generateRandomPosition), this.createSkinnyShroom(this.generateRandomPosition)
+        ]
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // swap elements
+            }
+        }
+
+        shuffle(functions);
+        functions.forEach(item => item);
     }
 
     createBellaBowl(position = { x:1.5, y:0, z:-2.6})
     {
-        this.bellaBowl = new THREE.Group;
-        this.bellaBowlModel = this.experience.resources.items.bellaBowl.scene;
-        this.bellaBowl.add(this.bellaBowlModel);
-        this.bellaBowl.position.set(position.x, position.y, position.z);
-        this.bellaBowl.scale.set(0.1, 0.1, 0.1);
-        this.bellaBowl.updateMatrixWorld(true);
-        this.bellaBowl.name = 'bellaBowl';
-        this.bellaBowl.userData.type = 'interactive';
+        const bellaBowl = new THREE.Group;
+        const bellaBowlModel = this.experience.resources.items.bellaBowl.scene.clone();
+
+        bellaBowl.add(bellaBowlModel);
+        bellaBowl.position.set(position.x, position.y, position.z);
+        bellaBowl.scale.set(0.1, 0.1, 0.1);
+        bellaBowl.updateMatrixWorld(true);
+        bellaBowl.name = 'bellaBowl';
+        bellaBowl.userData.type = 'interactive';
+
         this.bellaBowlPart = [];
 
-        this.bellaBowl.traverse((child) =>
+        bellaBowl.traverse((child) =>
+        {
+            if (child.name.toLocaleLowerCase().includes('bowl'))
             {
-                if (child.name.toLocaleLowerCase().includes('bowl'))
-                {
-                    this.bellaBowlPart.push(child);
-                    this.bellaBowlPart.color = new THREE.Color(0xff5ac5);
-                    let baseColor = new THREE.Color(0xff5ac5);
+                this.bellaBowlPart.push(child);
+                child.material = this.toonMaterial.clone();
+                child.material.color = new THREE.Color(0xff5ac5); // Set initial color
+            }
+        });
+                    
+        let baseColor = new THREE.Color(0xff5ac5);
 
-                    // Set the initial material and color for the first part
-                    this.bellaBowlPart[0].material = this.toonMaterial.clone();
-                    this.bellaBowlPart[0].material.color.set(baseColor);
+        for (let i = 1; i < this.bellaBowlPart.length; i++) {
+            let child = this.bellaBowlPart[i];
 
-                    // Iterate over each part after the first
-                    for (let i = 1; i < this.bellaBowlPart.length; i++) {
-                        let child = this.bellaBowlPart[i];
+            child.material = this.bellaBowlPart[0].material.clone();
 
-                        // Clone the material from the first part
-                        child.material = this.bellaBowlPart[0].material.clone();
+            let factor = 0.55;
+            let darkerColor = baseColor.clone().multiplyScalar(factor);
 
-                        // Darken the color by reducing the lightness
-                        // Assuming each subsequent part gets 10% darker than the previous
-                        let factor = 0.55;  // Adjust the factor to control how much darker each part gets
-                        let darkerColor = baseColor.clone().multiplyScalar(factor);
+            child.material.color.set(darkerColor);
 
-                        // Set the darker color for this part
-                        child.material.color.set(darkerColor);
+            baseColor = darkerColor;
+        }
 
-                        // Update baseColor to the new darker color for the next iteration
-                        baseColor = darkerColor;
-                    }
-                }
-            });
+        this.scene.add(bellaBowl);
 
-        this.scene.add(this.bellaBowl);
-
-        gsap.to(this.bellaBowl.scale, {
+        gsap.to(bellaBowl.scale, {
             x: 0.5,
             y: 1.75,
             z: 0.5,
@@ -96,7 +108,7 @@ export default class curveAnim
             ease: "bounce.in"
         });
         
-        gsap.to(this.bellaBowl.scale, {
+        gsap.to(bellaBowl.scale, {
             x: 1,
             y: 1.75,
             z: 1,
@@ -350,22 +362,12 @@ export default class curveAnim
 
     spawnIngredient(name)
     {
-        const ingredients = [
-            { positions: [ new THREE.Vector3(2.0, 0, 2.0), new THREE.Vector3(-2.0, 0, -2.0), new THREE.Vector3(2.0, 0, -2.0), new THREE.Vector3(-2.0, 0, 2.0)], name: "bellaBowl" },
-            { positions: [ new THREE.Vector3(1.8, 0, 1.8), new THREE.Vector3(-1.8, 0, -1.8), new THREE.Vector3(1.8, 0, -1.8), new THREE.Vector3(-1.8, 0, 1.8)], name: "toadstool" },
-            { positions: [ new THREE.Vector3(1.6, 0, 1.8), new THREE.Vector3(-1.6, 0, -1.8), new THREE.Vector3(1.6, 0, -1.8), new THREE.Vector3(-1.6, 0, 1.8)], name: "skinnyShroom" },
-            { positions: [ new THREE.Vector3(2.0, 0, 1.8), new THREE.Vector3(-2.0, 0, -1.8), new THREE.Vector3(2.0, 0, -1.8), new THREE.Vector3(-2.0, 0, 1.8)], name: "foxGlove" },
-            { positions: [ new THREE.Vector3(1.6, 0, 2.0), new THREE.Vector3(-1.6, 0, -2.0), new THREE.Vector3(1.6, 0, -2.0), new THREE.Vector3(-1.6, 0, 2.0)], name: "pentaFlora" },
-            { positions: [ new THREE.Vector3(2.2, 0, 1.8), new THREE.Vector3(-2.2, 0, -1.8), new THREE.Vector3(2.2, 0, -1.8), new THREE.Vector3(-2.2, 0, 1.8)], name: "starShroom" }
-        ];
-
-        const objectInfo = ingredients.find( ingredient => ingredient.name === name );
-        const randomNumber = Math.round(Math.random() * (objectInfo.positions.length - 1));
-        const randomPosition = objectInfo.positions[randomNumber];
+        const randomPosition = this.generateRandomPosition(2, 4);
         
-        switch(name) {
+        switch(name) 
+        {
             case 'bellaBowl':
-                //this.createBellaBowl(randomPosition);
+                this.createBellaBowl(randomPosition);
                 break;
             case 'toadstool':
                 this.createToadstool(randomPosition);
@@ -383,7 +385,6 @@ export default class curveAnim
                 this.createStarShroom(randomPosition);
                 break;
         }
-    
     }
 
     createBox(name)
@@ -437,7 +438,7 @@ export default class curveAnim
         if(this.debug.active)
         {
             this.debugObject = {
-                bellaBowlColor: `#${this.bellaBowlPart.color.getHexString()}`,
+                //bellaBowlColor: `#${this.bellaBowlPart.color.getHexString()}`,
 
                 foxGloveLeafColor: `#${this.foxGloveLeaf.color.getHexString()}`,
                 foxGloveStalkColor: `#${this.foxGloveStalk.material.color.getHexString()}`,
@@ -456,34 +457,34 @@ export default class curveAnim
                 //starShroomColor: `#${this.starShroomPart.material.color.getHexString()}`,
             };
 
-            // BellaBowl Tweaks
-            const bellaBowlTweaks = this.debugFolder.addFolder({
-                title: 'BellaBowl',
-                expanded: false
-            });
+            // // BellaBowl Tweaks
+            // const bellaBowlTweaks = this.debugFolder.addFolder({
+            //     title: 'BellaBowl',
+            //     expanded: false
+            // });
             
-            bellaBowlTweaks.addBinding(this.bellaBowl.position, 'x', {
-                min: -10,
-                max: 10,
-                step: 0.5,
-                label: 'X Position',
-            });
+            // bellaBowlTweaks.addBinding(this.bellaBowl.position, 'x', {
+            //     min: -10,
+            //     max: 10,
+            //     step: 0.5,
+            //     label: 'X Position',
+            // });
 
-            bellaBowlTweaks.addBinding(this.bellaBowl.position, 'y', {
-                min: -10,
-                max: 10,
-                step: 0.01,
-                label: 'Y Position',
-            });
+            // bellaBowlTweaks.addBinding(this.bellaBowl.position, 'y', {
+            //     min: -10,
+            //     max: 10,
+            //     step: 0.01,
+            //     label: 'Y Position',
+            // });
 
-            bellaBowlTweaks.addBinding(this.bellaBowl.position, 'z', {
-                min: -10,
-                max: 10,
-                step: 0.5,
-                label: 'Z Position',
-            });
+            // bellaBowlTweaks.addBinding(this.bellaBowl.position, 'z', {
+            //     min: -10,
+            //     max: 10,
+            //     step: 0.5,
+            //     label: 'Z Position',
+            // });
 
-            bellaBowlTweaks.addBinding(this.debugObject, 'bellaBowlColor').on('change', () => this.bellaBowlPart.forEach(bowl => { bowl.material.color.set(this.debugObject.bellaBowlColor)}));
+            // bellaBowlTweaks.addBinding(this.debugObject, 'bellaBowlColor').on('change', () => this.bellaBowlPart.forEach(bowl => { bowl.material.color.set(this.debugObject.bellaBowlColor)}));
 
             // Star Shroom Tweaks
             const starShroomTweaks = this.debugFolder.addFolder({

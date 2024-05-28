@@ -76,11 +76,13 @@ export default class Experience
     added(ingredient)
     {
         this.world.potion.createInteraction(ingredient);
+        
     }
-
+    
     respawn(ingredient)
     {
         this.world.curveAnim.spawnIngredient(ingredient);
+        console.log('respawn: ', ingredient);
         this.raycaster.populateArray();
     }
 
