@@ -26,7 +26,7 @@ export default class curveAnim
         // this.createToadstool();
         // this.createSkinnyShroom();
         this.setupDebug();
-        this.start();
+        this.beginTheShow();
     }
 
     generateRandomPosition(minRadius, maxRadius) 
@@ -34,27 +34,6 @@ export default class curveAnim
         const angle = Math.random() * 2 * Math.PI;
         const radius = Math.random() * (maxRadius - minRadius) + minRadius;
         return new THREE.Vector3(radius * Math.cos(angle), 0, radius * Math.sin(angle));
-    }
-
-    start() {
-        const functions = [
-            this.createBellaBowl(this.generateRandomPosition), this.createBellaBowl(this.generateRandomPosition), this.createBellaBowl(this.generateRandomPosition), this.createBellaBowl(this.generateRandomPosition),
-            this.createPentaFlora(this.generateRandomPosition), this.createPentaFlora(this.generateRandomPosition), this.createPentaFlora(this.generateRandomPosition), this.createPentaFlora(this.generateRandomPosition),
-            this.createStarShroom(this.generateRandomPosition), this.createStarShroom(this.generateRandomPosition), this.createStarShroom(this.generateRandomPosition), this.createStarShroom(this.generateRandomPosition),
-            this.createFoxGlove(this.generateRandomPosition), this.createFoxGlove(this.generateRandomPosition), this.createFoxGlove(this.generateRandomPosition), this.createFoxGlove(this.generateRandomPosition),
-            this.createToadstool(this.generateRandomPosition), this.createToadstool(this.generateRandomPosition), this.createToadstool(this.generateRandomPosition), this.createToadstool(this.generateRandomPosition),
-            this.createSkinnyShroom(this.generateRandomPosition), this.createSkinnyShroom(this.generateRandomPosition), this.createSkinnyShroom(this.generateRandomPosition), this.createSkinnyShroom(this.generateRandomPosition)
-        ]
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // swap elements
-            }
-        }
-
-        shuffle(functions);
-        functions.forEach(item => item);
     }
 
     createBellaBowl(position = { x:1.5, y:0, z:-2.6})
@@ -121,16 +100,16 @@ export default class curveAnim
     
     createStarShroom(position = { x:-1.5, y:0, z:-2.6})
     {
-        this.starShroom = new THREE.Group;
-        this.starShroomModel = this.experience.resources.items.starShroom.scene;
-        this.starShroom.add(this.starShroomModel);
-        this.starShroom.position.set(position.x, position.y, position.z);
-        this.starShroom.scale.set(0.1, 0.1, 0.1);
-        this.starShroom.updateMatrixWorld(true);
-        this.starShroom.name = 'starShroom';
-        this.starShroom.userData.type = 'interactive';
+        const starShroom = new THREE.Group;
+        const starShroomModel = this.experience.resources.items.starShroom.scene.clone();
+        starShroom.add(starShroomModel);
+        starShroom.position.set(position.x, position.y, position.z);
+        starShroom.scale.set(0.1, 0.1, 0.1);
+        starShroom.updateMatrixWorld(true);
+        starShroom.name = 'starShroom';
+        starShroom.userData.type = 'interactive';
 
-        this.starShroom.traverse((child) =>
+        starShroom.traverse((child) =>
             {
                 if (child.name.toLocaleLowerCase().includes('cylinder'))
                 {
@@ -146,9 +125,9 @@ export default class curveAnim
                 }
             });
 
-        this.scene.add(this.starShroom);
+        this.scene.add(starShroom);
 
-        gsap.to(this.starShroom.scale, {
+        gsap.to(starShroom.scale, {
             x: 1,
             y: 1,
             z: 1,
@@ -161,17 +140,17 @@ export default class curveAnim
     
     createPentaFlora(position = { x:-3, y:0, z:0})
     {
-        this.pentaFlora = new THREE.Group;
-        this.pentaFloraModel = this.experience.resources.items.pentaFlora.scene;
-        this.pentaFlora.add(this.pentaFloraModel);
-        this.pentaFlora.position.set(position.x, position.y, position.z);
-        this.pentaFlora.scale.set(0.1, 0.1, 0.1);
-        this.pentaFlora.updateMatrixWorld(true);
-        this.pentaFlora.name = 'pentaFlora';
-        this.pentaFlora.userData.type = 'interactive';
+        const pentaFlora = new THREE.Group;
+        const pentaFloraModel = this.experience.resources.items.pentaFlora.scene.clone();
+        pentaFlora.add(pentaFloraModel);
+        pentaFlora.position.set(position.x, position.y, position.z);
+        pentaFlora.scale.set(0.1, 0.1, 0.1);
+        pentaFlora.updateMatrixWorld(true);
+        pentaFlora.name = 'pentaFlora';
+        pentaFlora.userData.type = 'interactive';
         this.pentaFloraPetal = [];
 
-        this.pentaFlora.traverse((child) =>
+        pentaFlora.traverse((child) =>
             {
                 if (child.name.toLocaleLowerCase().includes('stalk'))
                 {
@@ -190,9 +169,9 @@ export default class curveAnim
                 }
             });
 
-        this.scene.add(this.pentaFlora);
+        this.scene.add(pentaFlora);
 
-        gsap.to(this.pentaFlora.scale, {
+        gsap.to(pentaFlora.scale, {
             x: 1,
             y: 1,
             z: 1,
@@ -201,7 +180,7 @@ export default class curveAnim
             ease: "bounce.out"
         });
         
-        gsap.to(this.pentaFlora.rotation, {
+        gsap.to(pentaFlora.rotation, {
             y: - Math.PI * 2,
             delay: this.animationParameters.delay,
             duration: this.animationParameters.duration,
@@ -212,17 +191,17 @@ export default class curveAnim
     
     createToadstool(position = { x:-1.5, y:0, z:2.6})
     {
-        this.toadstool = new THREE.Group;
-        this.toadstoolModel = this.experience.resources.items.toadstool.scene;
-        this.toadstool.add(this.toadstoolModel);
-        this.toadstool.position.set(position.x, position.y, position.z);
-        this.toadstool.scale.set(0.1, 0.1, 0.1);
-        this.toadstool.updateMatrixWorld(true);
-        this.toadstool.name = 'toadstool';
-        this.toadstool.userData.type = 'interactive';
+        const toadstool = new THREE.Group;
+        const toadstoolModel = this.experience.resources.items.toadstool.scene.clone();
+        toadstool.add(toadstoolModel);
+        toadstool.position.set(position.x, position.y, position.z);
+        toadstool.scale.set(0.1, 0.1, 0.1);
+        toadstool.updateMatrixWorld(true);
+        toadstool.name = 'toadstool';
+        toadstool.userData.type = 'interactive';
         this.toadstoolSphere = [];
 
-        this.toadstool.traverse((child) =>
+        toadstool.traverse((child) =>
             {
                 if (child.name.toLocaleLowerCase().includes('head'))
                 {
@@ -245,9 +224,9 @@ export default class curveAnim
                 }
             });
 
-        this.scene.add(this.toadstool);
+        this.scene.add(toadstool);
 
-        gsap.to(this.toadstool.scale, {
+        gsap.to(toadstool.scale, {
             x: 1,
             y: 1,
             z: 1,
@@ -256,7 +235,7 @@ export default class curveAnim
             ease: "bounce.in"
         });
         
-        gsap.to(this.toadstool.rotation, {
+        gsap.to(toadstool.rotation, {
             y: Math.PI * 4,
             delay: this.animationParameters.delay,
             duration: this.animationParameters.duration,
@@ -268,18 +247,18 @@ export default class curveAnim
     
     createSkinnyShroom(position = { x:1.5, y:0, z:2.6})
     {
-        this.skinnyShroom = new THREE.Group;
-        this.skinnyShroomModel = this.experience.resources.items.skinnyShroom.scene;
-        this.skinnyShroom.add(this.skinnyShroomModel);
-        this.skinnyShroom.position.set(position.x, position.y, position.z);
-        this.skinnyShroom.scale.set(0.1, 0.1, 0.1);
-        this.skinnyShroom.updateMatrixWorld(true);
-        this.skinnyShroom.name = 'skinnyShroom';
-        this.skinnyShroom.userData.type = 'interactive';
+        const skinnyShroom = new THREE.Group;
+        const skinnyShroomModel = this.experience.resources.items.skinnyShroom.scene.clone();
+        skinnyShroom.add(skinnyShroomModel);
+        skinnyShroom.position.set(position.x, position.y, position.z);
+        skinnyShroom.scale.set(0.1, 0.1, 0.1);
+        skinnyShroom.updateMatrixWorld(true);
+        skinnyShroom.name = 'skinnyShroom';
+        skinnyShroom.userData.type = 'interactive';
         this.skinnyShroomHead = [];
         this.skinnyShroomStalk = [];
 
-        this.skinnyShroom.traverse((child) =>
+        skinnyShroom.traverse((child) =>
             {
                 if (child.name.toLocaleLowerCase().includes('head'))
                 {
@@ -297,9 +276,9 @@ export default class curveAnim
                 }
             });
 
-        this.scene.add(this.skinnyShroom);
+        this.scene.add(skinnyShroom);
 
-        gsap.to(this.skinnyShroom.scale, {
+        gsap.to(skinnyShroom.scale, {
             x: 1,
             y: 1,
             z: 1,
@@ -312,18 +291,18 @@ export default class curveAnim
     
     createFoxGlove(position = { x:3, y:0, z:0})
     {
-        this.foxGlove = new THREE.Group;
-        this.foxGloveModel = this.experience.resources.items.foxGlove.scene;
-        this.foxGlove.add(this.foxGloveModel);
-        this.foxGlove.position.set( position.x, position.y, position.z );
-        this.foxGlove.scale.set( 0.1, 0.1, 0.1 );
-        this.foxGlove.updateMatrixWorld(true);
-        this.foxGlove.name = 'foxGlove';
-        this.foxGlove.userData.type = "interactive";
+        const foxGlove = new THREE.Group;
+        const foxGloveModel = this.experience.resources.items.foxGlove.scene.clone();
+        foxGlove.add(foxGloveModel);
+        foxGlove.position.set( position.x, position.y, position.z );
+        foxGlove.scale.set( 0.1, 0.1, 0.1 );
+        foxGlove.updateMatrixWorld(true);
+        foxGlove.name = 'foxGlove';
+        foxGlove.userData.type = "interactive";
         this.foxGloveGlove = [];
         this.foxGloveLeaf = [];
 
-        this.foxGlove.traverse((child) =>
+        foxGlove.traverse((child) =>
             {
                 if (child.name.toLocaleLowerCase().includes('glove'))
                 {
@@ -347,9 +326,9 @@ export default class curveAnim
                 }
             });
 
-        this.scene.add(this.foxGlove);
+        this.scene.add(foxGlove);
 
-        gsap.to(this.foxGlove.scale, {
+        gsap.to(foxGlove.scale, {
             x: 1,
             y: 1,
             z: 1,
@@ -358,6 +337,33 @@ export default class curveAnim
             repeat: this.animationParameters.repeat,
             ease: "bounce.in"
         });
+    }
+
+    beginTheShow() {
+        this.createPentaFlora(this.generateRandomPosition(2, 4)),
+        this.createToadstool(this.generateRandomPosition(2, 4)),
+        this.createBellaBowl(this.generateRandomPosition(2, 4)),
+        this.createStarShroom(this.generateRandomPosition(2, 4)),
+        this.createPentaFlora(this.generateRandomPosition(2, 4)),
+        this.createSkinnyShroom(this.generateRandomPosition(2, 4)),
+        this.createFoxGlove(this.generateRandomPosition(2, 4)),
+        this.createSkinnyShroom(this.generateRandomPosition(2, 4)),
+        this.createStarShroom(this.generateRandomPosition(2, 4)),
+        this.createPentaFlora(this.generateRandomPosition(2, 4)),
+        this.createToadstool(this.generateRandomPosition(2, 4)),
+        this.createFoxGlove(this.generateRandomPosition(2, 4)),
+        this.createBellaBowl(this.generateRandomPosition(2, 4)),
+        this.createStarShroom(this.generateRandomPosition(2, 4)),
+        this.createFoxGlove(this.generateRandomPosition(2, 4)),
+        this.createSkinnyShroom(this.generateRandomPosition(2, 4)),
+        this.createToadstool(this.generateRandomPosition(2, 4)),
+        this.createStarShroom(this.generateRandomPosition(2, 4)),
+        this.createBellaBowl(this.generateRandomPosition(2, 4)),
+        this.createSkinnyShroom(this.generateRandomPosition(2, 4)),
+        this.createToadstool(this.generateRandomPosition(2, 4)),
+        this.createFoxGlove(this.generateRandomPosition(2, 4)),
+        this.createBellaBowl(this.generateRandomPosition(2, 4)),
+        this.createPentaFlora(this.generateRandomPosition(2, 4))
     }
 
     spawnIngredient(name)

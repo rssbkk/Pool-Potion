@@ -82,7 +82,6 @@ export default class Experience
     respawn(ingredient)
     {
         this.world.curveAnim.spawnIngredient(ingredient);
-        console.log('respawn: ', ingredient);
         this.raycaster.populateArray();
     }
 
