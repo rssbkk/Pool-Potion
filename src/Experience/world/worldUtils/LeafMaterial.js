@@ -3,7 +3,7 @@ import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 
 import Experience from '../../Experience.js';
 
-import leafVertexShader from"../shaders/leafShader/leafVertex.glsl";
+import leafVertexShader from "../shaders/leafShader/leafVertex.glsl";
 
 export default class Leaf
 {
@@ -16,16 +16,11 @@ export default class Leaf
         this.debug = this.experience.debug;
         this.toonMaterial = this.experience.toonMaterial;
 
-        this.leafMaterial = null;
-
-        this.createLeafMaterial();
-        this.setupDebug();
+        
     }
 
     createLeafMaterial()
     {
-        // this.perlinTexture = this.experience.resources.items.perlinNoiseImage;
-        // this.perlinTexture.wrapS = this.perlinTexture.wrapT = THREE.RepeatWrapping;
         this.foliageImage = this.experience.resources.items.foliageImage;
 
         this.leafUniforms =
@@ -36,11 +31,6 @@ export default class Leaf
             uWindSpeed: 1,
             uWindTime: 0.0,
         }
-
-        // (0x3f6d21)
-        // (0x9bd38d),
-        // (0x1f352a),
-        // (0x228b22) ,
 
         this.leafMaterial = new CustomShaderMaterial({
             baseMaterial: new THREE.MeshToonMaterial(),
@@ -60,7 +50,7 @@ export default class Leaf
         })
     }
 
-    setupDebug()
+    setupLeafMaterialDebug()
     {
         if(this.debug.active)
         {

@@ -196,7 +196,7 @@ export default class Potion
 		// console.log('config = ' + config);
 
 		if (config.isIterations) {
-			newValue = Math.round(Math.random() * 4);
+			newValue = Math.round(Math.random() * 5);
 			this.material.uniforms.uSmallIterations.value = newValue;
 		} else {
 			let randomChange = (Math.random() - 0.5) * range;

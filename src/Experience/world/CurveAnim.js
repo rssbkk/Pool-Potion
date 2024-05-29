@@ -25,7 +25,7 @@ export default class curveAnim
         // this.createFoxGlove();
         // this.createToadstool();
         // this.createSkinnyShroom();
-        this.setupDebug();
+        // this.setupDebug();
         this.beginTheShow();
     }
 
