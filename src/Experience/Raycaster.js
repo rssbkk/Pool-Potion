@@ -52,7 +52,7 @@ export default class Raycaster {
 
     triggerAnimation()
     {
-        window.addEventListener('click', () => {
+        window.addEventListener('pointerDown', () => {
             if(this.currentIntersect)
             {
                 const worldPosition = new THREE.Vector3();
@@ -70,14 +70,14 @@ export default class Raycaster {
         if (intersects.length) {
             this.currentIntersect = intersects[0];
 
-            // if(this.currentIntersect !== this.previousIntersect) {
-            //     if(this.previousIntersect) {
-            //         this.previousIntersect.scale.set(1, 1, 1);
-            //     }
-            //     this.currentIntersect.object.parent.scale.set(1.1, 1.1, 1.1);
+            if(this.currentIntersect !== this.previousIntersect) {
+                if(this.previousIntersect) {
+                    this.previousIntersect.scale.set(1, 1, 1);
+                }
+                this.currentIntersect.object.parent.scale.set(1.1, 1.1, 1.1);
 
-            //     this.previousIntersect = this.currentIntersect.object.parent;
-            // }
+                this.previousIntersect = this.currentIntersect.object.parent;
+            }
         } else {
             if(this.previousIntersect) {
                 this.previousIntersect.scale.set(1, 1, 1);

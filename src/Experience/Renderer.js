@@ -91,9 +91,8 @@ export default class Renderer
         this.composer.setSize(this.sizes.width, this.sizes.height);
 
         this.renderPixelatedPass = new RenderPixelatedPass( 4, this.scene, this.camera.instance );
-        this.renderPixelatedPass.normalEdgeStrength = 1.5;
-        this.renderPixelatedPass.depthEdgeStrength = 1.25;
-        this.renderPixelatedPass = new RenderPixelatedPass( 4, this.scene, this.camera.instance );
+        this.renderPixelatedPass.normalEdgeStrength = 0.45;
+        this.renderPixelatedPass.depthEdgeStrength = 0.35;
 
         this.composer.addPass( this.renderPixelatedPass );
 
