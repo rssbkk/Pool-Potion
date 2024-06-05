@@ -29,7 +29,7 @@ export default class Potion
 		this.animationStep = null;
 
     	this.animationConfig = {
-			uBigWavesElevation: { min: 0.25, max: 1 },
+			uBigWavesElevation: { min: 0.1, max: 0.5 },
 			uBigWavesSpeed: { min: 0.25, max: 2.5 },
 			uSmallWavesElevation: { min: 0.15, max: 1 },
 			uSmallWavesFrequency: { min: 2, max: 15 },
@@ -94,7 +94,7 @@ export default class Potion
               // Big Waves Elevation
               materialTweaks.addBinding(this.material.uniforms.uBigWavesElevation, 'value', {
                 min: 0,
-                max: 1,
+                max: 0.5,
                 step: 0.001,
                 label: 'uBigWavesElevation',
               });
@@ -196,7 +196,7 @@ export default class Potion
 		// console.log('config = ' + config);
 
 		if (config.isIterations) {
-			newValue = Math.round(Math.random() * 5);
+			newValue = Math.round((Math.random() * 4) + 1);
 			this.material.uniforms.uSmallIterations.value = newValue;
 		} else {
 			let randomChange = (Math.random() - 0.5) * range;

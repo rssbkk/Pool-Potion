@@ -3,6 +3,7 @@ import Environment from './Environment.js';
 import Floor from './Floor.js';
 import Grass from './Grass2.js';
 import Landscape from './Landscape.js';
+import Fog from './Fog.js';
 import Potion from './Potion.js';
 import curveAnim from './CurveAnim.js';
 
@@ -25,6 +26,7 @@ export default class World
             this.curveAnim = new curveAnim();
             this.environment = new Environment();
             this.raycaster.populateArray();
+            this.Fog = new Fog();
         })
     }
 

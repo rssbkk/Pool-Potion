@@ -37,7 +37,7 @@ export default class Grass
             peakWidth: 0.005,
             baseWidth: 0.02,
             height: 0.25,
-            heightSegments: 4
+            heightSegments: 1 //4
         }
 
         this.grassUniforms =
@@ -46,7 +46,7 @@ export default class Grass
             uWindStrength: 4.5 ,
             uGrassBend: 1.85 ,
             uNoiseSpeed: 0.01 ,
-            uTerrainSize: 400. ,
+            uTerrainSize: 40.0 ,
             uTipColor1: new THREE.Color(0xa8b243),
             uTipColor2: new THREE.Color(0x1f352a),
             uTipColor3: new THREE.Color(0xffff00) ,
@@ -138,58 +138,13 @@ export default class Grass
                 expanded: false
             });
 
-            // Folder for geometry properties
-            const grassGeometry = this.debugFolder.addFolder({ title: 'Geometry Properties' });
-
-            grassGeometry.addBinding(this.grassDimentions, 'peakWidth', {
-                label: 'Peak Width',
-                min: 0.001,
-                max: 0.1,
-                step: 0.001
-            }).on('change', (value) => {
-                this.updateGeometry();
-            });
-
-            grassGeometry.addBinding(this.grassDimentions, 'baseWidth', {
-                label: 'Base Width',
-                min: 0.01,
-                max: 0.1,
-                step: 0.001
-            }).on('change', (value) => {
-                this.updateGeometry();
-            });
-
-            grassGeometry.addBinding(this.grassDimentions, 'height', {
-                label: 'Height',
-                min: 0.1,
-                max: 1.0,
-                step: 0.01
-            }).on('change', (value) => {
-                this.updateGeometry();
-            });
-            
-            grassGeometry.addBinding(this.grassDimentions, 'heightSegments', {
-                label: 'Height Segments',
-                min: 1,
-                max: 20,
-                step: 1
-            }).on('change', (value) => {
-                this.updateGeometry();
-            });
-
-            this.updateGeometry = () => {
-                const newGeometry = new THREE.CylinderGeometry(this.grassDimentions.peakWidth, this.grassDimentions.baseWidth, this.grassDimentions.height, 3, this.grassDimentions.heightSegments, true);
-                this.instanceMesh.geometry.dispose();
-                this.instanceMesh.geometry = newGeometry;
-            };
-
             // // Folder for shader properties
             const shaderFolder = this.debugFolder.addFolder({ title: 'Shader Properties' });
 
             shaderFolder.addBinding(this.grassUniforms, 'uNoiseScale', {
                 label: 'Noise Scale',
                 min: 0.1,
-                max: 5,
+                max: 50,
                 step: 0.1
             }).on('change', () => {
                 this.updateMaterial();
@@ -241,7 +196,7 @@ export default class Grass
             });
             
             shaderFolder.addBinding(this.grassUniforms, 'uTerrainSize', {
-                min: 100,
+                min: -100,
                 max: 1000,
                 step: 10,
                 label: 'Terrain Size'
@@ -275,6 +230,51 @@ export default class Grass
                         this.material.uniforms[key].value = this.grassUniforms[key];
                     }
                 })
+            };
+
+            // Folder for geometry properties
+            const grassGeometry = this.debugFolder.addFolder({ title: 'Geometry Properties' });
+
+            grassGeometry.addBinding(this.grassDimentions, 'peakWidth', {
+                label: 'Peak Width',
+                min: 0.001,
+                max: 0.1,
+                step: 0.001
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
+
+            grassGeometry.addBinding(this.grassDimentions, 'baseWidth', {
+                label: 'Base Width',
+                min: 0.01,
+                max: 0.1,
+                step: 0.001
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
+
+            grassGeometry.addBinding(this.grassDimentions, 'height', {
+                label: 'Height',
+                min: 0.1,
+                max: 1.0,
+                step: 0.01
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
+            
+            grassGeometry.addBinding(this.grassDimentions, 'heightSegments', {
+                label: 'Height Segments',
+                min: 1,
+                max: 20,
+                step: 1
+            }).on('change', (value) => {
+                this.updateGeometry();
+            });
+
+            this.updateGeometry = () => {
+                const newGeometry = new THREE.CylinderGeometry(this.grassDimentions.peakWidth, this.grassDimentions.baseWidth, this.grassDimentions.height, 3, this.grassDimentions.heightSegments, true);
+                this.instanceMesh.geometry.dispose();
+                this.instanceMesh.geometry = newGeometry;
             };
         };
     }

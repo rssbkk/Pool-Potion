@@ -16,6 +16,7 @@ export default class Raycaster {
 
         this.objectsToTest = [];
         this.currentIntersect = null;
+        this.previousIntersect = null;
 
         this.createPointer();
         this.populateArray();
@@ -68,7 +69,21 @@ export default class Raycaster {
         const intersects = this.instance.intersectObjects(this.objectsToTest);
         if (intersects.length) {
             this.currentIntersect = intersects[0];
+
+            if(this.currentIntersect !== this.previousIntersect) {
+                if(this.previousIntersect) {
+                    this.previousIntersect.scale.set(1, 1, 1);
+                }
+                this.currentIntersect.object.parent.scale.set(1.1, 1.1, 1.1);
+
+                this.previousIntersect = this.currentIntersect.object.parent;
+            }
         } else {
+            if(this.previousIntersect) {
+                this.previousIntersect.scale.set(1, 1, 1);
+                this.previousIntersect = null;
+            }
+
             this.currentIntersect = null;
         }
     }

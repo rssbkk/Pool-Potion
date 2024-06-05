@@ -69,7 +69,7 @@ export default class Landscape
             {
                 this.sceneObjectTrunks.push(child);
                 child.material = this.toonMaterial.clone();
-                child.material.color = new THREE.Color(0x515138);
+                child.material.color = new THREE.Color(0x573711);
             }
         });
         

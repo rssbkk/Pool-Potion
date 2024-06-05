@@ -90,10 +90,10 @@ export default class Renderer
         this.composer.setPixelRatio(this.sizes.pixelRatio);
         this.composer.setSize(this.sizes.width, this.sizes.height);
 
-        this.renderPixelatedPass = new RenderPixelatedPass( 3, this.scene, this.camera.instance );
+        this.renderPixelatedPass = new RenderPixelatedPass( 4, this.scene, this.camera.instance );
         this.renderPixelatedPass.normalEdgeStrength = 1.5;
         this.renderPixelatedPass.depthEdgeStrength = 1.25;
-        this.renderPixelatedPass = new RenderPixelatedPass( 3, this.scene, this.camera.instance );
+        this.renderPixelatedPass = new RenderPixelatedPass( 4, this.scene, this.camera.instance );
 
         this.composer.addPass( this.renderPixelatedPass );
 
@@ -102,7 +102,7 @@ export default class Renderer
 
         if(this.debug.active)
         {
-            this.debugObject.pixelSize = 3;
+            this.debugObject.pixelSize = 4;
 
             this.debugFolder.addBinding( this.debugObject, 'pixelSize',
             {
