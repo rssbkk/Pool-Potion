@@ -30,10 +30,10 @@ export default class Potion
 
     	this.animationConfig = {
 			uBigWavesElevation: { min: 0.1, max: 0.5 },
-			uBigWavesSpeed: { min: 0.25, max: 2.5 },
+			uBigWavesSpeed: { min: 0.5, max: 2.5 },
 			uSmallWavesElevation: { min: 0.15, max: 1 },
 			uSmallWavesFrequency: { min: 2, max: 15 },
-			uSmallWavesSpeed: { min: 0, max: 2 },
+			uSmallWavesSpeed: { min: 0.5, max: 2 },
 			uSmallIterations: { isIterations: true }
 		};
 
@@ -182,14 +182,14 @@ export default class Potion
     	this.animationStep = 0.1;
     } else if (this.animationCount < 10)
     {
-		this.animationStep = 0.2;
+		  this.animationStep = 0.2;
     } else {
-		this.animationStep = 0.3;
-	}
+		  this.animationStep = 0.3;
+	  }
 
 		let config = this.animationConfig[propertyKey];
 		let previous = this.material.uniforms[propertyKey].value;
-    	let range = config.max - config.min;
+    let range = config.max - config.min;
 		let minChange = range * this.animationStep;
 		let newValue;
 
