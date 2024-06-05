@@ -86,10 +86,10 @@ export default class Raycaster {
                 }
     
                 // Scale the currently intersected object
-                this.currentIntersect.object.scale.set(1.1, 1.1, 1.1);
+                this.currentIntersect.object.parent.scale.set(1.1, 1.1, 1.1);
     
                 // Update the previous intersected object
-                this.previousIntersect = this.currentIntersect.object;
+                this.previousIntersect = this.currentIntersect.object.parent;
             }
         } else {
             // No intersects, reset the scale of the previous intersected object after 200ms
@@ -100,7 +100,7 @@ export default class Raycaster {
                         this.previousIntersect = null;
                     }
                     this.scaleTimeout = null;
-                }, 200);
+                }, 400);
             }
     
             this.currentIntersect = null;
