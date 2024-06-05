@@ -17,6 +17,7 @@ export default class Raycaster {
         this.objectsToTest = [];
         this.currentIntersect = null;
         this.previousIntersect = null;
+        this.scaleTimeout = null;
 
         this.createPointer();
         this.populateArray();
@@ -52,7 +53,7 @@ export default class Raycaster {
 
     triggerAnimation()
     {
-        window.addEventListener('pointerDown', () => {
+        window.addEventListener('click', () => {
             if(this.currentIntersect)
             {
                 const worldPosition = new THREE.Vector3();
@@ -64,26 +65,44 @@ export default class Raycaster {
     }
 
     update() {
+    
         this.instance.setFromCamera(this.pointer, this.camera.instance);
-
+    
         const intersects = this.instance.intersectObjects(this.objectsToTest);
+    
         if (intersects.length) {
             this.currentIntersect = intersects[0];
-
-            if(this.currentIntersect !== this.previousIntersect) {
-                if(this.previousIntersect) {
+    
+            if (this.currentIntersect.object !== this.previousIntersect) {
+                // Clear the previous timeout if it exists
+                if (this.scaleTimeout) {
+                    clearTimeout(this.scaleTimeout);
+                    this.scaleTimeout = null;
+                }
+    
+                // Reset the scale of the previous intersected object
+                if (this.previousIntersect) {
                     this.previousIntersect.scale.set(1, 1, 1);
                 }
-                this.currentIntersect.object.parent.scale.set(1.1, 1.1, 1.1);
-
-                this.previousIntersect = this.currentIntersect.object.parent;
+    
+                // Scale the currently intersected object
+                this.currentIntersect.object.scale.set(1.1, 1.1, 1.1);
+    
+                // Update the previous intersected object
+                this.previousIntersect = this.currentIntersect.object;
             }
         } else {
-            if(this.previousIntersect) {
-                this.previousIntersect.scale.set(1, 1, 1);
-                this.previousIntersect = null;
+            // No intersects, reset the scale of the previous intersected object after 200ms
+            if (this.previousIntersect && !this.scaleTimeout) {
+                this.scaleTimeout = setTimeout(() => {
+                    if (this.previousIntersect) {
+                        this.previousIntersect.scale.set(1, 1, 1);
+                        this.previousIntersect = null;
+                    }
+                    this.scaleTimeout = null;
+                }, 200);
             }
-
+    
             this.currentIntersect = null;
         }
     }
